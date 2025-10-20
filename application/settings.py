@@ -39,7 +39,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'utilisateurs',
     'cours',
-    'statistiques',
+    'etudiants',
+    'evaluation',
+   
 ]
 # Ajoutez cette ligne pour le modèle utilisateur personnalisé
 AUTH_USER_MODEL = 'utilisateurs.User'

@@ -1,7 +1,6 @@
 from django.contrib import admin
-
-# Register your models here.
 from .models import Promotion, Groupe, Etudiant
+# Register your models here.
 
 @admin.register(Promotion)
 class PromotionAdmin(admin.ModelAdmin):
