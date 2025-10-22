@@ -1,34 +1,21 @@
-from flask import Flask, render_template
+#!/usr/bin/env python
+import os
+import sys
 
-app = Flask(__name__, static_folder='frontend/static', template_folder='templates')
 
-@app.route('/')
-def login():
-    return render_template('login.html')
+def main():
+    """Run administrative tasks."""
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "application.settings")
+    try:
+        from django.core.management import execute_from_command_line
+    except ImportError as exc:
+        raise ImportError(
+            "Couldn't import Django. Are you sure it's installed and "
+            "available on your PYTHONPATH environment variable? Did you "
+            "forget to activate a virtual environment?"
+        ) from exc
+    execute_from_command_line(sys.argv)
 
-@app.route('/dashboard')
-def dashboard():
-    return render_template('dashboard.html')
 
-@app.route('/etudiants')
-def etudiants():
-    return render_template('etudiants.html')
-
-@app.route('/modules')
-def modules():
-    return render_template('modules.html')
-
-@app.route('/notes')
-def notes():
-    return render_template('notes.html')
-
-@app.route('/absences')
-def absences():
-    return render_template('absences.html')
-
-@app.route('/statistiques')
-def statistiques():
-    return render_template('statistiques.html')
-
-if __name__ == '__main__':
-    app.run(debug=True)
+if __name__ == "__main__":
+    main()

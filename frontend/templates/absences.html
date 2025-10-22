@@ -1,44 +1,84 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Absences - Suivi Étudiants</title>
-  <link rel="stylesheet" href="C:\Users\Etudiant\Documents\Depotloc\Projet-Tutor-\frontend\static\css\styles.css">
+{% extends 'base.html' %} 
 
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-</head>
-<body>
-  <aside class="sidebar">
-    <div class="sidebar-header"><h2>Suivi Étudiants</h2><p>Plateforme de gestion</p></div>
-    <nav class="menu">
-      <a href="dashboard.html" class="menu-item active"><i class="fas fa-chart-line"></i> Dashboard</a>
-      <a href="etudiants.html" class="menu-item"><i class="fas fa-users"></i> Étudiants</a>
-      <a href="modules.html" class="menu-item"><i class="fas fa-book"></i> Modules</a>
-      <a href="notes.html" class="menu-item"><i class="fas fa-clipboard-list"></i> Notes</a>
-      <a href="absences.html" class="menu-item"><i class="fas fa-calendar-times"></i> Absences</a>
-      <a href="statistiques.html" class="menu-item"><i class="fas fa-calendar-times"></i> Statistiques</a>
+{% block title %}Absences - Suivi Étudiants
+{% endblock%} 
+{% block content %}
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <h2>Suivi Étudiants</h2>
+    <p>Plateforme de gestion</p>
+  </div>
+  <nav class="menu">
+    <a href="{% url 'dashboard' %}" class="menu-item"
+      ><i class="fas fa-chart-line"></i> Dashboard</a
+    >
+    <a href="{% url 'etudiants' %}" class="menu-item"
+      ><i class="fas fa-users"></i> Étudiants</a
+    >
+    <a href="{% url 'modules' %}" class="menu-item"
+      ><i class="fas fa-book"></i> Modules</a
+    >
+    <a href="{% url 'notes' %}" class="menu-item"
+      ><i class="fas fa-clipboard-list"></i> Notes</a
+    >
+    <a href="{% url 'absences' %}" class="menu-item active"
+      ><i class="fas fa-calendar-times"></i> Absences</a
+    >
+    <a href="{% url 'statistiques' %}" class="menu-item"
+      ><i class="fas fa-chart-pie"></i> Statistiques</a
+    >
+  </nav>
+</aside>
 
-    </nav>
-  </aside>
+<main class="main-content">
+  <div class="topbar"><h1>Gestion des Absences</h1></div>
 
-  <main class="main-content">
-    <div class="topbar"><h1>Gestion des Absences</h1></div>
-    <div class="content-area">
-      <div class="table-container">
-        <div class="table-header">
-          <h2>Liste des absences</h2>
-          <button class="btn-action"><i class="fas fa-plus"></i> Nouvelle absence</button>
-        </div>
-        <table>
-          <thead><tr><th>Étudiant</th><th>Module</th><th>Date</th><th>Type</th><th>Justifiée</th><th>Actions</th></tr></thead>
-          <tbody>
-            <tr><td>Sophie Martin</td><td>Programmation Web</td><td>10/10/2025</td><td>Cours</td><td><span class="badge danger">Non</span></td><td><button class="btn-icon"><i class="fas fa-edit"></i></button><button class="btn-icon"><i class="fas fa-trash"></i></button></td></tr>
-            <tr><td>Lucas Dubois</td><td>Base de Données</td><td>12/10/2025</td><td>TP</td><td><span class="badge success">Oui</span></td><td><button class="btn-icon"><i class="fas fa-edit"></i></button><button class="btn-icon"><i class="fas fa-trash"></i></button></td></tr>
-          </tbody>
-        </table>
+  <div class="content-area">
+    <div class="table-container">
+      <div class="table-header">
+        <h2>Liste des absences</h2>
+        <button class="btn-action">
+          <i class="fas fa-plus"></i> Nouvelle absence
+        </button>
       </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Étudiant</th>
+            <th>Module</th>
+            <th>Date</th>
+            <th>Type</th>
+            <th>Justifiée</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Sophie Martin</td>
+            <td>Programmation Web</td>
+            <td>10/10/2025</td>
+            <td>Cours</td>
+            <td><span class="badge danger">Non</span></td>
+            <td>
+              <button class="btn-icon"><i class="fas fa-edit"></i></button>
+              <button class="btn-icon"><i class="fas fa-trash"></i></button>
+            </td>
+          </tr>
+          <tr>
+            <td>Lucas Dubois</td>
+            <td>Base de Données</td>
+            <td>12/10/2025</td>
+            <td>TP</td>
+            <td><span class="badge success">Oui</span></td>
+            <td>
+              <button class="btn-icon"><i class="fas fa-edit"></i></button>
+              <button class="btn-icon"><i class="fas fa-trash"></i></button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
-  </main>
-</body>
-</html>
+  </div>
+</main>
+{% endblock %}

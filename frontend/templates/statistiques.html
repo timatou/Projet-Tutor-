@@ -1,78 +1,148 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Statistiques - Suivi Étudiants</title>
-  <link rel="stylesheet" href="C:\Users\Etudiant\Documents\Depotloc\Projet-Tutor-\frontend\static\css\styles.css">
+{% extends 'base.html' %} 
+{% block title %}Statistiques - Suivi Étudiants
+{%endblock %} {% block content %}
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <h2>Suivi Étudiants</h2>
+    <p>Plateforme de gestion</p>
+  </div>
+  <nav class="menu">
+    <a href="{% url 'dashboard' %}" class="menu-item"
+      ><i class="fas fa-chart-line"></i> Dashboard</a
+    >
+    <a href="{% url 'etudiants' %}" class="menu-item"
+      ><i class="fas fa-users"></i> Étudiants</a
+    >
+    <a href="{% url 'modules' %}" class="menu-item"
+      ><i class="fas fa-book"></i> Modules</a
+    >
+    <a href="{% url 'notes' %}" class="menu-item"
+      ><i class="fas fa-clipboard-list"></i> Notes</a
+    >
+    <a href="{% url 'absences' %}" class="menu-item"
+      ><i class="fas fa-calendar-times"></i> Absences</a
+    >
+    <a href="{% url 'statistiques' %}" class="menu-item active"
+      ><i class="fas fa-chart-pie"></i> Statistiques</a
+    >
+  </nav>
+</aside>
 
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-<body>
-  <aside class="sidebar">
-    <div class="sidebar-header"><h2>Suivi Étudiants</h2><p>Plateforme de gestion</p></div>
-    <nav class="menu">
-      <a href="dashboard.html" class="menu-item"><i class="fas fa-chart-line"></i> Dashboard</a>
-      <a href="etudiants.html" class="menu-item"><i class="fas fa-users"></i> Étudiants</a>
-      <a href="modules.html" class="menu-item"><i class="fas fa-book"></i> Modules</a>
-      <a href="notes.html" class="menu-item"><i class="fas fa-clipboard-list"></i> Notes</a>
-      <a href="absences.html" class="menu-item"><i class="fas fa-calendar-times"></i> Absences</a>
-      <a href="statistiques.html" class="menu-item active"><i class="fas fa-chart-pie"></i> Statistiques</a>
-    </nav>
-  </aside>
+<main class="main-content">
+  <div class="topbar">
+    <h1>Statistiques Globales</h1>
+    <a href="{% url 'login' %}" class="btn-action"
+      ><i class="fas fa-sign-out-alt"></i> Déconnexion</a
+    >
+  </div>
 
-  <main class="main-content">
-    <div class="topbar">
-      <h1>Statistiques Globales</h1>
-      <a href="login.html" class="btn-action"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
-    </div>
-
-    <div class="content-area">
-      <!-- Cartes indicateurs -->
-      <div class="stats-grid">
-        <div class="stat-card"><div class="stat-card-header">
-          <div><div class="stat-value">14.2</div><div class="stat-label">Moyenne générale</div></div>
-          <div class="stat-card-icon blue"><i class="fas fa-chart-bar"></i></div>
-        </div></div>
-
-        <div class="stat-card"><div class="stat-card-header">
-          <div><div class="stat-value">88%</div><div class="stat-label">Taux de réussite</div></div>
-          <div class="stat-card-icon green"><i class="fas fa-trophy"></i></div>
-        </div></div>
-
-        <div class="stat-card"><div class="stat-card-header">
-          <div><div class="stat-value">5%</div><div class="stat-label">Taux d'absence</div></div>
-          <div class="stat-card-icon orange"><i class="fas fa-calendar-times"></i></div>
-        </div></div>
-
-        <div class="stat-card"><div class="stat-card-header">
-          <div><div class="stat-value">6</div><div class="stat-label">Étudiants en difficulté</div></div>
-          <div class="stat-card-icon red"><i class="fas fa-exclamation-triangle"></i></div>
-        </div></div>
-      </div>
-
-      <!-- Filtres -->
-      <div class="card" style="background:white;padding:20px;border-radius:10px;margin-bottom:20px;">
-        <h3 style="margin-bottom:10px;color:#333;">Filtres</h3>
-        <div style="display:flex;gap:20px;flex-wrap:wrap;">
-          <select>
-            <option>Tous les modules</option>
-            <option>Programmation Web</option>
-            <option>Base de Données</option>
-            <option>Statistique</option>
-          </select>
-          <select>
-            <option>Semestre 1</option>
-            <option>Semestre 2</option>
-          </select>
-          <select>
-            <option>Groupe A</option>
-            <option>Groupe B</option>
-          </select>
-          <button class="btn-action"><i class="fas fa-filter"></i> Appliquer</button>
+  <div class="content-area">
+    <!-- Cartes indicateurs -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-card-header">
+          <div>
+            <div class="stat-value">14.2</div>
+            <div class="stat-label">Moyenne générale</div>
+          </div>
+          <div class="stat-card-icon blue">
+            <i class="fas fa-chart-bar"></i>
+          </div>
         </div>
       </div>
 
-      <!-- Graphiques -->
-      <div class="charts-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(350px,1fr));gap:25px;">
+      <div class="stat-card">
+        <div class="stat-card-header">
+          <div>
+            <div class="stat-value">88%</div>
+            <div class="stat-label">Taux de réussite</div>
+          </div>
+          <div class="stat-card-icon green"><i class="fas fa-trophy"></i></div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-card-header">
+          <div>
+            <div class="stat-value">5%</div>
+            <div class="stat-label">Taux d'absence</div>
+          </div>
+          <div class="stat-card-icon orange">
+            <i class="fas fa-calendar-times"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-card-header">
+          <div>
+            <div class="stat-value">6</div>
+            <div class="stat-label">Étudiants en difficulté</div>
+          </div>
+          <div class="stat-card-icon red">
+            <i class="fas fa-exclamation-triangle"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filtres -->
+    <div
+      class="card"
+      style="
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+      "
+    >
+      <h3 style="margin-bottom: 10px; color: #333">Filtres</h3>
+      <div style="display: flex; gap: 20px; flex-wrap: wrap">
+        <select>
+          <option>Tous les modules</option>
+          <option>Programmation Web</option>
+          <option>Base de Données</option>
+          <option>Statistique</option>
+        </select>
+        <select>
+          <option>Semestre 1</option>
+          <option>Semestre 2</option>
+        </select>
+        <select>
+          <option>Groupe A</option>
+          <option>Groupe B</option>
+        </select>
+        <button class="btn-action">
+          <i class="fas fa-filter"></i> Appliquer
+        </button>
+      </div>
+    </div>
+
+    <!-- Graphiques -->
+    <div
+      class="charts-grid"
+      style="
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 25px;
+      "
+    >
+      <div
+        class="card"
+        style="padding: 20px; background: white; border-radius: 10px"
+      >
+        <h3 style="margin-bottom: 15px">Répartition des Moyennes</h3>
+        <canvas id="chartMoyennes"></canvas>
+      </div>
+
+      <div
+        class="card"
+        style="padding: 20px; background: white; border-radius: 10px"
+      >
+        <h3 style="margin-bottom: 15px">Taux de Réussite par Module</h3>
+        <canvas id="chartReussite"></canvas>
+      </div>
+    </div>
+  </div>
+</main>
+{% endblock %}

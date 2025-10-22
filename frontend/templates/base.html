@@ -1,20 +1,14 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="fr">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{% block title %}Suivi étudiants{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'css/style.css' %}" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   </head>
   <body>
-    <header>
-      <h1>Suivi des indicateurs étudiants</h1>
-      <nav>
-        <a href="#">Dashboard</a> | <a href="#">Notes</a> |
-        <a href="#">Statistiques</a>
-      </nav>
-    </header>
-
-    <main>{% block content %}{% endblock %}</main>
+    <main>{% block content %} {% endblock %}</main>
   </body>
 </html>
