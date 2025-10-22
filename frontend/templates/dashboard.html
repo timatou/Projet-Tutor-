@@ -1,6 +1,72 @@
-{% extends 'base.html' %} {% block title %}Dashboard{% endblock %} {% block
-content %}
-<h2>Tableau de bord</h2>
-<canvas id="graph"></canvas>
-<script src="{% static 'js/charts.js' %}"></script>
-{% endblock %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Suivi Étudiants</title>
+  <link rel="stylesheet" href="C:\Users\Etudiant\Documents\Depotloc\Projet-Tutor-\frontend\static\css\styles.css">
+
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <h2>Suivi Étudiants</h2>
+      <p>Plateforme de gestion</p>
+    </div>
+    <nav class="menu">
+      <a href="dashboard.html" class="menu-item active"><i class="fas fa-chart-line"></i> Dashboard</a>
+      <a href="etudiants.html" class="menu-item"><i class="fas fa-users"></i> Étudiants</a>
+      <a href="modules.html" class="menu-item"><i class="fas fa-book"></i> Modules</a>
+      <a href="notes.html" class="menu-item"><i class="fas fa-clipboard-list"></i> Notes</a>
+      <a href="absences.html" class="menu-item"><i class="fas fa-calendar-times"></i> Absences</a>
+      <a href="statistiques.html" class="menu-item"><i class="fas fa-calendar-times"></i> Statistiques</a>
+
+    </nav>
+  </aside>
+
+  <!-- Main -->
+  <main class="main-content">
+    <div class="topbar">
+      <h1>Dashboard</h1>
+      <a href="login.html" class="btn-action"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
+    </div>
+
+    <div class="content-area">
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-card-header">
+          <div><div class="stat-value">156</div><div class="stat-label">Étudiants inscrits</div></div>
+          <div class="stat-card-icon blue"><i class="fas fa-users"></i></div>
+        </div></div>
+
+        <div class="stat-card"><div class="stat-card-header">
+          <div><div class="stat-value">12</div><div class="stat-label">Modules actifs</div></div>
+          <div class="stat-card-icon green"><i class="fas fa-book"></i></div>
+        </div></div>
+
+        <div class="stat-card"><div class="stat-card-header">
+          <div><div class="stat-value">14.2</div><div class="stat-label">Moyenne générale</div></div>
+          <div class="stat-card-icon orange"><i class="fas fa-chart-bar"></i></div>
+        </div></div>
+
+        <div class="stat-card"><div class="stat-card-header">
+          <div><div class="stat-value">8</div><div class="stat-label">Alertes en cours</div></div>
+          <div class="stat-card-icon red"><i class="fas fa-exclamation-triangle"></i></div>
+        </div></div>
+      </div>
+
+      <div class="table-container">
+        <div class="table-header"><h2>Étudiants en difficulté</h2></div>
+        <table>
+          <thead><tr><th>Nom</th><th>Moyenne</th><th>Absences</th><th>Statut</th></tr></thead>
+          <tbody>
+            <tr><td>Sophie Martin</td><td>8.5</td><td>12</td><td><span class="badge danger">Critique</span></td></tr>
+            <tr><td>Lucas Dubois</td><td>9.8</td><td>8</td><td><span class="badge warning">À surveiller</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</body>
+</html>
