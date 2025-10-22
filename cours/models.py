@@ -6,8 +6,8 @@ class Module(models.Model):
     libelle = models.CharField(max_length=100)
     coefficient = models.FloatField(default=1.0)
     semestre = models.IntegerField()
-    enseignant = models.ForeignKey('utilisateurs.Professeur', on_delete=models.SET_NULL, null=True)
-    promotion = models.ForeignKey('etudiants.Promotion', on_delete=models.CASCADE)
+    enseignant = models.ForeignKey('utilisateurs.Professeur', on_delete=models.SET_NULL, null=True,related_name='modules')
+    promotion = models.ForeignKey('etudiants.Promotion', on_delete=models.CASCADE,related_name='modules')
     
     def __str__(self):
         return f"{self.code} - {self.libelle}"
