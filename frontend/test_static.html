@@ -1,0 +1,48 @@
+    <!DOCTYPE html>
+    <html lang="fr">
+    <head>
+    <meta charset="UTF-8">
+    <title>Test Static - Suivi des indicateurs étudiants</title>
+    <link rel="stylesheet" href="static/css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="static/js/forms.js" defer></script>
+    <script src="static/js/charts.js" defer></script>
+    </head>
+    <body>
+
+    <header>
+    <h1>Suivi des indicateurs étudiants</h1>
+    <nav>
+        <a href="#">Dashboard</a>
+        <a href="#">Étudiants</a>
+        <a href="#">Modules</a>
+        <a href="#">Notes</a>
+        <a href="#">Absences</a>
+    </nav>
+    </header>
+
+    <main>
+    <section id="dashboard">
+        <h2>Dashboard</h2>
+        <div class="stats">
+        <div class="card">📊 Moyenne : <b>13.2</b></div>
+        <div class="card">🎓 Réussite : <b>76%</b></div>
+        <div class="card">🕒 Absences : <b>1.4 j</b></div>
+        </div>
+        <canvas id="chartGlobal" width="400" height="200"></canvas>
+    </section>
+
+    <section id="notes">
+        <h2>Notes</h2>
+        <button id="btn-add-note">➕ Ajouter une note</button>
+        <form id="form-note" class="hidden">
+        <select><option>Dupont</option><option>Martin</option></select>
+        <select><option>Algo</option><option>BD</option></select>
+        <input type="number" min="0" max="20" placeholder="Note">
+        <button type="submit">Enregistrer</button>
+        </form>
+    </section>
+    </main>
+
+    </body>
+    </html>
