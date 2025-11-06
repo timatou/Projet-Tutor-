@@ -1,81 +1,260 @@
-{% extends 'base.html' %} {% block title %}Étudiants - Suivi Étudiants
-{%endblock %} {% block content %}
+{% extends 'base.html' %}
+{% load static %} {% block title %}Gestion des Étudiants - Suivi Étudiants
+{% endblock %} {% block content %}
+<!-- Sidebar -->
 <aside class="sidebar">
   <div class="sidebar-header">
     <h2>Suivi Étudiants</h2>
     <p>Plateforme de gestion</p>
   </div>
   <nav class="menu">
-    <a href="{% url 'dashboard' %}" class="menu-item"
-      ><i class="fas fa-chart-line"></i> Dashboard</a
-    >
-    <a href="{% url 'etudiants' %}" class="menu-item active"
-      ><i class="fas fa-users"></i> Étudiants</a
-    >
-    <a href="{% url 'modules' %}" class="menu-item"
-      ><i class="fas fa-book"></i> Modules</a
-    >
-    <a href="{% url 'notes' %}" class="menu-item"
-      ><i class="fas fa-clipboard-list"></i> Notes</a
-    >
-    <a href="{% url 'absences' %}" class="menu-item"
-      ><i class="fas fa-calendar-times"></i> Absences</a
-    >
-    <a href="{% url 'statistiques' %}" class="menu-item"
-      ><i class="fas fa-chart-pie"></i> Statistiques</a
-    >
+    <a href="{% url 'dashboard' %}" class="menu-item"><i class="fas fa-chart-line"></i> Dashboard</a>
+    <a href="{% url 'etudiants' %}" class="menu-item active"><i class="fas fa-users"></i> Étudiants</a>
+    <a href="{% url 'modules' %}" class="menu-item"><i class="fas fa-book"></i> Modules</a>
+    <a href="{% url 'notes' %}" class="menu-item"><i class="fas fa-clipboard-list"></i> Notes</a>
+    <a href="{% url 'absences' %}" class="menu-item"><i class="fas fa-calendar-times"></i> Absences</a>
+    <a href="{% url 'statistiques' %}" class="menu-item"><i class="fas fa-chart-pie"></i> Statistiques</a>
   </nav>
 </aside>
 
+<!-- Contenu principal -->
 <main class="main-content">
-  <div class="topbar"><h1>Gestion des Étudiants</h1></div>
+  <div class="topbar">
+    <h1>Gestion des Étudiants</h1>
+    <a href="{% url 'login' %}" class="btn-action"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
+  </div>
 
   <div class="content-area">
     <div class="table-container">
       <div class="table-header">
-        <h2>Liste des étudiants</h2>
-        <button class="btn-action">
-          <i class="fas fa-plus"></i> Nouvel étudiant
-        </button>
+        <h2><i class="fas fa-users"></i> Liste des Étudiants</h2>
       </div>
 
-      <table>
+      <!-- Filtres -->
+      <div class="filters-bar">
+        <input id="searchInput" class="input-filter" type="text" placeholder="Rechercher par nom...">
+
+        <select id="filterFiliere" class="input-filter">
+          <option value="">Toutes les filières</option>
+          <option value="MIASHS">MIASHS</option>
+          <option value="Sociologie">Sociologie</option>
+          <option value="Économie">Économie</option>
+          <option value="Psychologie">Psychologie</option>
+          <option value="Géographie">Géographie</option>
+          <option value="Philosophie">Philosophie</option>
+          <option value="Arts">Arts</option>
+          <option value="Langues">Langues</option>
+          <option value="Histoire">Histoire</option>
+          <option value="Sciences de l’Éducation">Sciences de l’Éducation</option>
+        </select>
+
+        <select id="filterPromo" class="input-filter">
+          <option value="">Toutes les promotions</option>
+          <option value="L1">L1</option>
+          <option value="L2">L2</option>
+          <option value="L3">L3</option>
+          <option value="M1">M1</option>
+          <option value="M2">M2</option>
+        </select>
+
+        <button id="btnAddEtudiant" class="btn-action"><i class="fas fa-plus"></i> Ajouter un étudiant</button>
+      </div>
+
+      <!-- Tableau -->
+      <table id="tableEtudiants">
         <thead>
           <tr>
-            <th>ID</th>
-            <th>Nom complet</th>
+            <th>Matricule</th>
+            <th>Nom</th>
+            <th>Prénom</th>
+            <th>Filière</th>
+            <th>Promotion</th>
+            <th>Groupe</th>
             <th>Email</th>
-            <th>Moyenne</th>
-            <th>Statut</th>
             <th>Actions</th>
           </tr>
         </thead>
         <tbody>
+          <!-- Données d'exemple -->
           <tr>
-            <td>ET001</td>
-            <td>Marie Dupont</td>
-            <td>marie.dupont@univ-tlse2.fr</td>
-            <td>15.2</td>
-            <td><span class="badge success">Actif</span></td>
-            <td>
-              <button class="btn-icon"><i class="fas fa-edit"></i></button>
-              <button class="btn-icon"><i class="fas fa-trash"></i></button>
-            </td>
+            <td>ET001</td><td>Dupont</td><td>Marie</td><td>MIASHS</td><td>L2</td><td>A</td><td>marie.dupont@univ-tlse2.fr</td>
+            <td><button class="btn-icon edit"><i class="fas fa-edit"></i></button><button class="btn-icon delete"><i class="fas fa-trash"></i></button></td>
           </tr>
           <tr>
-            <td>ET002</td>
-            <td>Pierre Leroy</td>
-            <td>pierre.leroy@univ-tlse2.fr</td>
-            <td>12.8</td>
-            <td><span class="badge success">Actif</span></td>
-            <td>
-              <button class="btn-icon"><i class="fas fa-edit"></i></button>
-              <button class="btn-icon"><i class="fas fa-trash"></i></button>
-            </td>
+            <td>ET002</td><td>Leroy</td><td>Pierre</td><td>Sociologie</td><td>L3</td><td>B</td><td>pierre.leroy@univ-tlse2.fr</td>
+            <td><button class="btn-icon edit"><i class="fas fa-edit"></i></button><button class="btn-icon delete"><i class="fas fa-trash"></i></button></td>
+          </tr>
+          <tr>
+            <td>ET003</td><td>Martin</td><td>Lucie</td><td>Psychologie</td><td>L1</td><td>C</td><td>lucie.martin@univ-tlse2.fr</td>
+            <td><button class="btn-icon edit"><i class="fas fa-edit"></i></button><button class="btn-icon delete"><i class="fas fa-trash"></i></button></td>
           </tr>
         </tbody>
       </table>
     </div>
   </div>
 </main>
+
+<!-- MODALE : Ajouter un étudiant -->
+<div id="modalAddEtudiant" class="modal" aria-hidden="true">
+  <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <button type="button" class="close-modal" aria-label="Fermer">&times;</button>
+    <h2 id="modalTitle"><i class="fas fa-user-plus"></i> Ajouter un étudiant</h2>
+
+    <form id="formEtudiant">
+      <label for="matricule">Matricule</label>
+      <input id="matricule" type="text" required>
+
+      <label for="nom">Nom</label>
+      <input id="nom" type="text" required>
+
+      <label for="prenom">Prénom</label>
+      <input id="prenom" type="text" required>
+
+      <label for="filiere">Filière</label>
+      <select id="filiere" required>
+        <option value="">-- Choisir --</option>
+        <option>MIASHS</option>
+        <option>Sociologie</option>
+        <option>Économie</option>
+        <option>Psychologie</option>
+        <option>Géographie</option>
+        <option>Philosophie</option>
+        <option>Arts</option>
+        <option>Langues</option>
+        <option>Histoire</option>
+        <option>Sciences de l’Éducation</option>
+      </select>
+
+      <label for="promotion">Promotion</label>
+      <select id="promotion" required>
+        <option value="">-- Choisir --</option>
+        <option>L1</option>
+        <option>L2</option>
+        <option>L3</option>
+        <option>M1</option>
+        <option>M2</option>
+      </select>
+
+      <label for="groupe">Groupe</label>
+      <input id="groupe" type="text" placeholder="Ex: A" required>
+
+      <label for="email">Email</label>
+      <input id="email" type="email" required>
+
+      <button type="submit" class="btn-action full-width">Enregistrer</button>
+    </form>
+  </div>
+</div>
+
+<!-- JS -->
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  // --- Sélecteurs
+  const searchInput   = document.getElementById('searchInput');
+  const filterFiliere = document.getElementById('filterFiliere');
+  const filterPromo   = document.getElementById('filterPromo');
+  const table         = document.getElementById('tableEtudiants');
+  const tbody         = table.querySelector('tbody');
+
+  const modal         = document.getElementById('modalAddEtudiant');
+  const btnOpen       = document.getElementById('btnAddEtudiant');
+  const btnClose      = modal.querySelector('.close-modal');
+  const form          = document.getElementById('formEtudiant');
+
+  // --- Filtrage dynamique
+  function applyFilters() {
+    const term   = (searchInput.value || '').toLowerCase().trim();
+    const fil    = (filterFiliere.value || '').toLowerCase();
+    const promo  = (filterPromo.value || '').toLowerCase();
+
+    const rows = tbody.querySelectorAll('tr');
+    rows.forEach(row => {
+      const cells = row.children;
+      const nom      = (cells[1]?.textContent || '').toLowerCase();
+      const filiere  = (cells[3]?.textContent || '').toLowerCase();
+      const prom     = (cells[4]?.textContent || '').toLowerCase();
+
+      const match =
+        (term === ''  || nom.includes(term)) &&
+        (fil  === ''  || filiere.includes(fil)) &&
+        (promo === '' || prom.includes(promo));
+
+      row.style.display = match ? '' : 'none';
+    });
+  }
+
+  ['input', 'change'].forEach(evt => {
+    searchInput.addEventListener(evt, applyFilters);
+    filterFiliere.addEventListener(evt, applyFilters);
+    filterPromo.addEventListener(evt, applyFilters);
+  });
+
+  // --- Modale
+  function openModal() {
+    modal.style.display = 'flex';
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('modal-open');
+  }
+  function closeModal() {
+    modal.style.display = 'none';
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('modal-open');
+  }
+
+  btnOpen.addEventListener('click', openModal);
+  btnClose.addEventListener('click', closeModal);
+  window.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+  window.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+
+  // --- Ajout d'étudiant
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    const matricule = document.getElementById('matricule').value.trim();
+    const nom       = document.getElementById('nom').value.trim();
+    const prenom    = document.getElementById('prenom').value.trim();
+    const filiere   = document.getElementById('filiere').value;
+    const promotion = document.getElementById('promotion').value;
+    const groupe    = document.getElementById('groupe').value.trim();
+    const email     = document.getElementById('email').value.trim();
+
+    if (!matricule || !nom || !prenom || !filiere || !promotion || !groupe || !email) {
+      alert('Veuillez remplir tous les champs.');
+      return;
+    }
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${matricule}</td>
+      <td>${nom}</td>
+      <td>${prenom}</td>
+      <td>${filiere}</td>
+      <td>${promotion}</td>
+      <td>${groupe}</td>
+      <td>${email}</td>
+      <td>
+        <button class="btn-icon edit" title="Modifier"><i class="fas fa-edit"></i></button>
+        <button class="btn-icon delete" title="Supprimer"><i class="fas fa-trash"></i></button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+
+    form.reset();
+    closeModal();
+    applyFilters(); // re-applique les filtres en cours
+  });
+
+  // (optionnel) Suppression en front
+  tbody.addEventListener('click', function (e) {
+    const btn = e.target.closest('.delete');
+    if (btn) {
+      const row = btn.closest('tr');
+      if (confirm('Supprimer cet étudiant ?')) row.remove();
+    }
+  });
+
+  // Premier rendu filtré (au cas où)
+  applyFilters();
+});
+</script>
 {% endblock %}

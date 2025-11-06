@@ -1,120 +1,195 @@
-{% extends 'base.html' %} {% block title %} Dashboard - Suivi Étudiants
-{%endblock %} {% block content %}
-<!-- Sidebar -->
+{% extends 'base.html' %}
+{% load static %} {% block title %}Tableau de Bord - Suivi Étudiants
+{% endblock %} {% block content %}
 <aside class="sidebar">
   <div class="sidebar-header">
     <h2>Suivi Étudiants</h2>
     <p>Plateforme de gestion</p>
   </div>
   <nav class="menu">
-    <a href="{% url 'dashboard' %}" class="menu-item active"
-      ><i class="fas fa-chart-line"></i> Dashboard</a
-    >
-    <a href="{% url 'etudiants' %}" class="menu-item"
-      ><i class="fas fa-users"></i> Étudiants</a
-    >
-    <a href="{% url 'modules' %}" class="menu-item"
-      ><i class="fas fa-book"></i> Modules</a
-    >
-    <a href="{% url 'notes' %}" class="menu-item"
-      ><i class="fas fa-clipboard-list"></i> Notes</a
-    >
-    <a href="{% url 'absences' %}" class="menu-item"
-      ><i class="fas fa-calendar-times"></i> Absences</a
-    >
-    <a href="{% url 'statistiques' %}" class="menu-item"
-      ><i class="fas fa-chart-pie"></i> Statistiques</a
-    >
+    <a href="{% url 'dashboard' %}" class="menu-item active"><i class="fas fa-chart-line"></i> Dashboard</a>
+    <a href="{% url 'etudiants' %}" class="menu-item"><i class="fas fa-users"></i> Étudiants</a>
+    <a href="{% url 'modules' %}" class="menu-item"><i class="fas fa-book"></i> Modules</a>
+    <a href="{% url 'notes' %}" class="menu-item"><i class="fas fa-clipboard-list"></i> Notes</a>
+    <a href="{% url 'absences' %}" class="menu-item"><i class="fas fa-calendar-times"></i> Absences</a>
+    <a href="{% url 'statistiques' %}" class="menu-item"><i class="fas fa-chart-pie"></i> Statistiques</a>
   </nav>
 </aside>
 
-<!-- Main -->
 <main class="main-content">
   <div class="topbar">
-    <h1>Dashboard</h1>
-    <a href="{% url 'login' %}" class="btn-action"
-      ><i class="fas fa-sign-out-alt"></i> Déconnexion</a
-    >
+    <h1>Tableau de Bord Administratif</h1>
+    <a href="{% url 'login' %}" class="btn-action"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
   </div>
 
   <div class="content-area">
+    <h2 class="section-title">Suivi global de l’activité académique</h2>
+
+    <!-- Statistiques principales -->
     <div class="stats-grid">
       <div class="stat-card">
         <div class="stat-card-header">
           <div>
-            <div class="stat-value">156</div>
-            <div class="stat-label">Étudiants inscrits</div>
+            <div class="stat-value">524</div>
+            <div class="stat-label">Étudiants actifs</div>
           </div>
-          <div class="stat-card-icon blue">
-            <i class="fas fa-users"></i>
-          </div>
+          <div class="stat-card-icon blue"><i class="fas fa-user-graduate"></i></div>
         </div>
       </div>
 
       <div class="stat-card">
         <div class="stat-card-header">
           <div>
-            <div class="stat-value">12</div>
-            <div class="stat-label">Modules actifs</div>
+            <div class="stat-value">48</div>
+            <div class="stat-label">Modules suivis</div>
           </div>
-          <div class="stat-card-icon green">
-            <i class="fas fa-book"></i>
-          </div>
+          <div class="stat-card-icon green"><i class="fas fa-book"></i></div>
         </div>
       </div>
 
       <div class="stat-card">
         <div class="stat-card-header">
           <div>
-            <div class="stat-value">14.2</div>
-            <div class="stat-label">Moyenne générale</div>
+            <div class="stat-value">112</div>
+            <div class="stat-label">Absences totales</div>
           </div>
-          <div class="stat-card-icon orange">
-            <i class="fas fa-chart-bar"></i>
-          </div>
+          <div class="stat-card-icon orange"><i class="fas fa-calendar-times"></i></div>
         </div>
       </div>
 
       <div class="stat-card">
         <div class="stat-card-header">
           <div>
-            <div class="stat-value">8</div>
+            <div class="stat-value">9</div>
             <div class="stat-label">Alertes en cours</div>
           </div>
-          <div class="stat-card-icon red">
-            <i class="fas fa-exclamation-triangle"></i>
-          </div>
+          <div class="stat-card-icon red"><i class="fas fa-exclamation-triangle"></i></div>
         </div>
       </div>
     </div>
 
+    <!-- Derniers enregistrements -->
     <div class="table-container">
-      <div class="table-header"><h2>Étudiants en difficulté</h2></div>
+      <div class="table-header">
+        <h2><i class="fas fa-clock"></i> Suivi des derniers enregistrements</h2>
+      </div>
       <table>
         <thead>
           <tr>
-            <th>Nom</th>
-            <th>Moyenne</th>
-            <th>Absences</th>
+            <th>Étudiant</th>
+            <th>Filière</th>
+            <th>Dernier module suivi</th>
+            <th>Dernière note</th>
+            <th>Dernière absence</th>
             <th>Statut</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td>Sophie Martin</td>
-            <td>8.5</td>
-            <td>12</td>
-            <td><span class="badge danger">Critique</span></td>
+            <td>Marie Dupont</td>
+            <td>MIASHS</td>
+            <td>Programmation Python</td>
+            <td>16.5</td>
+            <td>03/10/2025</td>
+            <td><span class="badge success">Régulière</span></td>
           </tr>
           <tr>
-            <td>Lucas Dubois</td>
-            <td>9.8</td>
-            <td>8</td>
-            <td><span class="badge warning">À surveiller</span></td>
+            <td>Pierre Leroy</td>
+            <td>Géographie</td>
+            <td>Cartographie</td>
+            <td>13.2</td>
+            <td>10/10/2025</td>
+            <td><span class="badge warning">Absence récente</span></td>
+          </tr>
+          <tr>
+            <td>Lucie Martin</td>
+            <td>Économie</td>
+            <td>Microéconomie</td>
+            <td>12.8</td>
+            <td>06/10/2025</td>
+            <td><span class="badge success">Régulière</span></td>
+          </tr>
+          <tr>
+            <td>Julie Rousseau</td>
+            <td>Psychologie</td>
+            <td>Psychologie Cognitive</td>
+            <td>14.5</td>
+            <td>08/10/2025</td>
+            <td><span class="badge success">Régulière</span></td>
           </tr>
         </tbody>
       </table>
     </div>
+
+    <!-- Graphiques côte à côte -->
+    <div class="charts-grid">
+      <div class="chart-box">
+        <h4>📈 Activité académique globale</h4>
+        <canvas id="chartGlobalActivity"></canvas>
+      </div>
+
+      <div class="chart-box">
+        <h4>📊 Répartition des alertes par motif</h4>
+        <canvas id="chartAlerts"></canvas>
+      </div>
+    </div>
+
+    <!-- Alertes Étudiantes -->
+    <div class="alertes-etudiantes">
+      <h3><i class="fas fa-exclamation-circle"></i> Alertes Étudiantes</h3>
+
+      <div class="alerte-card critique">
+        <strong>Marie Dupont — MIASHS</strong><br>
+        Moyenne : 8.5 / 20 — 6 absences non justifiées
+        <span class="badge danger">Critique</span>
+      </div>
+
+      <div class="alerte-card surveiller">
+        <strong>Pierre Leroy — Géographie</strong><br>
+        Moyenne : 10.2 / 20 — Absence répétée depuis 3 semaines
+        <span class="badge warning">À surveiller</span>
+      </div>
+
+      <div class="alerte-card progression">
+        <strong>Lucie Martin — Économie</strong><br>
+        Moyenne stable : 12.1 / 20 — Progression constante
+        <span class="badge info">En progression</span>
+      </div>
+
+      <div class="alerte-card bonne">
+        <strong>Julie Rousseau — Psychologie</strong><br>
+        Moyenne : 15.8 / 20 — Aucune absence signalée
+        <span class="badge success">Positive</span>
+      </div>
+    </div>
   </div>
 </main>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+new Chart(document.getElementById("chartGlobalActivity"), {
+  type: "line",
+  data: {
+    labels: ["Sept", "Oct", "Nov", "Déc", "Janv", "Fév"],
+    datasets: [
+      { label: "Notes moyennes", data: [13.2, 13.7, 14.1, 13.9, 14.4, 14.7],
+        borderColor: "#667eea", backgroundColor: "rgba(102,126,234,0.2)", fill: true, tension: 0.3 },
+      { label: "Absences", data: [20, 25, 18, 22, 15, 17],
+        borderColor: "#f44336", backgroundColor: "rgba(244,67,54,0.2)", fill: true, tension: 0.3 }
+    ]
+  },
+  options: { plugins: { legend: { position: "bottom" } }, scales: { y: { beginAtZero: true } } }
+});
+
+new Chart(document.getElementById("chartAlerts"), {
+  type: "doughnut",
+  data: {
+    labels: ["Absences répétées", "Moyenne < 10", "Non-participation", "Retards fréquents"],
+    datasets: [{ data: [40, 25, 20, 15], backgroundColor: ["#f44336", "#ff9800", "#4caf50", "#2196f3"] }]
+  },
+  options: { plugins: { legend: { position: "bottom" } } }
+});
+</script>
 {% endblock %}

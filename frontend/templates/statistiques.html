@@ -1,61 +1,49 @@
-{% extends 'base.html' %} 
-{% block title %}Statistiques - Suivi Étudiants
-{%endblock %} {% block content %}
+{% extends 'base.html' %}
+{% load static %} {% block title %}Statistiques Globales - Suivi Étudiants
+{% endblock %} {% block content %}
+<!-- Sidebar -->
 <aside class="sidebar">
   <div class="sidebar-header">
     <h2>Suivi Étudiants</h2>
     <p>Plateforme de gestion</p>
   </div>
   <nav class="menu">
-    <a href="{% url 'dashboard' %}" class="menu-item"
-      ><i class="fas fa-chart-line"></i> Dashboard</a
-    >
-    <a href="{% url 'etudiants' %}" class="menu-item"
-      ><i class="fas fa-users"></i> Étudiants</a
-    >
-    <a href="{% url 'modules' %}" class="menu-item"
-      ><i class="fas fa-book"></i> Modules</a
-    >
-    <a href="{% url 'notes' %}" class="menu-item"
-      ><i class="fas fa-clipboard-list"></i> Notes</a
-    >
-    <a href="{% url 'absences' %}" class="menu-item"
-      ><i class="fas fa-calendar-times"></i> Absences</a
-    >
-    <a href="{% url 'statistiques' %}" class="menu-item active"
-      ><i class="fas fa-chart-pie"></i> Statistiques</a
-    >
+    <a href="{% url 'dashboard' %}" class="menu-item"><i class="fas fa-chart-line"></i> Dashboard</a>
+    <a href="{% url 'etudiants' %}" class="menu-item"><i class="fas fa-users"></i> Étudiants</a>
+    <a href="{% url 'modules' %}" class="menu-item"><i class="fas fa-book"></i> Modules</a>
+    <a href="{% url 'notes' %}" class="menu-item"><i class="fas fa-clipboard-list"></i> Notes</a>
+    <a href="{% url 'absences' %}" class="menu-item"><i class="fas fa-calendar-times"></i> Absences</a>
+    <a href="{% url 'statistiques' %}" class="menu-item active"><i class="fas fa-chart-pie"></i> Statistiques</a>
   </nav>
 </aside>
 
+<!-- Contenu principal -->
 <main class="main-content">
   <div class="topbar">
     <h1>Statistiques Globales</h1>
-    <a href="{% url 'login' %}" class="btn-action"
-      ><i class="fas fa-sign-out-alt"></i> Déconnexion</a
-    >
+    <a href="{% url 'login' %}" class="btn-action"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
   </div>
 
   <div class="content-area">
-    <!-- Cartes indicateurs -->
+    <p class="subtitle">Vue d’ensemble des performances académiques</p>
+
+    <!-- Indicateurs principaux -->
     <div class="stats-grid">
       <div class="stat-card">
         <div class="stat-card-header">
           <div>
-            <div class="stat-value">14.2</div>
             <div class="stat-label">Moyenne générale</div>
+            <div class="stat-value">13.8</div>
           </div>
-          <div class="stat-card-icon blue">
-            <i class="fas fa-chart-bar"></i>
-          </div>
+          <div class="stat-card-icon blue"><i class="fas fa-chart-bar"></i></div>
         </div>
       </div>
 
       <div class="stat-card">
         <div class="stat-card-header">
           <div>
-            <div class="stat-value">88%</div>
             <div class="stat-label">Taux de réussite</div>
+            <div class="stat-value" style="color:#4caf50;">87%</div>
           </div>
           <div class="stat-card-icon green"><i class="fas fa-trophy"></i></div>
         </div>
@@ -64,85 +52,156 @@
       <div class="stat-card">
         <div class="stat-card-header">
           <div>
-            <div class="stat-value">5%</div>
-            <div class="stat-label">Taux d'absence</div>
+            <div class="stat-label">Taux d’absence</div>
+            <div class="stat-value" style="color:#ff9800;">6%</div>
           </div>
-          <div class="stat-card-icon orange">
-            <i class="fas fa-calendar-times"></i>
-          </div>
+          <div class="stat-card-icon orange"><i class="fas fa-calendar-times"></i></div>
         </div>
       </div>
 
       <div class="stat-card">
         <div class="stat-card-header">
           <div>
-            <div class="stat-value">6</div>
             <div class="stat-label">Étudiants en difficulté</div>
+            <div class="stat-value" style="color:#f44336;">7</div>
           </div>
-          <div class="stat-card-icon red">
-            <i class="fas fa-exclamation-triangle"></i>
-          </div>
+          <div class="stat-card-icon red"><i class="fas fa-exclamation-triangle"></i></div>
         </div>
       </div>
     </div>
 
     <!-- Filtres -->
-    <div
-      class="card"
-      style="
-        background: white;
-        padding: 20px;
-        border-radius: 10px;
-        margin-bottom: 20px;
-      "
-    >
-      <h3 style="margin-bottom: 10px; color: #333">Filtres</h3>
-      <div style="display: flex; gap: 20px; flex-wrap: wrap">
-        <select>
-          <option>Tous les modules</option>
-          <option>Programmation Web</option>
-          <option>Base de Données</option>
-          <option>Statistique</option>
-        </select>
-        <select>
-          <option>Semestre 1</option>
-          <option>Semestre 2</option>
-        </select>
-        <select>
-          <option>Groupe A</option>
-          <option>Groupe B</option>
-        </select>
-        <button class="btn-action">
-          <i class="fas fa-filter"></i> Appliquer
-        </button>
-      </div>
+    <div style="display:flex; gap:10px; align-items:center; margin:20px 0;">
+      <select><option>Toutes les Filières</option><option>MIASHS</option><option>Sociologie</option><option>Économie</option><option>Psychologie</option><option>Arts</option></select>
+      <select><option>Tous les Modules</option><option>Programmation Python</option><option>Microéconomie</option><option>Cartographie</option></select>
+      <select><option>Semestre 1</option><option>Semestre 2</option></select>
+      <button class="btn-action"><i class="fas fa-filter"></i> Appliquer</button>
     </div>
 
-    <!-- Graphiques -->
-    <div
-      class="charts-grid"
-      style="
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-        gap: 25px;
-      "
-    >
-      <div
-        class="card"
-        style="padding: 20px; background: white; border-radius: 10px"
-      >
-        <h3 style="margin-bottom: 15px">Répartition des Moyennes</h3>
-        <canvas id="chartMoyennes"></canvas>
+    <!-- Graphiques principaux -->
+    <div class="charts-grid">
+      <div class="chart-box">
+        <h4><i class="fas fa-chart-bar"></i> Moyenne par filière</h4>
+        <canvas id="chartMoyenneFiliere"></canvas>
       </div>
 
-      <div
-        class="card"
-        style="padding: 20px; background: white; border-radius: 10px"
-      >
-        <h3 style="margin-bottom: 15px">Taux de Réussite par Module</h3>
+      <div class="chart-box">
+        <h4><i class="fas fa-trophy"></i> Taux de réussite par filière</h4>
         <canvas id="chartReussite"></canvas>
+      </div>
+
+      <div class="chart-box">
+        <h4><i class="fas fa-chart-pie"></i> Répartition des absences</h4>
+        <canvas id="chartAbsences"></canvas>
+      </div>
+
+      <div class="chart-box">
+        <h4><i class="fas fa-chart-line"></i> Évolution de la moyenne générale</h4>
+        <canvas id="chartEvolution"></canvas>
+      </div>
+
+      <div class="chart-box">
+        <h4><i class="fas fa-user-times"></i> Étudiants en difficulté par filière</h4>
+        <canvas id="chartDifficulte"></canvas>
+      </div>
+
+      <div class="chart-box">
+        <h4><i class="fas fa-star"></i> Classement global des moyennes</h4>
+        <canvas id="chartRadar"></canvas>
       </div>
     </div>
   </div>
 </main>
+
+<!-- Scripts Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  // --- Moyenne par filière ---
+  new Chart(document.getElementById("chartMoyenneFiliere"), {
+    type: "bar",
+    data: {
+      labels: ["MIASHS", "Sociologie", "Économie", "Psychologie", "Arts"],
+      datasets: [{
+        label: "Moyenne",
+        data: [14, 13, 12.8, 15, 14.5],
+        backgroundColor: ["#667eea", "#ff9800", "#4caf50", "#ba68c8", "#ff7043"]
+      }]
+    },
+    options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
+  });
+
+  // --- Taux de réussite par filière ---
+  new Chart(document.getElementById("chartReussite"), {
+    type: "bar",
+    data: {
+      labels: ["MIASHS", "Sociologie", "Économie", "Psychologie", "Arts"],
+      datasets: [{
+        label: "Taux de réussite (%)",
+        data: [92, 85, 80, 88, 90],
+        backgroundColor: ["#4caf50", "#81c784", "#66bb6a", "#43a047", "#2e7d32"]
+      }]
+    },
+    options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, max: 100 } } }
+  });
+
+  // --- Répartition des absences ---
+  new Chart(document.getElementById("chartAbsences"), {
+    type: "pie",
+    data: {
+      labels: ["Justifiées", "Non justifiées"],
+      datasets: [{
+        data: [65, 35],
+        backgroundColor: ["#4caf50", "#f44336"]
+      }]
+    },
+    options: { plugins: { legend: { position: "bottom" } } }
+  });
+
+  // --- Évolution de la moyenne générale ---
+  new Chart(document.getElementById("chartEvolution"), {
+    type: "line",
+    data: {
+      labels: ["Sept", "Oct", "Nov", "Déc", "Janv", "Fév"],
+      datasets: [{
+        label: "Moyenne générale",
+        data: [13.2, 13.5, 14, 13.8, 14.3, 14.5],
+        borderColor: "#667eea",
+        backgroundColor: "rgba(102,126,234,0.2)",
+        fill: true,
+        tension: 0.3
+      }]
+    },
+    options: { plugins: { legend: { position: "bottom" } }, scales: { y: { beginAtZero: true } } }
+  });
+
+  // --- Étudiants en difficulté ---
+  new Chart(document.getElementById("chartDifficulte"), {
+    type: "bar",
+    data: {
+      labels: ["MIASHS", "Sociologie", "Économie", "Psychologie", "Arts"],
+      datasets: [{
+        label: "Étudiants en difficulté",
+        data: [2, 1, 3, 2, 1],
+        backgroundColor: ["#ff7043", "#ffb74d", "#e57373", "#ba68c8", "#90a4ae"]
+      }]
+    },
+    options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
+  });
+
+  // --- Radar : classement global ---
+  new Chart(document.getElementById("chartRadar"), {
+    type: "radar",
+    data: {
+      labels: ["MIASHS", "Sociologie", "Économie", "Psychologie", "Arts"],
+      datasets: [{
+        label: "Performance moyenne",
+        data: [15, 13, 12, 14, 16],
+        backgroundColor: "rgba(102,126,234,0.2)",
+        borderColor: "#667eea",
+        pointBackgroundColor: "#667eea"
+      }]
+    },
+    options: { plugins: { legend: { position: "top" } } }
+  });
+</script>
 {% endblock %}

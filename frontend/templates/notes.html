@@ -1,50 +1,66 @@
-{% extends 'base.html' %} 
-{% block title %}Notes - Suivi Étudiants 
-{% endblock%}
-
-{% block content %}
+{% extends 'base.html' %}
+{% load static %} {% block title %}Gestion des Notes - Suivi Étudiants
+{% endblock %} {% block content %}
+<!-- Sidebar -->
 <aside class="sidebar">
   <div class="sidebar-header">
     <h2>Suivi Étudiants</h2>
     <p>Plateforme de gestion</p>
   </div>
   <nav class="menu">
-    <a href="{% url 'dashboard' %}" class="menu-item"
-      ><i class="fas fa-chart-line"></i> Dashboard</a
-    >
-    <a href="{% url 'etudiants' %}" class="menu-item"
-      ><i class="fas fa-users"></i> Étudiants</a
-    >
-    <a href="{% url 'modules' %}" class="menu-item"
-      ><i class="fas fa-book"></i> Modules</a
-    >
-    <a href="{% url 'notes' %}" class="menu-item active"
-      ><i class="fas fa-clipboard-list"></i> Notes</a
-    >
-    <a href="{% url 'absences' %}" class="menu-item"
-      ><i class="fas fa-calendar-times"></i> Absences</a
-    >
-    <a href="{% url 'statistiques' %}" class="menu-item"
-      ><i class="fas fa-chart-pie"></i> Statistiques</a
-    >
+    <a href="{% url 'dashboard' %}" class="menu-item"><i class="fas fa-chart-line"></i> Dashboard</a>
+    <a href="{% url 'etudiants' %}" class="menu-item"><i class="fas fa-users"></i> Étudiants</a>
+    <a href="{% url 'modules' %}" class="menu-item"><i class="fas fa-book"></i> Modules</a>
+    <a href="{% url 'notes' %}" class="menu-item active"><i class="fas fa-clipboard-list"></i> Notes</a>
+    <a href="{% url 'absences' %}" class="menu-item"><i class="fas fa-calendar-times"></i> Absences</a>
+    <a href="{% url 'statistiques' %}" class="menu-item"><i class="fas fa-chart-pie"></i> Statistiques</a>
   </nav>
 </aside>
 
+<!-- Contenu principal -->
 <main class="main-content">
-  <div class="topbar"><h1>Gestion des Notes</h1></div>
+  <div class="topbar">
+    <h1>Gestion des Notes</h1>
+    <a href="{% url 'login' %}" class="btn-action"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
+  </div>
 
   <div class="content-area">
     <div class="table-container">
       <div class="table-header">
-        <h2>Liste des notes</h2>
-        <button class="btn-action">
-          <i class="fas fa-plus"></i> Ajouter une note
-        </button>
+        <h2><i class="fas fa-clipboard-list"></i> Liste des Notes</h2>
       </div>
 
-      <table>
+      <!-- Filtres -->
+      <div class="filters-bar">
+        <select id="filterFiliere" class="input-filter">
+          <option value="">Toutes les Filières</option>
+          <option>MIASHS</option><option>Sociologie</option><option>Économie</option><option>Psychologie</option>
+          <option>Géographie</option><option>Philosophie</option><option>Histoire</option><option>Arts</option>
+          <option>Langues</option><option>Sciences de l’Éducation</option>
+        </select>
+
+        <select id="filterEtudiant" class="input-filter">
+          <option value="">Tous les Étudiants</option>
+          <option>Marie Dupont</option><option>Pierre Leroy</option><option>Lucie Martin</option>
+          <option>Julie Rousseau</option><option>Antoine Bernard</option>
+        </select>
+
+        <select id="filterModule" class="input-filter">
+          <option value="">Tous les Modules</option>
+          <option>Programmation Python</option><option>Méthodes en Sociologie</option>
+          <option>Microéconomie</option><option>Psychologie Cognitive</option><option>Cartographie</option>
+          <option>Éthique et Morale</option><option>Histoire Moderne</option><option>Esthétique et Création</option>
+          <option>Linguistique Générale</option><option>Pédagogie et Apprentissage</option>
+        </select>
+
+        <button id="btnAddNote" class="btn-action"><i class="fas fa-plus"></i> Ajouter une note</button>
+      </div>
+
+      <!-- Tableau -->
+      <table id="tableNotes">
         <thead>
           <tr>
+            <th>Filière</th>
             <th>Étudiant</th>
             <th>Module</th>
             <th>Type</th>
@@ -54,31 +70,188 @@
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>Marie Dupont</td>
-            <td>Programmation Web</td>
-            <td>Examen</td>
-            <td>16.5</td>
-            <td>15/10/2025</td>
-            <td>
-              <button class="btn-icon"><i class="fas fa-edit"></i></button>
-              <button class="btn-icon"><i class="fas fa-trash"></i></button>
-            </td>
-          </tr>
-          <tr>
-            <td>Pierre Leroy</td>
-            <td>Base de Données</td>
-            <td>TP</td>
-            <td>14.0</td>
-            <td>18/10/2025</td>
-            <td>
-              <button class="btn-icon"><i class="fas fa-edit"></i></button>
-              <button class="btn-icon"><i class="fas fa-trash"></i></button>
-            </td>
-          </tr>
+          <tr><td>MIASHS</td><td>Marie Dupont</td><td>Programmation Python</td><td>Examen</td><td>16.5</td><td>15/10/2025</td><td><i class="fas fa-edit edit-icon"></i> <i class="fas fa-trash delete-icon"></i></td></tr>
+          <tr><td>Sociologie</td><td>Antoine Bernard</td><td>Méthodes en Sociologie</td><td>Dossier</td><td>13.8</td><td>18/10/2025</td><td><i class="fas fa-edit edit-icon"></i> <i class="fas fa-trash delete-icon"></i></td></tr>
+          <tr><td>Économie</td><td>Lucie Martin</td><td>Microéconomie</td><td>Examen</td><td>12.8</td><td>20/10/2025</td><td><i class="fas fa-edit edit-icon"></i> <i class="fas fa-trash delete-icon"></i></td></tr>
         </tbody>
       </table>
     </div>
+
+    <!-- Graphiques -->
+    <div class="charts-grid">
+      <div class="chart-box">
+        <h4><i class="fas fa-chart-bar"></i> Moyenne par module</h4>
+        <canvas id="chartModules"></canvas>
+      </div>
+
+      <div class="chart-box">
+        <h4><i class="fas fa-user-graduate"></i> Moyenne par étudiant</h4>
+        <canvas id="chartEtudiants"></canvas>
+      </div>
+
+      <div class="chart-box">
+        <h4><i class="fas fa-chart-pie"></i> Répartition des notes par filière</h4>
+        <canvas id="chartFilieres"></canvas>
+      </div>
+    </div>
   </div>
 </main>
+
+<!-- MODALE AJOUT / ÉDITION NOTE -->
+<div id="modalAddNote" class="modal">
+  <div class="modal-content">
+    <button class="close-modal">&times;</button>
+    <h2 id="modalTitle"><i class="fas fa-plus-circle"></i> Ajouter une note</h2>
+
+    <form id="formNote">
+      <input type="hidden" id="editingIndex">
+
+      <label>Filière</label>
+      <select id="filiere" required>
+        <option value="">-- Choisir --</option>
+        <option>MIASHS</option><option>Sociologie</option><option>Économie</option><option>Psychologie</option>
+        <option>Géographie</option><option>Philosophie</option><option>Histoire</option><option>Arts</option>
+        <option>Langues</option><option>Sciences de l’Éducation</option>
+      </select>
+
+      <label>Étudiant</label>
+      <input id="etudiant" type="text" placeholder="Nom Prénom" required>
+
+      <label>Module</label>
+      <input id="module" type="text" required>
+
+      <label>Type</label>
+      <select id="type" required>
+        <option>Examen</option><option>TP</option><option>Projet</option><option>Oral</option><option>Dossier</option>
+      </select>
+
+      <label>Note</label>
+      <input id="note" type="number" min="0" max="20" step="0.1" required>
+
+      <label>Date</label>
+      <input id="date" type="date" required>
+
+      <button type="submit" class="btn-action full-width">Enregistrer</button>
+    </form>
+  </div>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- JS logique -->
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const tbody = document.querySelector("#tableNotes tbody");
+  const filters = ["filterFiliere", "filterEtudiant", "filterModule"].map(id => document.getElementById(id));
+
+  const modal = document.getElementById("modalAddNote");
+  const btnOpen = document.getElementById("btnAddNote");
+  const btnClose = modal.querySelector(".close-modal");
+  const form = document.getElementById("formNote");
+  const editingIndex = document.getElementById("editingIndex");
+
+  // === Filtres ===
+  const applyFilters = () => {
+    const [filiere, etudiant, module] = filters.map(f => f.value.toLowerCase());
+    tbody.querySelectorAll("tr").forEach(row => {
+      const cells = [...row.children].map(td => td.textContent.toLowerCase());
+      row.style.display =
+        (!filiere || cells[0].includes(filiere)) &&
+        (!etudiant || cells[1].includes(etudiant)) &&
+        (!module || cells[2].includes(module)) ? "" : "none";
+    });
+  };
+  filters.forEach(f => f.addEventListener("change", applyFilters));
+
+  // === Modal open/close ===
+  btnOpen.onclick = () => { form.reset(); editingIndex.value = ""; document.getElementById("modalTitle").innerHTML = '<i class="fas fa-plus-circle"></i> Ajouter une note'; modal.style.display = "flex"; };
+  btnClose.onclick = () => modal.style.display = "none";
+  window.onclick = e => { if (e.target === modal) modal.style.display = "none"; };
+
+  // === Ajout / Édition ===
+  form.addEventListener("submit", e => {
+    e.preventDefault();
+    const data = {
+      filiere: filiere.value, etudiant: etudiant.value, module: module.value,
+      type: type.value, note: note.value, date: date.value.split("-").reverse().join("/")
+    };
+    if (editingIndex.value) {
+      const row = tbody.children[editingIndex.value];
+      row.innerHTML = `<td>${data.filiere}</td><td>${data.etudiant}</td><td>${data.module}</td><td>${data.type}</td><td>${data.note}</td><td>${data.date}</td><td><i class='fas fa-edit edit-icon'></i> <i class='fas fa-trash delete-icon'></i></td>`;
+    } else {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `<td>${data.filiere}</td><td>${data.etudiant}</td><td>${data.module}</td><td>${data.type}</td><td>${data.note}</td><td>${data.date}</td><td><i class='fas fa-edit edit-icon'></i> <i class='fas fa-trash delete-icon'></i></td>`;
+      tbody.appendChild(tr);
+    }
+    modal.style.display = "none";
+    applyFilters();
+    updateCharts();
+  });
+
+  // === Édition & Suppression ===
+  tbody.addEventListener("click", e => {
+    const tr = e.target.closest("tr");
+    if (!tr) return;
+    const index = [...tbody.children].indexOf(tr);
+    if (e.target.classList.contains("delete-icon")) {
+      if (confirm("Supprimer cette note ?")) tr.remove(), updateCharts();
+    }
+    if (e.target.classList.contains("edit-icon")) {
+      const cells = tr.children;
+      editingIndex.value = index;
+      document.getElementById("modalTitle").innerHTML = '<i class="fas fa-edit"></i> Modifier une note';
+      filiere.value = cells[0].textContent;
+      etudiant.value = cells[1].textContent;
+      module.value = cells[2].textContent;
+      type.value = cells[3].textContent;
+      note.value = cells[4].textContent;
+      date.value = cells[5].textContent.split("/").reverse().join("-");
+      modal.style.display = "flex";
+    }
+  });
+
+  // === Graphiques ===
+  const chartModules = new Chart(document.getElementById("chartModules"), {
+    type: "bar",
+    data: { labels: [], datasets: [{ label: "Moyenne", data: [], backgroundColor: "#667eea" }] },
+    options: { scales: { y: { beginAtZero: true } }, plugins: { legend: { display: false } } }
+  });
+  const chartEtudiants = new Chart(document.getElementById("chartEtudiants"), {
+    type: "bar",
+    data: { labels: [], datasets: [{ label: "Moyenne", data: [], backgroundColor: "#4caf50" }] },
+    options: { scales: { y: { beginAtZero: true } }, plugins: { legend: { display: false } } }
+  });
+  const chartFilieres = new Chart(document.getElementById("chartFilieres"), {
+    type: "pie",
+    data: { labels: [], datasets: [{ data: [], backgroundColor: ["#667eea", "#4caf50", "#ff9800", "#ba68c8", "#ff7043"] }] },
+    options: { plugins: { legend: { position: "bottom" } } }
+  });
+
+  // === MAJ des graphiques ===
+  function updateCharts() {
+    const rows = [...tbody.children];
+    const moyennes = { modules: {}, etudiants: {}, filieres: {} };
+
+    rows.forEach(r => {
+      const [f, e, m, , note] = [...r.children].map(td => td.textContent);
+      const n = parseFloat(note);
+      if (!isNaN(n)) {
+        [moyennes.modules[m] ||= [], moyennes.etudiants[e] ||= [], moyennes.filieres[f] ||= []]
+          .forEach(arr => arr.push(n));
+      }
+    });
+
+    const calc = obj => Object.entries(obj).map(([k, v]) => [k, (v.reduce((a,b)=>a+b,0)/v.length).toFixed(2)]);
+
+    const mod = calc(moyennes.modules), etu = calc(moyennes.etudiants), fil = calc(moyennes.filieres);
+
+    chartModules.data.labels = mod.map(x=>x[0]); chartModules.data.datasets[0].data = mod.map(x=>x[1]); chartModules.update();
+    chartEtudiants.data.labels = etu.map(x=>x[0]); chartEtudiants.data.datasets[0].data = etu.map(x=>x[1]); chartEtudiants.update();
+    chartFilieres.data.labels = fil.map(x=>x[0]); chartFilieres.data.datasets[0].data = fil.map(x=>x[1]); chartFilieres.update();
+  }
+
+  updateCharts();
+});
+</script>
 {% endblock %}

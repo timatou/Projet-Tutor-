@@ -1,33 +1,32 @@
-{% extends "base.html" %} {% block title %} Connexion - Suivi Étudiants
-{%endblock %} {% block content %}
-<div class="login-container">
-  <div class="login-box">
-    <div class="login-header">
-      <i class="fas fa-user-graduate"></i>
-      <h1>Suivi des Étudiants</h1>
-      <p>Connectez-vous pour accéder à votre tableau de bord</p>
-    </div>
-
-    <form action="{% url 'dashboard' %}">
-      <div class="form-group">
-        <label>Identifiant</label>
-        <input type="text" required placeholder="Entrez votre identifiant" />
+{% extends 'base.html' %} {% block title %}Connexion - Suivi Étudiants
+{% endblock %} {% block content %}
+<div class="login-body">
+  <div class="login-container">
+    <div class="login-box">
+      <div class="login-header">
+        <i class="fas fa-user-graduate"></i>
+        <h1>Suivi des Indicateurs Étudiants</h1>
+        <p>Veuillez vous connecter pour accéder à la plateforme</p>
       </div>
 
-      <div class="form-group">
-        <label>Mot de passe</label>
-        <input
-          type="password"
-          required
-          placeholder="Entrez votre mot de passe"
-        />
+      <form method="POST" action="{% url 'dashboard' %}">
+        {% csrf_token %}
+        <div class="form-group">
+          <label for="username">Adresse email</label>
+          <input type="text" id="username" name="username" placeholder="ex: nom.prenom@univ.fr" required>
+        </div>
+
+        <div class="form-group">
+          <label for="password">Mot de passe</label>
+          <input type="password" id="password" name="password" placeholder="Mot de passe" required>
+        </div>
+
+        <button type="submit" class="btn-login">Connexion</button>
+      </form>
+
+      <div class="login-footer">
+        <a href="#">Mot de passe oublié ?</a>
       </div>
-
-      <button type="submit" class="btn-login">Se connecter</button>
-    </form>
-
-    <div class="login-footer">
-      <p>© 2025 Université Toulouse 2 - Jean Jaurès</p>
     </div>
   </div>
 </div>

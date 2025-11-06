@@ -1,84 +1,263 @@
-{% extends 'base.html' %} 
-
-{% block title %}Absences - Suivi Étudiants
-{% endblock%} 
-{% block content %}
+{% extends 'base.html' %}
+{% load static %} {% block title %}Suivi des Absences - Suivi Étudiants
+{% endblock %} {% block content %}
+<!-- Sidebar -->
 <aside class="sidebar">
   <div class="sidebar-header">
     <h2>Suivi Étudiants</h2>
     <p>Plateforme de gestion</p>
   </div>
   <nav class="menu">
-    <a href="{% url 'dashboard' %}" class="menu-item"
-      ><i class="fas fa-chart-line"></i> Dashboard</a
-    >
-    <a href="{% url 'etudiants' %}" class="menu-item"
-      ><i class="fas fa-users"></i> Étudiants</a
-    >
-    <a href="{% url 'modules' %}" class="menu-item"
-      ><i class="fas fa-book"></i> Modules</a
-    >
-    <a href="{% url 'notes' %}" class="menu-item"
-      ><i class="fas fa-clipboard-list"></i> Notes</a
-    >
-    <a href="{% url 'absences' %}" class="menu-item active"
-      ><i class="fas fa-calendar-times"></i> Absences</a
-    >
-    <a href="{% url 'statistiques' %}" class="menu-item"
-      ><i class="fas fa-chart-pie"></i> Statistiques</a
-    >
+    <a href="{% url 'dashboard' %}" class="menu-item"><i class="fas fa-chart-line"></i> Dashboard</a>
+    <a href="{% url 'etudiants' %}" class="menu-item"><i class="fas fa-users"></i> Étudiants</a>
+    <a href="{% url 'modules' %}" class="menu-item"><i class="fas fa-book"></i> Modules</a>
+    <a href="{% url 'notes' %}" class="menu-item"><i class="fas fa-clipboard-list"></i> Notes</a>
+    <a href="{% url 'absences' %}" class="menu-item active"><i class="fas fa-calendar-times"></i> Absences</a>
+    <a href="{% url 'statistiques' %}" class="menu-item"><i class="fas fa-chart-pie"></i> Statistiques</a>
   </nav>
 </aside>
 
+<!-- Contenu principal -->
 <main class="main-content">
-  <div class="topbar"><h1>Gestion des Absences</h1></div>
+  <div class="topbar">
+    <h1>Suivi des Absences</h1>
+    <a href="{% url 'login' %}" class="btn-action"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
+  </div>
 
   <div class="content-area">
     <div class="table-container">
       <div class="table-header">
-        <h2>Liste des absences</h2>
-        <button class="btn-action">
-          <i class="fas fa-plus"></i> Nouvelle absence
-        </button>
+        <h2><i class="fas fa-calendar-times"></i> Liste des Absences</h2>
       </div>
 
-      <table>
+      <!-- Filtres -->
+      <div class="filters-bar">
+        <select id="filterFiliere" class="input-filter">
+          <option value="">Toutes les Filières</option>
+          <option>MIASHS</option><option>Sociologie</option><option>Économie</option><option>Psychologie</option>
+          <option>Géographie</option><option>Philosophie</option><option>Histoire</option><option>Arts</option>
+          <option>Langues</option><option>Sciences de l’Éducation</option>
+        </select>
+
+        <select id="filterEtudiant" class="input-filter">
+          <option value="">Tous les Étudiants</option>
+          <option>Marie Dupont</option><option>Pierre Leroy</option><option>Lucie Martin</option>
+          <option>Julie Rousseau</option><option>Antoine Bernard</option>
+        </select>
+
+        <select id="filterType" class="input-filter">
+          <option value="">Tous les types</option>
+          <option>Justifiée</option>
+          <option>Non justifiée</option>
+        </select>
+
+        <button id="btnAddAbsence" class="btn-action"><i class="fas fa-plus"></i> Ajouter une absence</button>
+      </div>
+
+      <!-- Tableau -->
+      <table id="tableAbsences">
         <thead>
           <tr>
+            <th>Filière</th>
             <th>Étudiant</th>
-            <th>Module</th>
             <th>Date</th>
+            <th>Module</th>
+            <th>Durée (h)</th>
             <th>Type</th>
-            <th>Justifiée</th>
+            <th>Justification</th>
             <th>Actions</th>
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>Sophie Martin</td>
-            <td>Programmation Web</td>
-            <td>10/10/2025</td>
-            <td>Cours</td>
-            <td><span class="badge danger">Non</span></td>
-            <td>
-              <button class="btn-icon"><i class="fas fa-edit"></i></button>
-              <button class="btn-icon"><i class="fas fa-trash"></i></button>
-            </td>
-          </tr>
-          <tr>
-            <td>Lucas Dubois</td>
-            <td>Base de Données</td>
-            <td>12/10/2025</td>
-            <td>TP</td>
-            <td><span class="badge success">Oui</span></td>
-            <td>
-              <button class="btn-icon"><i class="fas fa-edit"></i></button>
-              <button class="btn-icon"><i class="fas fa-trash"></i></button>
-            </td>
-          </tr>
+          <tr><td>MIASHS</td><td>Marie Dupont</td><td>03/10/2025</td><td>Programmation Python</td><td>2</td><td>Justifiée</td><td>Certificat médical</td><td><i class="fas fa-edit edit-icon"></i> <i class="fas fa-trash delete-icon"></i></td></tr>
+          <tr><td>Sociologie</td><td>Antoine Bernard</td><td>05/10/2025</td><td>Méthodes en Sociologie</td><td>3</td><td>Non justifiée</td><td>-</td><td><i class="fas fa-edit edit-icon"></i> <i class="fas fa-trash delete-icon"></i></td></tr>
+          <tr><td>Psychologie</td><td>Julie Rousseau</td><td>08/10/2025</td><td>Psychologie Cognitive</td><td>2</td><td>Justifiée</td><td>Certificat médical</td><td><i class="fas fa-edit edit-icon"></i> <i class="fas fa-trash delete-icon"></i></td></tr>
         </tbody>
       </table>
     </div>
+
+    <!-- Graphiques -->
+    <div class="charts-grid">
+      <div class="chart-box">
+        <h4><i class="fas fa-chart-pie"></i> Répartition des absences</h4>
+        <canvas id="chartRepartition"></canvas>
+      </div>
+
+      <div class="chart-box">
+        <h4><i class="fas fa-chart-bar"></i> Taux d'absences par filière</h4>
+        <canvas id="chartFilieres"></canvas>
+      </div>
+
+      <div class="chart-box">
+        <h4><i class="fas fa-chart-line"></i> Évolution mensuelle</h4>
+        <canvas id="chartEvolution"></canvas>
+      </div>
+    </div>
   </div>
 </main>
+
+<!-- MODALE AJOUT/ÉDITION -->
+<div id="modalAddAbsence" class="modal">
+  <div class="modal-content">
+    <button class="close-modal">&times;</button>
+    <h2 id="modalTitle"><i class="fas fa-plus-circle"></i> Ajouter une absence</h2>
+
+    <form id="formAbsence">
+      <input type="hidden" id="editingIndex">
+
+      <label>Filière</label>
+      <select id="filiere" required>
+        <option value="">-- Choisir --</option>
+        <option>MIASHS</option><option>Sociologie</option><option>Économie</option><option>Psychologie</option>
+        <option>Géographie</option><option>Philosophie</option><option>Histoire</option><option>Arts</option>
+        <option>Langues</option><option>Sciences de l’Éducation</option>
+      </select>
+
+      <label>Étudiant</label>
+      <input id="etudiant" type="text" required>
+
+      <label>Date</label>
+      <input id="date" type="date" required>
+
+      <label>Module</label>
+      <input id="module" type="text" required>
+
+      <label>Durée (h)</label>
+      <input id="duree" type="number" min="1" required>
+
+      <label>Type</label>
+      <select id="type" required>
+        <option>Justifiée</option>
+        <option>Non justifiée</option>
+      </select>
+
+      <label>Justification</label>
+      <input id="justification" type="text" placeholder="Certificat, rendez-vous..." />
+
+      <button type="submit" class="btn-action full-width">Enregistrer</button>
+    </form>
+  </div>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- JS -->
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const tbody = document.querySelector("#tableAbsences tbody");
+  const filters = ["filterFiliere", "filterEtudiant", "filterType"].map(id => document.getElementById(id));
+  const modal = document.getElementById("modalAddAbsence");
+  const btnOpen = document.getElementById("btnAddAbsence");
+  const btnClose = modal.querySelector(".close-modal");
+  const form = document.getElementById("formAbsence");
+  const editingIndex = document.getElementById("editingIndex");
+
+  // === Filtres dynamiques ===
+  const applyFilters = () => {
+    const [fil, etu, typ] = filters.map(f => f.value.toLowerCase());
+    tbody.querySelectorAll("tr").forEach(row => {
+      const cells = [...row.children].map(td => td.textContent.toLowerCase());
+      row.style.display =
+        (!fil || cells[0].includes(fil)) &&
+        (!etu || cells[1].includes(etu)) &&
+        (!typ || cells[5].includes(typ))
+          ? "" : "none";
+    });
+  };
+  filters.forEach(f => f.addEventListener("change", applyFilters));
+
+  // === Modale ===
+  btnOpen.onclick = () => { form.reset(); editingIndex.value = ""; document.getElementById("modalTitle").innerHTML = '<i class="fas fa-plus-circle"></i> Ajouter une absence'; modal.style.display = "flex"; };
+  btnClose.onclick = () => modal.style.display = "none";
+  window.onclick = e => { if (e.target === modal) modal.style.display = "none"; };
+
+  // === Ajout / Modification ===
+  form.addEventListener("submit", e => {
+    e.preventDefault();
+    const data = {
+      filiere: filiere.value, etudiant: etudiant.value, date: date.value.split("-").reverse().join("/"),
+      module: module.value, duree: duree.value, type: type.value, justification: justification.value || "-"
+    };
+    if (editingIndex.value) {
+      const row = tbody.children[editingIndex.value];
+      row.innerHTML = `<td>${data.filiere}</td><td>${data.etudiant}</td><td>${data.date}</td><td>${data.module}</td><td>${data.duree}</td><td>${data.type}</td><td>${data.justification}</td><td><i class='fas fa-edit edit-icon'></i> <i class='fas fa-trash delete-icon'></i></td>`;
+    } else {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `<td>${data.filiere}</td><td>${data.etudiant}</td><td>${data.date}</td><td>${data.module}</td><td>${data.duree}</td><td>${data.type}</td><td>${data.justification}</td><td><i class='fas fa-edit edit-icon'></i> <i class='fas fa-trash delete-icon'></i></td>`;
+      tbody.appendChild(tr);
+    }
+    modal.style.display = "none";
+    applyFilters();
+    updateCharts();
+  });
+
+  // === Édition / Suppression ===
+  tbody.addEventListener("click", e => {
+    const tr = e.target.closest("tr");
+    if (!tr) return;
+    const index = [...tbody.children].indexOf(tr);
+    if (e.target.classList.contains("delete-icon")) {
+      if (confirm("Supprimer cette absence ?")) tr.remove(), updateCharts();
+    }
+    if (e.target.classList.contains("edit-icon")) {
+      const cells = tr.children;
+      editingIndex.value = index;
+      document.getElementById("modalTitle").innerHTML = '<i class="fas fa-edit"></i> Modifier une absence';
+      filiere.value = cells[0].textContent;
+      etudiant.value = cells[1].textContent;
+      date.value = cells[2].textContent.split("/").reverse().join("-");
+      module.value = cells[3].textContent;
+      duree.value = cells[4].textContent;
+      type.value = cells[5].textContent;
+      justification.value = cells[6].textContent !== "-" ? cells[6].textContent : "";
+      modal.style.display = "flex";
+    }
+  });
+
+  // === Graphiques ===
+  const chartRepartition = new Chart(document.getElementById("chartRepartition"), {
+    type: "pie",
+    data: { labels: ["Justifiées", "Non justifiées"], datasets: [{ data: [0,0], backgroundColor: ["#4caf50", "#f44336"] }] },
+    options: { plugins: { legend: { position: "bottom" } } }
+  });
+  const chartFilieres = new Chart(document.getElementById("chartFilieres"), {
+    type: "bar",
+    data: { labels: [], datasets: [{ label: "Total absences", data: [], backgroundColor: "#667eea" }] },
+    options: { scales: { y: { beginAtZero: true } }, plugins: { legend: { display: false } } }
+  });
+  const chartEvolution = new Chart(document.getElementById("chartEvolution"), {
+    type: "line",
+    data: { labels: ["Sept","Oct","Nov","Déc","Janv","Fév"], datasets: [{ label: "Absences mensuelles", data: [0,0,0,0,0,0], borderColor: "#ff9800", backgroundColor: "rgba(255,152,0,0.2)", fill: true, tension: .3 }] },
+    options: { scales: { y: { beginAtZero: true } }, plugins: { legend: { position: "bottom" } } }
+  });
+
+  // === MAJ Graphiques ===
+  function updateCharts() {
+    const rows = [...tbody.children];
+    const counts = { just: 0, non: 0 }, fil = {}, mois = { Sept:0, Oct:0, Nov:0, Déc:0, Janv:0, Fév:0 };
+
+    rows.forEach(r => {
+      const [filiere, , date, , , type] = [...r.children].map(td => td.textContent);
+      const moisName = ["01","02","03","04","05","06","07","08","09","10","11","12"][parseInt(date.split("/")[1])-1];
+      fil[filiere] = (fil[filiere]||0)+1;
+      if (type === "Justifiée") counts.just++; else counts.non++;
+      if (moisName === "09") mois.Sept++; if (moisName === "10") mois.Oct++; if (moisName === "11") mois.Nov++;
+      if (moisName === "12") mois.Déc++; if (moisName === "01") mois.Janv++; if (moisName === "02") mois.Fév++;
+    });
+
+    chartRepartition.data.datasets[0].data = [counts.just, counts.non];
+    chartRepartition.update();
+
+    chartFilieres.data.labels = Object.keys(fil);
+    chartFilieres.data.datasets[0].data = Object.values(fil);
+    chartFilieres.update();
+
+    chartEvolution.data.datasets[0].data = Object.values(mois);
+    chartEvolution.update();
+  }
+
+  updateCharts();
+});
+</script>
 {% endblock %}

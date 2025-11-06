@@ -1,53 +1,62 @@
 {% extends 'base.html' %}
-
-{% block title %}Modules - Suivi Étudiants
-{% endblock%} 
-
-{% block content %}
+{% load static %} {% block title %}Gestion des Modules - Suivi Étudiants
+{% endblock %} {% block content %}
+<!-- Sidebar -->
 <aside class="sidebar">
   <div class="sidebar-header">
     <h2>Suivi Étudiants</h2>
     <p>Plateforme de gestion</p>
   </div>
   <nav class="menu">
-    <a href="{% url 'dashboard' %}" class="menu-item"
-      ><i class="fas fa-chart-line"></i> Dashboard</a
-    >
-    <a href="{% url 'etudiants' %}" class="menu-item"
-      ><i class="fas fa-users"></i> Étudiants</a
-    >
-    <a href="{% url 'modules' %}" class="menu-item active"
-      ><i class="fas fa-book"></i> Modules</a
-    >
-    <a href="{% url 'notes' %}" class="menu-item"
-      ><i class="fas fa-clipboard-list"></i> Notes</a
-    >
-    <a href="{% url 'absences' %}" class="menu-item"
-      ><i class="fas fa-calendar-times"></i> Absences</a
-    >
-    <a href="{% url 'statistiques' %}" class="menu-item"
-      ><i class="fas fa-chart-pie"></i> Statistiques</a
-    >
+    <a href="{% url 'dashboard' %}" class="menu-item"><i class="fas fa-chart-line"></i> Dashboard</a>
+    <a href="{% url 'etudiants' %}" class="menu-item"><i class="fas fa-users"></i> Étudiants</a>
+    <a href="{% url 'modules' %}" class="menu-item active"><i class="fas fa-book"></i> Modules</a>
+    <a href="{% url 'notes' %}" class="menu-item"><i class="fas fa-clipboard-list"></i> Notes</a>
+    <a href="{% url 'absences' %}" class="menu-item"><i class="fas fa-calendar-times"></i> Absences</a>
+    <a href="{% url 'statistiques' %}" class="menu-item"><i class="fas fa-chart-pie"></i> Statistiques</a>
   </nav>
 </aside>
 
+<!-- Contenu principal -->
 <main class="main-content">
-  <div class="topbar"><h1>Gestion des Modules</h1></div>
+  <div class="topbar">
+    <h1>Gestion des Modules</h1>
+    <a href="{% url 'login' %}" class="btn-action"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
+  </div>
 
   <div class="content-area">
     <div class="table-container">
       <div class="table-header">
-        <h2>Liste des modules</h2>
-        <button class="btn-action">
-          <i class="fas fa-plus"></i> Nouveau module
-        </button>
+        <h2><i class="fas fa-book"></i> Liste des Modules</h2>
       </div>
 
+      <!-- Filtres et recherche -->
+      <div style="display: flex; gap: 10px; align-items: center; padding: 15px;">
+        <input type="text" placeholder="Rechercher un module..." style="padding: 8px; border: 1px solid #ccc; border-radius: 6px;">
+        <select>
+          <option>Toutes les Filières</option>
+          <option>MIASHS</option>
+          <option>Sociologie</option>
+          <option>Économie</option>
+          <option>Psychologie</option>
+          <option>Géographie</option>
+          <option>Philosophie</option>
+          <option>Langues</option>
+          <option>Arts</option>
+          <option>Histoire</option>
+          <option>Sciences de l'Éducation</option>
+        </select>
+        <button class="btn-action"><i class="fas fa-plus"></i> Nouveau module</button>
+      </div>
+
+      <!-- Tableau des modules -->
       <table>
         <thead>
           <tr>
             <th>Code</th>
             <th>Nom du module</th>
+            <th>Filière</th>
+            <th>Responsable</th>
             <th>Coefficient</th>
             <th>Étudiants</th>
             <th>Moyenne</th>
@@ -56,22 +65,130 @@
         </thead>
         <tbody>
           <tr>
-            <td>INF101</td>
-            <td>Programmation Web</td>
+            <td>MIA101</td>
+            <td>Programmation Python</td>
+            <td>MIASHS</td>
+            <td>Pr. Dupuis</td>
             <td>3</td>
-            <td>45</td>
-            <td>13.5</td>
+            <td>52</td>
+            <td>13.8</td>
             <td>
               <button class="btn-icon"><i class="fas fa-edit"></i></button>
               <button class="btn-icon"><i class="fas fa-trash"></i></button>
             </td>
           </tr>
           <tr>
-            <td>INF102</td>
-            <td>Base de Données</td>
+            <td>SOC201</td>
+            <td>Méthodes en Sociologie</td>
+            <td>Sociologie</td>
+            <td>Dr. Bernard</td>
+            <td>2</td>
+            <td>48</td>
+            <td>14.1</td>
+            <td>
+              <button class="btn-icon"><i class="fas fa-edit"></i></button>
+              <button class="btn-icon"><i class="fas fa-trash"></i></button>
+            </td>
+          </tr>
+          <tr>
+            <td>ECO102</td>
+            <td>Microéconomie</td>
+            <td>Économie</td>
+            <td>Pr. Lefebvre</td>
+            <td>3</td>
+            <td>46</td>
+            <td>12.7</td>
+            <td>
+              <button class="btn-icon"><i class="fas fa-edit"></i></button>
+              <button class="btn-icon"><i class="fas fa-trash"></i></button>
+            </td>
+          </tr>
+          <tr>
+            <td>PSY204</td>
+            <td>Psychologie Cognitive</td>
+            <td>Psychologie</td>
+            <td>Dr. Martin</td>
             <td>4</td>
-            <td>45</td>
-            <td>14.2</td>
+            <td>43</td>
+            <td>15.2</td>
+            <td>
+              <button class="btn-icon"><i class="fas fa-edit"></i></button>
+              <button class="btn-icon"><i class="fas fa-trash"></i></button>
+            </td>
+          </tr>
+          <tr>
+            <td>GEO210</td>
+            <td>Cartographie et SIG</td>
+            <td>Géographie</td>
+            <td>Dr. Dupont</td>
+            <td>3</td>
+            <td>41</td>
+            <td>14.5</td>
+            <td>
+              <button class="btn-icon"><i class="fas fa-edit"></i></button>
+              <button class="btn-icon"><i class="fas fa-trash"></i></button>
+            </td>
+          </tr>
+          <tr>
+            <td>PHI301</td>
+            <td>Éthique et Morale</td>
+            <td>Philosophie</td>
+            <td>Pr. Rousseau</td>
+            <td>2</td>
+            <td>35</td>
+            <td>13.9</td>
+            <td>
+              <button class="btn-icon"><i class="fas fa-edit"></i></button>
+              <button class="btn-icon"><i class="fas fa-trash"></i></button>
+            </td>
+          </tr>
+          <tr>
+            <td>ART110</td>
+            <td>Esthétique et Création</td>
+            <td>Arts</td>
+            <td>Pr. Lemoine</td>
+            <td>2</td>
+            <td>27</td>
+            <td>15.8</td>
+            <td>
+              <button class="btn-icon"><i class="fas fa-edit"></i></button>
+              <button class="btn-icon"><i class="fas fa-trash"></i></button>
+            </td>
+          </tr>
+          <tr>
+            <td>LAN220</td>
+            <td>Linguistique Générale</td>
+            <td>Langues</td>
+            <td>Dr. Garcia</td>
+            <td>3</td>
+            <td>33</td>
+            <td>14.0</td>
+            <td>
+              <button class="btn-icon"><i class="fas fa-edit"></i></button>
+              <button class="btn-icon"><i class="fas fa-trash"></i></button>
+            </td>
+          </tr>
+          <tr>
+            <td>HIS105</td>
+            <td>Histoire Moderne</td>
+            <td>Histoire</td>
+            <td>Pr. Vidal</td>
+            <td>3</td>
+            <td>38</td>
+            <td>13.2</td>
+            <td>
+              <button class="btn-icon"><i class="fas fa-edit"></i></button>
+              <button class="btn-icon"><i class="fas fa-trash"></i></button>
+            </td>
+          </tr>
+          <tr>
+            <td>EDU205</td>
+            <td>Pédagogie et Apprentissage</td>
+            <td>Sciences de l’Éducation</td>
+            <td>Dr. Colin</td>
+            <td>4</td>
+            <td>49</td>
+            <td>14.7</td>
             <td>
               <button class="btn-icon"><i class="fas fa-edit"></i></button>
               <button class="btn-icon"><i class="fas fa-trash"></i></button>
