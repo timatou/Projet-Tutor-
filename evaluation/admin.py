@@ -12,6 +12,6 @@ class NoteAdmin(admin.ModelAdmin):
 
 @admin.register(Absence)
 class AbsenceAdmin(admin.ModelAdmin):
-    list_display = ('etudiant', 'module', 'date', 'justifiee')
+    list_display = ('etudiant', 'module', 'date','duree', 'justifiee')
     list_filter = ('justifiee', 'date', 'module')
     search_fields = ('etudiant__nom', 'etudiant__prenom', 'module__libelle')

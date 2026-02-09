@@ -1,10 +1,10 @@
 from django.db import models
-
+from django.db.models import Avg
 
 # ----- Classe Promotion -----
 class Promotion(models.Model):
     nom = models.CharField(max_length=100)
-    annee = models.CharField(max_length=9)  # Format attendu : "2024-2025"
+    annee = models.CharField(max_length=9)  
 
     def __str__(self):
         return f"{self.nom} {self.annee}"
@@ -45,5 +45,16 @@ class Etudiant(models.Model):
         return f"{self.prenom} {self.nom}"
 
     def moyenne_generale(self):
-        # Cette méthode calculera plus tard la moyenne de l'étudiant
-        return 0.0
+        notes = self.notes.all()
+        if not notes.exists():
+            return 0.0
+        moyenne = notes.aggregate(Avg('valeur'))['valeur__avg']
+        return round(moyenne, 2)
+    
+    def status_performance(self):
+        moyenne = self.moyenne_generale()
+        if moyenne < 8 :
+            return "Rouge"
+        elif moyenne < 10 :
+            return "Orange"
+        return "Vert"
