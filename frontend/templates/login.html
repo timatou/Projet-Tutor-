@@ -1,33 +1,1331 @@
-{% extends 'base.html' %} {% block title %}Connexion - Suivi Étudiants
-{% endblock %} {% block content %}
+{% extends 'base.html' %}
+{% block title %}Connexion - Suivi Étudiants{% endblock %}
+{% block content %}
+
+<style>
+.login-body {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 380px;
+  background: white;
+  padding: 35px;
+  border-radius: 15px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.login-header h2 {
+  color: #333;
+  margin-bottom: 10px;
+  font-size: 24px;
+}
+
+.login-header p {
+  color: #666;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.role-selector {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 20px;
+}
+
+.role-btn {
+  flex: 1;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  text-align: center;
+  cursor: pointer;
+  background: #f4f4f4;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.role-btn:hover {
+  background: #eaeaea;
+  transform: translateY(-1px);
+}
+
+.role-btn.active {
+  background: linear-gradient(to right, #667eea, #764ba2);
+  color: white;
+  font-weight: 600;
+  border-color: #667eea;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+}
+
+.form-group {
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: #333;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 12px 15px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.btn-login {
+  width: 100%;
+  padding: 14px;
+  border-radius: 8px;
+  border: none;
+  background: linear-gradient(to right, #667eea, #764ba2);
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 10px;
+  font-size: 16px;
+}
+
+.btn-login:hover:not(:disabled) {
+  opacity: 0.95;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+}
+
+.btn-login:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.forgot-password {
+  text-align: center;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+}
+
+.forgot-password a {
+  color: #667eea;
+  text-decoration: none;
+  font-size: 14px;
+  transition: color 0.3s ease;
+  font-weight: 500;
+}
+
+.forgot-password a:hover {
+  color: #764ba2;
+  text-decoration: underline;
+}
+
+.error-message {
+  color: #e74c3c;
+  text-align: center;
+  margin-bottom: 15px;
+  font-size: 14px;
+  background-color: #fde8e8;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #fadbd8;
+  display: none;
+}
+
+.success-message {
+  color: #27ae60;
+  text-align: center;
+  margin-bottom: 15px;
+  font-size: 14px;
+  background-color: #d5f4e6;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #a3e4d7;
+  display: none;
+}
+
+/* Modal styles */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal-content {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.modal-header h3 {
+  margin: 0;
+  color: #333;
+  font-size: 20px;
+}
+
+.close-modal {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #666;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.close-modal:hover {
+  background: #f5f5f5;
+  color: #333;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 25px;
+}
+
+.btn-primary {
+  flex: 1;
+  padding: 12px;
+  background: linear-gradient(to right, #667eea, #764ba2);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  font-size: 14px;
+}
+
+.btn-primary:hover:not(:disabled) {
+  opacity: 0.95;
+  transform: translateY(-1px);
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.btn-secondary {
+  flex: 1;
+  padding: 12px;
+  background: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  font-size: 14px;
+}
+
+.btn-secondary:hover {
+  background: #c0392b;
+  transform: translateY(-1px);
+}
+
+/* Recovery steps styles */
+.recovery-steps {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 30px;
+  position: relative;
+}
+
+.recovery-steps:before {
+  content: '';
+  position: absolute;
+  top: 15px;
+  left: 10%;
+  right: 10%;
+  height: 2px;
+  background: #ddd;
+  z-index: 1;
+}
+
+.recovery-step {
+  text-align: center;
+  position: relative;
+  z-index: 2;
+  flex: 1;
+}
+
+.recovery-step-number {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #ddd;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 8px;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.recovery-step.active .recovery-step-number {
+  background: linear-gradient(to right, #667eea, #764ba2);
+  box-shadow: 0 4px 8px rgba(102, 126, 234, 0.2);
+}
+
+.recovery-step-label {
+  font-size: 12px;
+  color: #777;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.recovery-step.active .recovery-step-label {
+  color: #667eea;
+  font-weight: 600;
+}
+
+.form-step {
+  display: none;
+  animation: fadeIn 0.3s ease;
+}
+
+.form-step.active {
+  display: block;
+}
+
+.password-strength {
+  margin-top: 8px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.strength-weak { color: #e74c3c; }
+.strength-medium { color: #f39c12; }
+.strength-strong { color: #27ae60; }
+
+.info-text {
+  color: #666;
+  font-size: 12px;
+  margin-top: 5px;
+  display: block;
+  line-height: 1.4;
+}
+
+/* Options de récupération */
+.recovery-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 20px 0;
+}
+
+.recovery-option {
+  padding: 18px;
+  border: 2px solid #ddd;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+  background: #fafafa;
+}
+
+.recovery-option:hover {
+  background: #f5f5f5;
+  border-color: #667eea;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
+}
+
+.recovery-option.selected {
+  background: #e8eeff;
+  border-color: #667eea;
+  color: #667eea;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+}
+
+.recovery-option i {
+  font-size: 28px;
+  margin-bottom: 12px;
+  display: block;
+}
+
+.recovery-option h4 {
+  margin: 0 0 6px 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.recovery-option p {
+  margin: 0;
+  font-size: 13px;
+  color: #666;
+  line-height: 1.4;
+}
+
+.method-form {
+  margin-top: 20px;
+}
+
+textarea {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+  resize: vertical;
+  min-height: 80px;
+  font-family: inherit;
+}
+
+textarea:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+@media (max-width: 480px) {
+  .login-card {
+    padding: 25px;
+  }
+  
+  .modal-content {
+    padding: 20px;
+  }
+  
+  .role-btn {
+    padding: 10px;
+    font-size: 13px;
+  }
+  
+  .btn-login, .btn-primary, .btn-secondary {
+    padding: 12px;
+  }
+}
+
+/* Messages Django */
+.alert {
+  padding: 12px 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-size: 14px;
+  text-align: center;
+}
+
+.alert-error {
+  background-color: #fde8e8;
+  border: 1px solid #fadbd8;
+  color: #e74c3c;
+}
+
+.alert-success {
+  background-color: #d5f4e6;
+  border: 1px solid #a3e4d7;
+  color: #27ae60;
+}
+
+.alert-info {
+  background-color: #e8f4fc;
+  border: 1px solid #b6e0fe;
+  color: #3498db;
+}
+
+/* Loader */
+.loader {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-radius: 50%;
+  border-top-color: white;
+  animation: spin 1s ease-in-out infinite;
+  margin-right: 8px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+</style>
+
 <div class="login-body">
-  <div class="login-container">
-    <div class="login-box">
-      <div class="login-header">
-        <i class="fas fa-user-graduate"></i>
-        <h1>Suivi des Indicateurs Étudiants</h1>
-        <p>Veuillez vous connecter pour accéder à la plateforme</p>
+  <div class="login-card">
+    <div class="login-header">
+      <h2>Authentification</h2>
+      <p>Veuillez choisir votre profil pour vous connecter à votre compte</p>
+    </div>
+
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+          {{ message }}
+        </div>
+      {% endfor %}
+    {% endif %}
+
+    <div class="error-message" id="loginError"></div>
+    <div class="success-message" id="loginSuccess"></div>
+
+    <div class="role-selector">
+      <div class="role-btn active" data-role="etudiant" role="button" tabindex="0" aria-pressed="true">Étudiant</div>
+      <div class="role-btn" data-role="professeur" role="button" tabindex="0" aria-pressed="false">Professeur</div>
+      <div class="role-btn" data-role="admin" role="button" tabindex="0" aria-pressed="false">Administrateur</div>
+    </div>
+
+    <form id="loginForm" method="POST" action="{% url 'login' %}">
+      {% csrf_token %}
+      
+      <div class="form-group">
+        <label for="username">Identifiant</label>
+        <input type="text" id="username" name="username" placeholder="Votre identifiant ou numéro" required autocomplete="username">
       </div>
 
-      <form method="POST" action="{% url 'dashboard' %}">
-        {% csrf_token %}
-        <div class="form-group">
-          <label for="username">Adresse email</label>
-          <input type="text" id="username" name="username" placeholder="ex: nom.prenom@univ.fr" required>
+      <div class="form-group">
+        <label for="password">Mot de passe</label>
+        <input type="password" id="password" name="password" placeholder="Votre mot de passe" required autocomplete="current-password">
+      </div>
+
+      <button type="submit" class="btn-login" id="loginButton">
+        Se connecter
+      </button>
+    </form>
+
+    <div class="forgot-password">
+      <a href="#" id="forgotLink" role="button">Mot de passe ou identifiant oublié ?</a>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de récupération -->
+<div id="recoveryModal" class="modal-overlay" role="dialog" aria-labelledby="recoveryModalTitle" aria-hidden="true">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 id="recoveryModalTitle">Récupération d'accès</h3>
+      <button class="close-modal" id="closeRecoveryModal" aria-label="Fermer">&times;</button>
+    </div>
+
+    <div class="recovery-steps">
+      <div class="recovery-step active" data-step="1">
+        <div class="recovery-step-number">1</div>
+        <div class="recovery-step-label">Méthode</div>
+      </div>
+      <div class="recovery-step" data-step="2">
+        <div class="recovery-step-number">2</div>
+        <div class="recovery-step-label">Vérification</div>
+      </div>
+      <div class="recovery-step" data-step="3">
+        <div class="recovery-step-number">3</div>
+        <div class="recovery-step-label">Nouveau mot de passe</div>
+      </div>
+    </div>
+
+    <div id="recoveryMessage" class="error-message" role="alert" aria-live="assertive"></div>
+
+    <!-- Étape 1: Choix de la méthode -->
+    <div id="step1Form" class="form-step active">
+      <p style="color: #666; margin-bottom: 20px;">Comment souhaitez-vous récupérer votre accès ?</p>
+      
+      <div class="recovery-options">
+        <div class="recovery-option" data-method="email" role="button" tabindex="0">
+          <div>📧</div>
+          <h4>Par email</h4>
+          <p>Recevoir un lien de réinitialisation par email</p>
         </div>
-
-        <div class="form-group">
-          <label for="password">Mot de passe</label>
-          <input type="password" id="password" name="password" placeholder="Mot de passe" required>
+        
+        <div class="recovery-option" data-method="questions" role="button" tabindex="0">
+          <div>🔐</div>
+          <h4>Questions de sécurité</h4>
+          <p>Répondre à vos questions de sécurité</p>
         </div>
+        
+        <div class="recovery-option" data-method="admin" role="button" tabindex="0">
+          <div>👨‍💼</div>
+          <h4>Contacter l'administrateur</h4>
+          <p>Demander de l'aide à l'administrateur système</p>
+        </div>
+      </div>
+      
+      <div class="modal-actions">
+        <button type="button" id="nextToStep2" class="btn-primary" disabled>Continuer</button>
+        <button type="button" id="cancelStep1" class="btn-secondary">Annuler</button>
+      </div>
+    </div>
 
-        <button type="submit" class="btn-login">Connexion</button>
-      </form>
+    <!-- Étape 2: Formulaire selon la méthode -->
+    <div id="step2Form" class="form-step">
+      <!-- Formulaire pour l'email -->
+      <div id="emailForm" class="method-form" style="display: none;">
+        <p style="color: #666; margin-bottom: 20px;">Entrez votre adresse email associée à votre compte.</p>
+        
+        <div class="form-group">
+          <label for="recoveryEmail">Adresse email</label>
+          <input type="email" id="recoveryEmail" placeholder="votre@email.com" autocomplete="email">
+          <span class="info-text">Entrez l'adresse email que vous avez utilisée lors de votre inscription</span>
+        </div>
+      </div>
+      
+      <!-- Formulaire pour les questions de sécurité -->
+      <div id="questionsForm" class="method-form" style="display: none;">
+        <p style="color: #666; margin-bottom: 20px;">Entrez votre identifiant et répondez aux questions de sécurité.</p>
+        
+        <div class="form-group">
+          <label for="recoveryUsername">Identifiant</label>
+          <input type="text" id="recoveryUsername" placeholder="Votre identifiant" autocomplete="username">
+        </div>
+        
+        <div class="form-group">
+          <label for="question1">Question 1 : Quel est le nom de votre mère ?</label>
+          <input type="text" id="question1" placeholder="Votre réponse" autocomplete="off">
+        </div>
+        
+        <div class="form-group">
+          <label for="question2">Question 2 : Quelle est votre ville de naissance ?</label>
+          <input type="text" id="question2" placeholder="Votre réponse" autocomplete="off">
+        </div>
+      </div>
+      
+      <!-- Formulaire pour contacter l'admin -->
+      <div id="adminForm" class="method-form" style="display: none;">
+        <p style="color: #666; margin-bottom: 20px;">Envoyez une demande à l'administrateur pour récupérer votre accès.</p>
+        
+        <div class="form-group">
+          <label for="adminName">Votre nom complet</label>
+          <input type="text" id="adminName" placeholder="Votre nom et prénom" autocomplete="name">
+        </div>
+        
+        <div class="form-group">
+          <label for="adminIdentifier">Identifiant ou numéro étudiant</label>
+          <input type="text" id="adminIdentifier" placeholder="Votre identifiant" autocomplete="username">
+        </div>
+        
+        <div class="form-group">
+          <label for="adminMessage">Message (optionnel)</label>
+          <textarea id="adminMessage" placeholder="Expliquez votre situation..."></textarea>
+        </div>
+      </div>
+      
+      <div class="modal-actions">
+        <button type="button" id="prevToStep1" class="btn-secondary">Retour</button>
+        <button type="button" id="verifyMethod" class="btn-primary">Vérifier</button>
+      </div>
+    </div>
 
-      <div class="login-footer">
-        <a href="#">Mot de passe oublié ?</a>
+    <!-- Étape 3: Nouveau mot de passe -->
+    <div id="step3Form" class="form-step">
+      <p style="color: #666; margin-bottom: 20px;">Choisissez un nouveau mot de passe sécurisé.</p>
+      
+      <div class="form-group">
+        <label for="newPassword">Nouveau mot de passe</label>
+        <input type="password" id="newPassword" placeholder="Votre nouveau mot de passe" autocomplete="new-password">
+        <div id="passwordStrength" class="password-strength"></div>
+      </div>
+      
+      <div class="form-group">
+        <label for="confirmPassword">Confirmer le mot de passe</label>
+        <input type="password" id="confirmPassword" placeholder="Confirmez votre mot de passe" autocomplete="new-password">
+      </div>
+      
+      <div class="modal-actions">
+        <button type="button" id="prevToStep2" class="btn-secondary">Retour</button>
+        <button type="button" id="submitNewPassword" class="btn-primary">Réinitialiser</button>
+      </div>
+    </div>
+
+    <!-- Étape 4: Confirmation -->
+    <div id="step4Form" class="form-step">
+      <div style="text-align: center; padding: 20px 0;">
+        <div id="successIcon" style="font-size: 60px; color: #27ae60; margin-bottom: 15px;">✓</div>
+        <h3 id="successTitle" style="color: #27ae60; margin-bottom: 10px;">Succès !</h3>
+        <p id="successMessage" style="color: #666;">Votre mot de passe a été réinitialisé avec succès.</p>
+        <p id="successDetails" style="color: #666; font-size: 13px;">Vous pouvez maintenant vous connecter avec votre nouveau mot de passe.</p>
+      </div>
+      
+      <div class="modal-actions">
+        <button type="button" id="goToLogin" class="btn-primary" style="width: 100%;">Aller à la connexion</button>
       </div>
     </div>
   </div>
 </div>
+
+<script>
+// Configuration globale
+const LOGIN_CONFIG = {
+    redirectDelay: 800, // Réduit à 800ms pour une expérience plus rapide
+    validationDelay: 1200
+};
+
+// Variables d'état
+let selectedRole = "etudiant";
+let currentRecoveryStep = 1;
+let selectedRecoveryMethod = null;
+let isSubmitting = false;
+
+// Initialisation
+document.addEventListener('DOMContentLoaded', function() {
+    initLoginForm();
+    initRoleSelector();
+    initRecoveryModal();
+    setDefaultRole();
+    
+    // Nettoyer l'état du formulaire au chargement
+    cleanupLoginForm();
+    
+    // Focus sur le champ identifiant
+    document.getElementById("username").focus();
+});
+
+// Nettoyage du formulaire au chargement
+function cleanupLoginForm() {
+    // Réinitialiser le bouton
+    const loginButton = document.getElementById("loginButton");
+    if (loginButton) {
+        loginButton.innerHTML = "Se connecter";
+        loginButton.disabled = false;
+    }
+    
+    // Réinitialiser l'état de soumission
+    isSubmitting = false;
+    
+    // Effacer les messages d'erreur/succès
+    const errorDiv = document.getElementById("loginError");
+    const successDiv = document.getElementById("loginSuccess");
+    if (errorDiv) {
+        errorDiv.style.display = "none";
+        errorDiv.textContent = "";
+    }
+    if (successDiv) {
+        successDiv.style.display = "none";
+        successDiv.textContent = "";
+    }
+}
+
+// ========== GESTION DU FORMULAIRE DE CONNEXION ==========
+
+function initLoginForm() {
+    const loginForm = document.getElementById("loginForm");
+    const loginButton = document.getElementById("loginButton");
+    const passwordInput = document.getElementById("password");
+    
+    // Sauvegarder le texte original du bouton
+    loginButton.setAttribute('data-original-text', loginButton.innerHTML);
+    
+    loginForm.addEventListener("submit", handleLoginSubmit);
+    
+    // Permettre la soumission avec Enter dans le champ mot de passe
+    passwordInput.addEventListener("keypress", function(e) {
+        if (e.key === "Enter" && !isSubmitting) {
+            loginForm.dispatchEvent(new Event("submit"));
+        }
+    });
+    
+    // Ajouter le champ caché pour le rôle
+    addRoleHiddenInput();
+    
+    // Ajouter un écouteur pour réinitialiser l'état si l'utilisateur modifie un champ
+    document.getElementById("username").addEventListener('input', function() {
+        if (isSubmitting) {
+            cleanupLoginForm();
+        }
+    });
+    
+    document.getElementById("password").addEventListener('input', function() {
+        if (isSubmitting) {
+            cleanupLoginForm();
+        }
+    });
+}
+
+function addRoleHiddenInput() {
+    let roleInput = document.getElementById('roleInput');
+    if (!roleInput) {
+        roleInput = document.createElement('input');
+        roleInput.type = 'hidden';
+        roleInput.id = 'roleInput';
+        roleInput.name = 'role';
+        roleInput.value = selectedRole;
+        document.getElementById('loginForm').appendChild(roleInput);
+    }
+}
+
+function setDefaultRole() {
+    const roleInput = document.getElementById('roleInput');
+    if (roleInput) {
+        roleInput.value = selectedRole;
+    }
+}
+
+async function handleLoginSubmit(e) {
+    e.preventDefault();
+    
+    if (isSubmitting) return;
+    isSubmitting = true;
+    
+    const loginButton = document.getElementById("loginButton");
+    const originalText = loginButton.getAttribute('data-original-text') || "Se connecter";
+    const username = document.getElementById("username").value.trim();
+    const password = document.getElementById("password").value.trim();
+    const errorDiv = document.getElementById("loginError");
+    const successDiv = document.getElementById("loginSuccess");
+    
+    // Réinitialiser les messages
+    resetMessages(errorDiv, successDiv);
+    
+    // Validation simple - uniquement vérifier si les champs sont remplis
+    const validationErrors = validateLogin(username, password);
+    if (validationErrors.length > 0) {
+        showLoginError(validationErrors.join("<br>"));
+        resetSubmitState(loginButton, originalText);
+        return;
+    }
+    
+    // Afficher l'état de chargement
+    setLoadingState(loginButton);
+    
+    try {
+        // SIMULATION - Accepter n'importe quel identifiant/mot de passe
+        const response = await simulateLogin(username, password, selectedRole);
+        
+        if (response.success) {
+            handleLoginSuccess(username, successDiv, loginButton, originalText);
+        } else {
+            throw new Error(response.message || "Identifiants incorrects");
+        }
+        
+    } catch (error) {
+        handleLoginError(error, errorDiv, loginButton, originalText);
+    }
+}
+
+function validateLogin(username, password) {
+    const errors = [];
+    
+    // Validation minimale - juste vérifier si les champs sont remplis
+    if (!username) {
+        errors.push("L'identifiant est requis");
+    }
+    
+    if (!password) {
+        errors.push("Le mot de passe est requis");
+    }
+    
+    return errors;
+}
+
+async function simulateLogin(username, password, role) {
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            // ACCEPTER N'IMPORTE QUEL IDENTIFIANT/MOT DE PASSE
+            // C'est pour la démonstration seulement
+            resolve({
+                success: true,
+                message: "Connexion réussie",
+                redirectUrl: "/dashboard/?role=" + role
+            });
+        }, LOGIN_CONFIG.validationDelay);
+    });
+}
+
+function handleLoginSuccess(username, successDiv, loginButton, originalText) {
+    // Afficher le message de succès
+    showLoginSuccess("Connexion réussie ! Redirection...");
+    
+    // Sauvegarder les informations de session
+    saveUserSession(username, selectedRole);
+    
+    // IMPORTANT : Réinitialiser le bouton immédiatement avant la redirection
+    resetSubmitState(loginButton, originalText);
+    
+    // Rediriger après délai
+    setTimeout(() => {
+        redirectToDashboard(selectedRole);
+    }, LOGIN_CONFIG.redirectDelay);
+}
+
+function handleLoginError(error, errorDiv, loginButton, originalText) {
+    console.error("Login error:", error);
+    showLoginError(error.message || "Une erreur est survenue lors de la connexion");
+    resetSubmitState(loginButton, originalText);
+}
+
+function showLoginError(message) {
+    const div = document.getElementById("loginError");
+    div.innerHTML = message;
+    div.style.display = "block";
+    div.setAttribute("role", "alert");
+}
+
+function showLoginSuccess(message) {
+    const div = document.getElementById("loginSuccess");
+    div.textContent = message;
+    div.style.display = "block";
+}
+
+function resetMessages(errorDiv, successDiv) {
+    errorDiv.style.display = "none";
+    successDiv.style.display = "none";
+    errorDiv.textContent = "";
+    successDiv.textContent = "";
+}
+
+function setLoadingState(button) {
+    button.innerHTML = '<span class="loader"></span>Connexion en cours...';
+    button.disabled = true;
+}
+
+function resetSubmitState(button, originalText) {
+    button.innerHTML = originalText;
+    button.disabled = false;
+    isSubmitting = false;
+}
+
+function saveUserSession(username, role) {
+    localStorage.setItem("isLoggedIn", "true");
+    localStorage.setItem("userRole", role);
+    localStorage.setItem("username", username);
+    localStorage.setItem("loginTime", new Date().toISOString());
+    
+    // Optionnel : sessionStorage pour plus de sécurité
+    sessionStorage.setItem("sessionActive", "true");
+}
+
+function redirectToDashboard(role) {
+    // Forcer un rechargement complet avec timestamp pour éviter le cache
+    const timestamp = new Date().getTime();
+    window.location.href = "/dashboard/?role=" + role + "&t=" + timestamp;
+}
+
+// ========== GESTION DU SELECTEUR DE RÔLE ==========
+
+function initRoleSelector() {
+    document.querySelectorAll(".role-btn").forEach(btn => {
+        btn.addEventListener("click", handleRoleSelection);
+        btn.addEventListener("keypress", function(e) {
+            if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                handleRoleSelection.call(this);
+            }
+        });
+    });
+}
+
+function handleRoleSelection() {
+    // Retirer la sélection de tous les boutons
+    document.querySelectorAll(".role-btn").forEach(b => {
+        b.classList.remove("active");
+        b.setAttribute("aria-pressed", "false");
+    });
+    
+    // Sélectionner le bouton cliqué
+    this.classList.add("active");
+    this.setAttribute("aria-pressed", "true");
+    selectedRole = this.dataset.role;
+    
+    // Mettre à jour le champ caché
+    const roleInput = document.getElementById('roleInput');
+    if (roleInput) {
+        roleInput.value = selectedRole;
+    }
+    
+    // Animation de feedback
+    this.style.transform = "scale(0.95)";
+    setTimeout(() => {
+        this.style.transform = "";
+    }, 150);
+    
+    // Mettre le focus sur le champ identifiant
+    document.getElementById("username").focus();
+}
+
+// ========== GESTION DU MODAL DE RÉCUPÉRATION ==========
+
+function initRecoveryModal() {
+    // Ouvrir le modal
+    document.getElementById("forgotLink").addEventListener("click", function(e) {
+        e.preventDefault();
+        openRecoveryModal();
+    });
+    
+    // Fermer le modal
+    document.getElementById("closeRecoveryModal").addEventListener("click", closeRecoveryModal);
+    document.getElementById("cancelStep1").addEventListener("click", closeRecoveryModal);
+    
+    // Gestion des étapes
+    document.getElementById("nextToStep2").addEventListener("click", goToStep2);
+    document.getElementById("prevToStep1").addEventListener("click", () => goToRecoveryStep(1));
+    document.getElementById("verifyMethod").addEventListener("click", verifyRecoveryMethod);
+    document.getElementById("prevToStep2").addEventListener("click", () => goToRecoveryStep(2));
+    document.getElementById("submitNewPassword").addEventListener("click", submitNewPassword);
+    document.getElementById("goToLogin").addEventListener("click", goToLoginAfterRecovery);
+    
+    // Sélection des méthodes de récupération
+    document.querySelectorAll(".recovery-option").forEach(option => {
+        option.addEventListener("click", handleRecoveryMethodSelection);
+        option.addEventListener("keypress", function(e) {
+            if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                handleRecoveryMethodSelection.call(this);
+            }
+        });
+    });
+    
+    // Vérification force mot de passe
+    document.getElementById("newPassword").addEventListener("input", checkPasswordStrength);
+    
+    // Fermer en cliquant à l'extérieur
+    document.getElementById("recoveryModal").addEventListener("click", function(e) {
+        if (e.target === this) {
+            closeRecoveryModal();
+        }
+    });
+    
+    // Empêcher la soumission avec Enter dans le modal
+    document.querySelectorAll('#recoveryModal input').forEach(input => {
+        input.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+            }
+        });
+    });
+}
+
+function openRecoveryModal() {
+    document.getElementById("recoveryModal").style.display = "flex";
+    resetRecoveryForm();
+}
+
+function closeRecoveryModal() {
+    document.getElementById("recoveryModal").style.display = "none";
+}
+
+function handleRecoveryMethodSelection() {
+    // Retirer la sélection de toutes les options
+    document.querySelectorAll(".recovery-option").forEach(opt => {
+        opt.classList.remove("selected");
+    });
+    
+    // Sélectionner l'option cliquée
+    this.classList.add("selected");
+    selectedRecoveryMethod = this.dataset.method;
+    
+    // Activer le bouton continuer
+    document.getElementById("nextToStep2").disabled = false;
+}
+
+function goToStep2() {
+    if (!selectedRecoveryMethod) {
+        showRecoveryMessage("Veuillez sélectionner une méthode de récupération.", "error");
+        return;
+    }
+    
+    // Afficher le formulaire correspondant
+    document.querySelectorAll(".method-form").forEach(form => {
+        form.style.display = "none";
+    });
+    
+    document.getElementById(`${selectedRecoveryMethod}Form`).style.display = "block";
+    goToRecoveryStep(2);
+}
+
+function verifyRecoveryMethod() {
+    const messageDiv = document.getElementById("recoveryMessage");
+    
+    let isValid = false;
+    let message = "";
+    
+    switch(selectedRecoveryMethod) {
+        case "email":
+            const email = document.getElementById("recoveryEmail").value.trim();
+            if (!email) {
+                message = "Veuillez entrer votre adresse email.";
+            } else if (!isValidEmail(email)) {
+                message = "Veuillez entrer une adresse email valide.";
+            } else {
+                isValid = true;
+                message = "Un lien de réinitialisation a été envoyé à votre email.";
+            }
+            break;
+            
+        case "questions":
+            const username = document.getElementById("recoveryUsername").value.trim();
+            const answer1 = document.getElementById("question1").value.trim();
+            const answer2 = document.getElementById("question2").value.trim();
+            
+            if (!username || !answer1 || !answer2) {
+                message = "Veuillez remplir tous les champs.";
+            } else {
+                isValid = true;
+                message = "Vos réponses ont été vérifiées avec succès.";
+            }
+            break;
+            
+        case "admin":
+            const name = document.getElementById("adminName").value.trim();
+            const identifier = document.getElementById("adminIdentifier").value.trim();
+            
+            if (!name || !identifier) {
+                message = "Veuillez remplir les champs obligatoires.";
+            } else {
+                isValid = true;
+                message = "Votre demande a été envoyée à l'administrateur.";
+            }
+            break;
+    }
+    
+    if (!isValid) {
+        showRecoveryMessage(message, "error");
+        return;
+    }
+    
+    showRecoveryMessage(message, "success");
+    
+    // Pour la méthode admin, aller directement à la confirmation
+    if (selectedRecoveryMethod === "admin") {
+        setTimeout(() => {
+            document.getElementById("successIcon").textContent = "📨";
+            document.getElementById("successTitle").textContent = "Demande envoyée !";
+            document.getElementById("successMessage").textContent = "Votre demande a été transmise à l'administrateur.";
+            document.getElementById("successDetails").textContent = "Vous recevrez une réponse par email dans les 24 heures.";
+            goToRecoveryStep(4);
+        }, 1000);
+    } else {
+        setTimeout(() => {
+            goToRecoveryStep(3);
+        }, 1000);
+    }
+}
+
+function submitNewPassword() {
+    const newPassword = document.getElementById("newPassword").value;
+    const confirmPassword = document.getElementById("confirmPassword").value;
+    
+    if (!newPassword || !confirmPassword) {
+        showRecoveryMessage("Veuillez remplir tous les champs.", "error");
+        return;
+    }
+    
+    if (newPassword !== confirmPassword) {
+        showRecoveryMessage("Les mots de passe ne correspondent pas.", "error");
+        return;
+    }
+    
+    if (newPassword.length < 6) {
+        showRecoveryMessage("Le mot de passe doit contenir au moins 6 caractères.", "error");
+        return;
+    }
+    
+    // Simulation de réinitialisation
+    showRecoveryMessage("Réinitialisation du mot de passe...", "info");
+    
+    setTimeout(() => {
+        document.getElementById("successIcon").textContent = "✓";
+        document.getElementById("successTitle").textContent = "Succès !";
+        document.getElementById("successMessage").textContent = "Votre mot de passe a été réinitialisé avec succès.";
+        document.getElementById("successDetails").textContent = "Vous pouvez maintenant vous connecter avec votre nouveau mot de passe.";
+        goToRecoveryStep(4);
+    }, 1500);
+}
+
+function goToLoginAfterRecovery() {
+    closeRecoveryModal();
+    
+    // NE PAS pré-remplir le champ identifiant
+    // On laisse l'utilisateur saisir ses identifiants manuellement
+    
+    // Réinitialiser les champs de connexion pour sécurité
+    document.getElementById("username").value = "";
+    document.getElementById("password").value = "";
+    
+    // Focus sur le champ identifiant
+    document.getElementById("username").focus();
+}
+
+function goToRecoveryStep(step) {
+    currentRecoveryStep = step;
+    
+    // Mettre à jour les indicateurs d'étape
+    document.querySelectorAll('.recovery-step').forEach(stepEl => {
+        if (parseInt(stepEl.dataset.step) <= step) {
+            stepEl.classList.add('active');
+        } else {
+            stepEl.classList.remove('active');
+        }
+    });
+    
+    // Afficher le formulaire correspondant
+    document.querySelectorAll('.form-step').forEach(form => {
+        form.classList.remove('active');
+    });
+    
+    document.getElementById(`step${step}Form`).classList.add('active');
+    
+    // Cacher les messages d'erreur
+    showRecoveryMessage("", "info", false);
+}
+
+function showRecoveryMessage(message, type = "info", show = true) {
+    const messageDiv = document.getElementById("recoveryMessage");
+    messageDiv.textContent = message;
+    messageDiv.className = type === "error" ? "error-message" : 
+                         type === "success" ? "success-message" : 
+                         type === "info" ? "success-message" : "error-message";
+    
+    if (type === "success") {
+        messageDiv.style.color = "#27ae60";
+        messageDiv.style.backgroundColor = "#d5f4e6";
+        messageDiv.style.borderColor = "#a3e4d7";
+    } else if (type === "info") {
+        messageDiv.style.color = "#3498db";
+        messageDiv.style.backgroundColor = "#e8f4fc";
+        messageDiv.style.borderColor = "#b6e0fe";
+    }
+    
+    messageDiv.style.display = show ? "block" : "none";
+}
+
+function resetRecoveryForm() {
+    goToRecoveryStep(1);
+    selectedRecoveryMethod = null;
+    
+    // Réinitialiser toutes les options
+    document.querySelectorAll(".recovery-option").forEach(opt => {
+        opt.classList.remove("selected");
+    });
+    
+    // Réinitialiser tous les champs
+    document.getElementById("recoveryEmail").value = "";
+    document.getElementById("recoveryUsername").value = "";
+    document.getElementById("question1").value = "";
+    document.getElementById("question2").value = "";
+    document.getElementById("adminName").value = "";
+    document.getElementById("adminIdentifier").value = "";
+    document.getElementById("adminMessage").value = "";
+    document.getElementById("newPassword").value = "";
+    document.getElementById("confirmPassword").value = "";
+    document.getElementById("passwordStrength").innerHTML = "";
+    
+    // Désactiver le bouton continuer
+    document.getElementById("nextToStep2").disabled = true;
+    
+    showRecoveryMessage("", "info", false);
+}
+
+function isValidEmail(email) {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+}
+
+function checkPasswordStrength() {
+    const password = this.value;
+    const strengthDiv = document.getElementById("passwordStrength");
+    
+    if (!password) {
+        strengthDiv.innerHTML = "";
+        return;
+    }
+    
+    let strength = 0;
+    let message = "";
+    let colorClass = "";
+    
+    // Critères de force
+    if (password.length >= 8) strength++;
+    if (/[A-Z]/.test(password)) strength++;
+    if (/[0-9]/.test(password)) strength++;
+    if (/[^A-Za-z0-9]/.test(password)) strength++;
+    
+    switch(strength) {
+        case 0:
+        case 1:
+            message = "Faible";
+            colorClass = "strength-weak";
+            break;
+        case 2:
+            message = "Moyen";
+            colorClass = "strength-medium";
+            break;
+        case 3:
+        case 4:
+            message = "Fort";
+            colorClass = "strength-strong";
+            break;
+    }
+    
+    // Barre de force visuelle
+    const strengthBars = "■".repeat(strength) + "□".repeat(4 - strength);
+    strengthDiv.innerHTML = `<span class="${colorClass}">Sécurité: ${message} ${strengthBars}</span>`;
+}
+
+// Gestion de l'état de la page lors du retour en arrière
+window.addEventListener('pageshow', function(event) {
+    // Si la page est chargée depuis le cache (retour en arrière)
+    if (event.persisted) {
+        cleanupLoginForm();
+    }
+});
+</script>
+
 {% endblock %}

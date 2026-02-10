@@ -1,207 +1,231 @@
 {% extends 'base.html' %}
-{% load static %} {% block title %}Statistiques Globales - Suivi Étudiants
-{% endblock %} {% block content %}
-<!-- Sidebar -->
+{% load static %}
+{% block title %}Statistiques Globales - Suivi Étudiants{% endblock %}
+
+{% block content %}
+
+<!-- Tom Select -->
+<link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
+
 <aside class="sidebar">
   <div class="sidebar-header">
     <h2>Suivi Étudiants</h2>
     <p>Plateforme de gestion</p>
   </div>
   <nav class="menu">
-    <a href="{% url 'dashboard' %}" class="menu-item"><i class="fas fa-chart-line"></i> Dashboard</a>
-    <a href="{% url 'etudiants' %}" class="menu-item"><i class="fas fa-users"></i> Étudiants</a>
-    <a href="{% url 'modules' %}" class="menu-item"><i class="fas fa-book"></i> Modules</a>
-    <a href="{% url 'notes' %}" class="menu-item"><i class="fas fa-clipboard-list"></i> Notes</a>
-    <a href="{% url 'absences' %}" class="menu-item"><i class="fas fa-calendar-times"></i> Absences</a>
-    <a href="{% url 'statistiques' %}" class="menu-item active"><i class="fas fa-chart-pie"></i> Statistiques</a>
+    <a href="{% url 'dashboard' %}" class="menu-item">Dashboard</a>
+    <a href="{% url 'etudiants' %}" class="menu-item">Étudiants</a>
+    <a href="{% url 'modules' %}" class="menu-item">Modules</a>
+    <a href="{% url 'notes' %}" class="menu-item">Notes</a>
+    <a href="{% url 'absences' %}" class="menu-item">Absences</a>
+    <a href="{% url 'statistiques' %}" class="menu-item active">Statistiques</a>
   </nav>
 </aside>
 
-<!-- Contenu principal -->
 <main class="main-content">
   <div class="topbar">
     <h1>Statistiques Globales</h1>
-    <a href="{% url 'login' %}" class="btn-action"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
   </div>
 
   <div class="content-area">
-    <p class="subtitle">Vue d’ensemble des performances académiques</p>
 
-    <!-- Indicateurs principaux -->
+    <!-- INDICATEURS -->
     <div class="stats-grid">
       <div class="stat-card">
-        <div class="stat-card-header">
-          <div>
-            <div class="stat-label">Moyenne générale</div>
-            <div class="stat-value">13.8</div>
-          </div>
-          <div class="stat-card-icon blue"><i class="fas fa-chart-bar"></i></div>
-        </div>
+        <div class="stat-label">Moyenne générale</div>
+        <div class="stat-value" id="moyenneGenerale">13.8</div>
       </div>
 
       <div class="stat-card">
-        <div class="stat-card-header">
-          <div>
-            <div class="stat-label">Taux de réussite</div>
-            <div class="stat-value" style="color:#4caf50;">87%</div>
-          </div>
-          <div class="stat-card-icon green"><i class="fas fa-trophy"></i></div>
-        </div>
+        <div class="stat-label">Taux de réussite</div>
+        <div class="stat-value" style="color:#4caf50;">87%</div>
       </div>
 
       <div class="stat-card">
-        <div class="stat-card-header">
-          <div>
-            <div class="stat-label">Taux d’absence</div>
-            <div class="stat-value" style="color:#ff9800;">6%</div>
-          </div>
-          <div class="stat-card-icon orange"><i class="fas fa-calendar-times"></i></div>
-        </div>
+        <div class="stat-label">Taux d'absence</div>
+        <div class="stat-value" style="color:#ff9800;">6%</div>
       </div>
 
       <div class="stat-card">
-        <div class="stat-card-header">
-          <div>
-            <div class="stat-label">Étudiants en difficulté</div>
-            <div class="stat-value" style="color:#f44336;">7</div>
-          </div>
-          <div class="stat-card-icon red"><i class="fas fa-exclamation-triangle"></i></div>
-        </div>
+        <div class="stat-label">Étudiants en difficulté</div>
+        <div class="stat-value" style="color:#f44336;">7</div>
       </div>
     </div>
 
-    <!-- Filtres -->
-    <div style="display:flex; gap:10px; align-items:center; margin:20px 0;">
-      <select><option>Toutes les Filières</option><option>MIASHS</option><option>Sociologie</option><option>Économie</option><option>Psychologie</option><option>Arts</option></select>
-      <select><option>Tous les Modules</option><option>Programmation Python</option><option>Microéconomie</option><option>Cartographie</option></select>
-      <select><option>Semestre 1</option><option>Semestre 2</option></select>
-      <button class="btn-action"><i class="fas fa-filter"></i> Appliquer</button>
+    <!-- FILTRES -->
+    <div style="display:flex; flex-wrap:wrap; gap:10px; margin:20px 0;">
+
+      <!-- Filtre Promotion -->
+      <select id="filterPromotion">
+        <option value="">Toutes les promotions</option>
+        <option>L1</option>
+        <option>L2</option>
+        <option>L3</option>
+        <option>M1</option>
+        <option>M2</option>
+      </select>
+
+      <!-- Filtre Module -->
+      <select id="filterModule">
+        <option value="">Tous les modules</option>
+        <option>Programmation Python</option>
+        <option>Microéconomie</option>
+        <option>Psychologie Cognitive</option>
+      </select>
+
+      <!-- Filtre Semestre -->
+      <select id="filterSemestre">
+        <option value="">Tous les semestres</option>
+        <option>S1</option>
+        <option>S2</option>
+      </select>
+
+      <!-- FILTRE ETUDIANT AVEC RECHERCHE -->
+      <select id="filterEtudiant">
+        <option value="">Tous les étudiants</option>
+        <option value="ET001">ET001 - Dupont Marie</option>
+        <option value="ET002">ET002 - Leroy Pierre</option>
+        <option value="ET003">ET003 - Martin Lucie</option>
+        <option value="ET004">ET004 - Rousseau Julie</option>
+      </select>
+
+      <!-- TRI -->
+      <select id="sortOrder">
+        <option value="desc">Trier par moyenne ↓</option>
+        <option value="asc">Trier par moyenne ↑</option>
+      </select>
+
     </div>
 
-    <!-- Graphiques principaux -->
+    <!-- GRAPHIQUES -->
     <div class="charts-grid">
+
       <div class="chart-box">
-        <h4><i class="fas fa-chart-bar"></i> Moyenne par filière</h4>
-        <canvas id="chartMoyenneFiliere"></canvas>
+        <h4>Moyenne par étudiant</h4>
+        <canvas id="chartEtudiants"></canvas>
       </div>
 
       <div class="chart-box">
-        <h4><i class="fas fa-trophy"></i> Taux de réussite par filière</h4>
-        <canvas id="chartReussite"></canvas>
-      </div>
-
-      <div class="chart-box">
-        <h4><i class="fas fa-chart-pie"></i> Répartition des absences</h4>
+        <h4>Répartition des absences</h4>
         <canvas id="chartAbsences"></canvas>
       </div>
 
       <div class="chart-box">
-        <h4><i class="fas fa-chart-line"></i> Évolution de la moyenne générale</h4>
+        <h4>Évolution de la moyenne</h4>
         <canvas id="chartEvolution"></canvas>
       </div>
 
       <div class="chart-box">
-        <h4><i class="fas fa-user-times"></i> Étudiants en difficulté par filière</h4>
-        <canvas id="chartDifficulte"></canvas>
-      </div>
-
-      <div class="chart-box">
-        <h4><i class="fas fa-star"></i> Classement global des moyennes</h4>
+        <h4>Performance globale (Radar)</h4>
         <canvas id="chartRadar"></canvas>
       </div>
+
     </div>
+
   </div>
 </main>
 
-<!-- Scripts Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <script>
-  // --- Moyenne par filière ---
-  new Chart(document.getElementById("chartMoyenneFiliere"), {
-    type: "bar",
-    data: {
-      labels: ["MIASHS", "Sociologie", "Économie", "Psychologie", "Arts"],
-      datasets: [{
-        label: "Moyenne",
-        data: [14, 13, 12.8, 15, 14.5],
-        backgroundColor: ["#667eea", "#ff9800", "#4caf50", "#ba68c8", "#ff7043"]
-      }]
-    },
-    options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
+document.addEventListener("DOMContentLoaded", function(){
+
+  /* === Activer recherche étudiant === */
+  new TomSelect("#filterEtudiant",{
+    create:false,
+    sortField:{field:"text",direction:"asc"}
   });
 
-  // --- Taux de réussite par filière ---
-  new Chart(document.getElementById("chartReussite"), {
-    type: "bar",
-    data: {
-      labels: ["MIASHS", "Sociologie", "Économie", "Psychologie", "Arts"],
-      datasets: [{
-        label: "Taux de réussite (%)",
-        data: [92, 85, 80, 88, 90],
-        backgroundColor: ["#4caf50", "#81c784", "#66bb6a", "#43a047", "#2e7d32"]
+  /* === Données simulées === */
+  let etudiantsData = [
+    {matricule:"ET001", moyenne:15},
+    {matricule:"ET002", moyenne:13},
+    {matricule:"ET003", moyenne:12},
+    {matricule:"ET004", moyenne:16}
+  ];
+
+  /* === Graphique Moyenne Étudiants === */
+  const chartEtudiants = new Chart(document.getElementById("chartEtudiants"), {
+    type:"bar",
+    data:{
+      labels:[],
+      datasets:[{
+        label:"Moyenne",
+        data:[],
+        backgroundColor:"#667eea"
       }]
     },
-    options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, max: 100 } } }
+    options:{
+      scales:{y:{beginAtZero:true,max:20}},
+      plugins:{legend:{display:false}}
+    }
   });
 
-  // --- Répartition des absences ---
+  function updateChart(){
+
+    let sorted = [...etudiantsData];
+
+    const selected = document.getElementById("filterEtudiant").value;
+    const order = document.getElementById("sortOrder").value;
+
+    if(selected){
+      sorted = sorted.filter(e => e.matricule === selected);
+    }
+
+    sorted.sort((a,b)=> order==="desc" ? b.moyenne-a.moyenne : a.moyenne-b.moyenne);
+
+    chartEtudiants.data.labels = sorted.map(e=>e.matricule);
+    chartEtudiants.data.datasets[0].data = sorted.map(e=>e.moyenne);
+    chartEtudiants.update();
+  }
+
+  document.getElementById("filterEtudiant").addEventListener("change", updateChart);
+  document.getElementById("sortOrder").addEventListener("change", updateChart);
+
+  updateChart();
+
+  /* === Pie Absences === */
   new Chart(document.getElementById("chartAbsences"), {
-    type: "pie",
-    data: {
-      labels: ["Justifiées", "Non justifiées"],
-      datasets: [{
-        data: [65, 35],
-        backgroundColor: ["#4caf50", "#f44336"]
+    type:"pie",
+    data:{
+      labels:["Justifiées","Non justifiées"],
+      datasets:[{
+        data:[65,35],
+        backgroundColor:["#4caf50","#f44336"]
       }]
-    },
-    options: { plugins: { legend: { position: "bottom" } } }
+    }
   });
 
-  // --- Évolution de la moyenne générale ---
+  /* === Evolution === */
   new Chart(document.getElementById("chartEvolution"), {
-    type: "line",
-    data: {
-      labels: ["Sept", "Oct", "Nov", "Déc", "Janv", "Fév"],
-      datasets: [{
-        label: "Moyenne générale",
-        data: [13.2, 13.5, 14, 13.8, 14.3, 14.5],
-        borderColor: "#667eea",
-        backgroundColor: "rgba(102,126,234,0.2)",
-        fill: true,
-        tension: 0.3
+    type:"line",
+    data:{
+      labels:["Sept","Oct","Nov","Déc","Janv","Fév"],
+      datasets:[{
+        data:[13.2,13.5,14,13.8,14.3,14.5],
+        borderColor:"#667eea",
+        backgroundColor:"rgba(102,126,234,0.2)",
+        fill:true,
+        tension:0.3
       }]
-    },
-    options: { plugins: { legend: { position: "bottom" } }, scales: { y: { beginAtZero: true } } }
+    }
   });
 
-  // --- Étudiants en difficulté ---
-  new Chart(document.getElementById("chartDifficulte"), {
-    type: "bar",
-    data: {
-      labels: ["MIASHS", "Sociologie", "Économie", "Psychologie", "Arts"],
-      datasets: [{
-        label: "Étudiants en difficulté",
-        data: [2, 1, 3, 2, 1],
-        backgroundColor: ["#ff7043", "#ffb74d", "#e57373", "#ba68c8", "#90a4ae"]
-      }]
-    },
-    options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
-  });
-
-  // --- Radar : classement global ---
+  /* === Radar === */
   new Chart(document.getElementById("chartRadar"), {
-    type: "radar",
-    data: {
-      labels: ["MIASHS", "Sociologie", "Économie", "Psychologie", "Arts"],
-      datasets: [{
-        label: "Performance moyenne",
-        data: [15, 13, 12, 14, 16],
-        backgroundColor: "rgba(102,126,234,0.2)",
-        borderColor: "#667eea",
-        pointBackgroundColor: "#667eea"
+    type:"radar",
+    data:{
+      labels:["Moyenne","Réussite","Assiduité","Participation"],
+      datasets:[{
+        data:[15,87,94,80],
+        backgroundColor:"rgba(102,126,234,0.2)",
+        borderColor:"#667eea"
       }]
-    },
-    options: { plugins: { legend: { position: "top" } } }
+    }
   });
+
+});
 </script>
+
 {% endblock %}

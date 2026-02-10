@@ -1,195 +1,1645 @@
+<!-- dashboard.html -->
 {% extends 'base.html' %}
-{% load static %} {% block title %}Tableau de Bord - Suivi Étudiants
-{% endblock %} {% block content %}
+{% load static %}
+{% block title %}Tableau de Bord - Suivi Étudiants{% endblock %}
+
+{% block content %}
+
+<style>
+:root {
+  --primary-color: #1a237e;
+  --secondary-color: #283593;
+  --accent-color: #3949ab;
+  --success-color: #2e7d32;
+  --warning-color: #f57c00;
+  --danger-color: #c62828;
+  --light-bg: #f5f5f5;
+  --card-bg: #ffffff;
+  --text-primary: #212121;
+  --text-secondary: #757575;
+}
+
+/* ============ TOPBAR STYLES ============ */
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  margin-right: 15px;
+}
+
+.user-info span {
+  display: block;
+  white-space: nowrap;
+}
+
+#userRoleDisplay {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.user-name {
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.btn-action {
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ============ END TOPBAR STYLES ============ */
+
+.clickable {
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.clickable:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.15) !important;
+}
+
+.clickable:hover::after {
+  content: '▶';
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--accent-color);
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+.details-container {
+  margin-top: 30px;
+  background: var(--light-bg);
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.detail-box {
+  display: none;
+  background: var(--card-bg);
+  padding: 25px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+  border-left: 4px solid var(--accent-color);
+  animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+  from { 
+    opacity: 0; 
+    transform: translateY(15px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
+
+/* ============ GRAPHIQUES AMÉLIORÉS ============ */
+
+.charts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+  gap: 30px;
+  margin-top: 40px;
+  padding: 0 10px;
+}
+
+@media (max-width: 1400px) {
+  .charts-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.chart-box {
+  background: var(--card-bg);
+  padding: 25px 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  border: 1px solid #e8e8e8;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  min-height: 450px;
+  max-height: 500px;
+}
+
+.chart-box:hover {
+  box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+  border-color: var(--accent-color);
+  transform: translateY(-3px);
+}
+
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-shrink: 0;
+}
+
+.chart-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--primary-color);
+  text-align: left;
+  margin: 0;
+  flex: 1;
+}
+
+.chart-controls {
+  display: flex;
+  gap: 10px;
+}
+
+.period-select {
+  padding: 6px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background: white;
+  color: var(--text-primary);
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+
+.period-select:hover {
+  border-color: var(--accent-color);
+}
+
+.chart-container {
+  flex: 1;
+  position: relative;
+  min-height: 300px;
+  max-height: 350px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 0;
+}
+
+.chart-container canvas {
+  max-height: 100% !important;
+  width: 100% !important;
+}
+
+.legend {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-top: 15px;
+  font-size: 0.9rem;
+  padding-top: 15px;
+  border-top: 1px solid #f0f0f0;
+  flex-shrink: 0;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legend-color {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  border: 2px solid white;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+/* ============ FIN GRAPHIQUES AMÉLIORÉS ============ */
+
+.stat-card {
+  background: linear-gradient(135deg, var(--card-bg) 0%, #f8f9fa 100%);
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 25px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, var(--accent-color), #7986cb);
+}
+
+.stat-value {
+  font-size: 2.8rem;
+  font-weight: 700;
+  color: var(--primary-color);
+  margin: 10px 0;
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 25px;
+  margin-bottom: 30px;
+}
+
+.role-section h2 {
+  color: var(--primary-color);
+  margin-bottom: 25px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid var(--light-bg);
+  font-size: 1.8rem;
+}
+
+.detail-box h3 {
+  color: var(--primary-color);
+  margin-bottom: 15px;
+  font-size: 1.3rem;
+}
+
+.detail-box ul {
+  list-style: none;
+  padding: 0;
+}
+
+.detail-box li {
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+  color: var(--text-primary);
+}
+
+.detail-box li:last-child {
+  border-bottom: none;
+}
+
+.alert-badge {
+  background: var(--danger-color);
+  color: white;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  margin-left: 10px;
+}
+
+.info-badge {
+  background: var(--accent-color);
+  color: white;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  margin-left: 10px;
+}
+
+.module-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.module-chip {
+  background: #e3f2fd;
+  color: var(--primary-color);
+  padding: 8px 15px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  border: 1px solid #bbdefb;
+  text-align: center;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+
+.data-table th,
+.data-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+.data-table th {
+  background: var(--light-bg);
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+.data-table tr:hover {
+  background: #f5f5f5;
+}
+
+.progress-container {
+  background: #e0e0e0;
+  border-radius: 10px;
+  height: 10px;
+  margin: 15px 0;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-color), #7986cb);
+  border-radius: 10px;
+  transition: width 1s ease;
+}
+
+.metric-label {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+  color: var(--text-secondary);
+}
+
+.tooltip {
+  position: absolute;
+  background: rgba(0,0,0,0.8);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  pointer-events: none;
+  z-index: 1000;
+}
+</style>
+
+<script>
+const role = localStorage.getItem("userRole");
+const username = localStorage.getItem("username") || "Utilisateur";
+
+if (!role) {
+  window.location.href = "{% url 'login' %}";
+}
+
+// Fonction pour formater le username (première lettre en majuscule)
+function formatUsername(username) {
+  if (!username) return "Utilisateur";
+  return username.charAt(0).toUpperCase() + username.slice(1).toLowerCase();
+}
+
+function logoutUser(){
+  // Nettoyer le localStorage
+  localStorage.removeItem("userRole");
+  localStorage.removeItem("username");
+  localStorage.removeItem("isLoggedIn");
+  localStorage.removeItem("loginTime");
+  
+  // Nettoyer sessionStorage
+  sessionStorage.clear();
+  
+  // Redirection
+  window.location.href = "{% url 'login' %}";
+}
+</script>
+
 <aside class="sidebar">
   <div class="sidebar-header">
     <h2>Suivi Étudiants</h2>
     <p>Plateforme de gestion</p>
   </div>
   <nav class="menu">
-    <a href="{% url 'dashboard' %}" class="menu-item active"><i class="fas fa-chart-line"></i> Dashboard</a>
-    <a href="{% url 'etudiants' %}" class="menu-item"><i class="fas fa-users"></i> Étudiants</a>
-    <a href="{% url 'modules' %}" class="menu-item"><i class="fas fa-book"></i> Modules</a>
-    <a href="{% url 'notes' %}" class="menu-item"><i class="fas fa-clipboard-list"></i> Notes</a>
-    <a href="{% url 'absences' %}" class="menu-item"><i class="fas fa-calendar-times"></i> Absences</a>
-    <a href="{% url 'statistiques' %}" class="menu-item"><i class="fas fa-chart-pie"></i> Statistiques</a>
+    <a href="{% url 'dashboard' %}" class="menu-item active"> Dashboard</a>
+    <a href="{% url 'etudiants' %}" class="menu-item"> Étudiants</a>
+    <a href="{% url 'modules' %}" class="menu-item"> Modules</a>
+    <a href="{% url 'notes' %}" class="menu-item"> Notes</a>
+    <a href="{% url 'absences' %}" class="menu-item"> Absences</a>
+    <a href="{% url 'statistiques' %}" class="menu-item"> Statistiques</a>
   </nav>
 </aside>
 
 <main class="main-content">
   <div class="topbar">
-    <h1>Tableau de Bord Administratif</h1>
-    <a href="{% url 'login' %}" class="btn-action"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
+    <div class="topbar-left">
+      <h1 id="dashboardTitle">Tableau de Bord</h1>
+      <div class="breadcrumb">
+        <span>Accueil</span> / <span id="roleBreadcrumb">Dashboard</span>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="user-info">
+        <span id="userRoleDisplay"></span>
+        <span class="user-name" id="userName"></span>
+      </div>
+      <a href="{% url 'login' %}" class="btn-action" onclick="logoutUser()">
+        <span class="btn-icon"></span>
+        Déconnexion
+      </a>
+    </div>
   </div>
 
   <div class="content-area">
-    <h2 class="section-title">Suivi global de l’activité académique</h2>
 
-    <!-- Statistiques principales -->
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-card-header">
-          <div>
-            <div class="stat-value">524</div>
-            <div class="stat-label">Étudiants actifs</div>
-          </div>
-          <div class="stat-card-icon blue"><i class="fas fa-user-graduate"></i></div>
+    <!-- ================= ADMIN ================= -->
+    <section class="role-section" data-role="admin" style="display:none;">
+
+      <div class="dashboard-header">
+        <h2> Tableau de Bord Administratif</h2>
+        <p class="dashboard-subtitle">Vue globale de l'établissement - Mise à jour en temps réel</p>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card clickable" data-target="admin-etudiants">
+          <div class="stat-icon"></div>
+          <div class="stat-value">524</div>
+          <div class="stat-label">Étudiants inscrits</div>
+          <div class="stat-change positive">+12 cette semaine</div>
+        </div>
+
+        <div class="stat-card clickable" data-target="admin-modules">
+          <div class="stat-icon"></div>
+          <div class="stat-value">48</div>
+          <div class="stat-label">Modules actifs</div>
+          <div class="stat-change">Dont 12 nouveaux</div>
+        </div>
+
+        <div class="stat-card clickable" data-target="admin-absences">
+          <div class="stat-icon"></div>
+          <div class="stat-value">112</div>
+          <div class="stat-label">Absences signalées</div>
+          <div class="stat-change negative">+5 cette semaine</div>
+        </div>
+
+        <div class="stat-card clickable" data-target="admin-alertes">
+          <div class="stat-icon"></div>
+          <div class="stat-value">9</div>
+          <div class="stat-label">Alertes actives</div>
+          <div class="stat-change critical"> Nécessite attention</div>
         </div>
       </div>
 
-      <div class="stat-card">
-        <div class="stat-card-header">
-          <div>
-            <div class="stat-value">48</div>
-            <div class="stat-label">Modules suivis</div>
+      <div class="details-container">
+        <div class="detail-box" id="admin-etudiants">
+          <h3> Gestion des Étudiants</h3>
+          <p><strong>Total :</strong> 524 étudiants inscrits pour l'année 2024-2025</p>
+          <div class="module-grid">
+            <div class="module-chip">L1 - Promotion 2024 : 180</div>
+            <div class="module-chip">L2 - Promotion 2023 : 165</div>
+            <div class="module-chip">L3 - Promotion 2022 : 142</div>
+            <div class="module-chip">M1 - Promotion 2021 : 37</div>
           </div>
-          <div class="stat-card-icon green"><i class="fas fa-book"></i></div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Promotion</th>
+                <th>Groupes</th>
+                <th>Effectif</th>
+                <th>Taux de présence</th>
+                <th>Statut</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>L1 - Promotion 2024</td><td>6 groupes</td><td>180</td><td><div class="progress-container"><div class="progress-bar" style="width: 94%"></div></div></td><td><span class="info-badge">Actif</span></td></tr>
+              <tr><td>L2 - Promotion 2023</td><td>5 groupes</td><td>165</td><td><div class="progress-container"><div class="progress-bar" style="width: 96%"></div></div></td><td><span class="info-badge">Actif</span></td></tr>
+              <tr><td>L3 - Promotion 2022</td><td>4 groupes</td><td>142</td><td><div class="progress-container"><div class="progress-bar" style="width: 95%"></div></div></td><td><span class="info-badge">Actif</span></td></tr>
+              <tr><td>M1 - Promotion 2021</td><td>1 groupe</td><td>37</td><td><div class="progress-container"><div class="progress-bar" style="width: 97%"></div></div></td><td><span class="info-badge">Actif</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="detail-box" id="admin-modules">
+          <h3> Catalogue des Modules</h3>
+          <p><strong>Total :</strong> 48 modules disponibles, 12 nouveaux cette année</p>
+          <div class="module-grid">
+            <div class="module-chip">Semestre 1 : 12 modules</div>
+            <div class="module-chip">Semestre 2 : 12 modules</div>
+            <div class="module-chip">Semestre 3 : 11 modules</div>
+            <div class="module-chip">Semestre 4 : 13 modules</div>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Code</th>
+                <th>Libellé</th>
+                <th>Coefficient</th>
+                <th>Semestre</th>
+                <th>Responsable</th>
+                <th>Taux réussite</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>INF101</td><td>Programmation Python</td><td>3</td><td>S1</td><td>M. Durand</td><td>87%</td></tr>
+              <tr><td>MAT201</td><td>Algèbre linéaire</td><td>4</td><td>S2</td><td>Mme. Martin</td><td>78%</td></tr>
+              <tr><td>INF202</td><td>Base de données</td><td>3</td><td>S2</td><td>M. Bernard</td><td>92%</td></tr>
+              <tr><td>WEB301</td><td>Développement Web</td><td>3</td><td>S3</td><td>Mme. Dubois</td><td>89%</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="detail-box" id="admin-absences">
+          <h3> Suivi des Absences</h3>
+          <p><strong>Total :</strong> 112 absences enregistrées (justifiées et non-justifiées)</p>
+          <div class="metric-label">
+            <span>Absences justifiées : 68 (61%)</span>
+            <span>Non justifiées : 44 (39%)</span>
+          </div>
+          <div class="progress-container">
+            <div class="progress-bar" style="width: 61%; background: var(--success-color)"></div>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Matricule</th>
+                <th>Étudiant</th>
+                <th>Module</th>
+                <th>Date</th>
+                <th>Durée (h)</th>
+                <th>Type</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>ETU2024001</td><td>Dupont Jean</td><td>INF101</td><td>05/12/2024</td><td>3h</td><td><span class="alert-badge">Non justifiée</span></td></tr>
+              <tr><td>ETU2023045</td><td>Martin Sophie</td><td>MAT201</td><td>03/12/2024</td><td>2h</td><td><span class="info-badge">Justifiée</span></td></tr>
+              <tr><td>ETU2024089</td><td>Bernard Pierre</td><td>WEB301</td><td>02/12/2024</td><td>3h</td><td><span class="info-badge">Justifiée</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="detail-box" id="admin-alertes">
+          <h3> Alertes et Signalements</h3>
+          <p><strong>Total :</strong> 9 alertes nécessitant une action immédiate</p>
+          <div class="alert-list">
+            <div class="alert-item critical">
+              <strong> 3 étudiants en risque de décrochage</strong>
+              <p>Absences répétées et résultats en baisse</p>
+              <ul style="margin-top: 10px; padding-left: 20px;">
+                <li>ETU2024032 - 8 absences non justifiées</li>
+                <li>ETU2023067 - Moyenne < 8/20</li>
+                <li>ETU2024125 - 5 modules en échec</li>
+              </ul>
+            </div>
+            <div class="alert-item warning">
+              <strong> 2 modules avec taux d'échec > 40%</strong>
+              <p>MAT301 (Mathématiques avancées) et PHY202 (Physique quantique)</p>
+            </div>
+            <div class="alert-item info">
+              <strong> 4 retards de saisie des notes</strong>
+              <p>Contrôles continus et projets en attente de validation</p>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div class="stat-card">
-        <div class="stat-card-header">
-          <div>
-            <div class="stat-value">112</div>
-            <div class="stat-label">Absences totales</div>
+      <div class="charts-grid">
+        <div class="chart-box">
+          <div class="chart-header">
+            <h3 class="chart-title"> Répartition des étudiants par promotion</h3>
+            <div class="chart-controls">
+              <select class="period-select">
+                <option>Cette année</option>
+                <option>L'année dernière</option>
+              </select>
+            </div>
           </div>
-          <div class="stat-card-icon orange"><i class="fas fa-calendar-times"></i></div>
+          <div class="chart-container">
+            <canvas id="chartAdminFiliere"></canvas>
+          </div>
+          <div class="legend">
+            <div class="legend-item"><span class="legend-color" style="background:#3498db"></span>L1 - Promo 2024</div>
+            <div class="legend-item"><span class="legend-color" style="background:#2ecc71"></span>L2 - Promo 2023</div>
+            <div class="legend-item"><span class="legend-color" style="background:#9b59b6"></span>L3 - Promo 2022</div>
+            <div class="legend-item"><span class="legend-color" style="background:#e74c3c"></span>M1 - Promo 2021</div>
+          </div>
+        </div>
+
+        <div class="chart-box">
+          <div class="chart-header">
+            <h3 class="chart-title"> Évolution des absences mensuelles</h3>
+          </div>
+          <div class="chart-container">
+            <canvas id="chartAdminAbsences"></canvas>
+          </div>
+          <div class="legend">
+            <div class="legend-item"><span class="legend-color" style="background:#e74c3c"></span>2024</div>
+            <div class="legend-item"><span class="legend-color" style="background:#3498db"></span>2023</div>
+          </div>
+        </div>
+
+        <div class="chart-box">
+          <div class="chart-header">
+            <h3 class="chart-title"> Statut académique des étudiants</h3>
+          </div>
+          <div class="chart-container">
+            <canvas id="chartAdminStatut"></canvas>
+          </div>
+          <div class="legend">
+            <div class="legend-item"><span class="legend-color" style="background:#2ecc71"></span>En règle</div>
+            <div class="legend-item"><span class="legend-color" style="background:#f39c12"></span>En alerte</div>
+            <div class="legend-item"><span class="legend-color" style="background:#e74c3c"></span>En difficulté</div>
+            <div class="legend-item"><span class="legend-color" style="background:#95a5a6"></span>Décrocheurs</div>
+          </div>
         </div>
       </div>
 
-      <div class="stat-card">
-        <div class="stat-card-header">
-          <div>
-            <div class="stat-value">9</div>
-            <div class="stat-label">Alertes en cours</div>
-          </div>
-          <div class="stat-card-icon red"><i class="fas fa-exclamation-triangle"></i></div>
+    </section>
+
+    <!-- ================= PROF ================= -->
+    <section class="role-section" data-role="professeur" style="display:none;">
+
+      <div class="dashboard-header">
+        <h2> Espace Enseignant</h2>
+        <p class="dashboard-subtitle">Gestion de vos cours et suivi des étudiants</p>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card clickable" data-target="prof-modules">
+          <div class="stat-icon"></div>
+          <div class="stat-value">6</div>
+          <div class="stat-label">Modules enseignés</div>
+          <div class="stat-change">3 groupes cette semaine</div>
+        </div>
+
+        <div class="stat-card clickable" data-target="prof-etudiants">
+          <div class="stat-icon"></div>
+          <div class="stat-value">142</div>
+          <div class="stat-label">Étudiants à suivre</div>
+          <div class="stat-change positive">Tous présents aujourd'hui</div>
+        </div>
+
+        <div class="stat-card clickable" data-target="prof-notes">
+          <div class="stat-icon"></div>
+          <div class="stat-value">12</div>
+          <div class="stat-label">Notes à valider</div>
+          <div class="stat-change warning">Échéance : 15/12</div>
+        </div>
+
+        <div class="stat-card clickable" data-target="prof-absences">
+          <div class="stat-icon"></div>
+          <div class="stat-value">7</div>
+          <div class="stat-label">Absences à traiter</div>
+          <div class="stat-change negative">Dont 2 non justifiées</div>
         </div>
       </div>
-    </div>
 
-    <!-- Derniers enregistrements -->
-    <div class="table-container">
-      <div class="table-header">
-        <h2><i class="fas fa-clock"></i> Suivi des derniers enregistrements</h2>
+      <div class="details-container">
+        <div class="detail-box" id="prof-modules">
+          <h3> Mes Modules d'Enseignement</h3>
+          <p><strong>Total :</strong> 6 modules répartis sur différents semestres</p>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Code</th>
+                <th>Libellé</th>
+                <th>Coefficient</th>
+                <th>Semestre</th>
+                <th>Étudiants</th>
+                <th>Taux réussite</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>INF101</td><td>Programmation Python</td><td>3</td><td>S1</td><td>35</td><td>87%</td></tr>
+              <tr><td>MAT201</td><td>Algèbre linéaire</td><td>4</td><td>S2</td><td>42</td><td>78%</td></tr>
+              <tr><td>STAT301</td><td>Statistiques</td><td>3</td><td>S3</td><td>28</td><td>85%</td></tr>
+              <tr><td>INF202</td><td>Base de données</td><td>3</td><td>S2</td><td>35</td><td>92%</td></tr>
+              <tr><td>WEB301</td><td>Développement Web</td><td>3</td><td>S3</td><td>30</td><td>89%</td></tr>
+              <tr><td>PROJ401</td><td>Projet intégré</td><td>5</td><td>S4</td><td>25</td><td>95%</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="detail-box" id="prof-etudiants">
+          <h3> Mes Groupes d'Étudiants</h3>
+          <p><strong>Total :</strong> 142 étudiants répartis dans vos groupes</p>
+          <div class="metric-label">
+            <span>Présents aujourd'hui : 142/142 (100%)</span>
+            <span>Moyenne générale : 13.2/20</span>
+          </div>
+          <div class="progress-container">
+            <div class="progress-bar" style="width: 100%; background: var(--success-color)"></div>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Promotion</th>
+                <th>Groupe</th>
+                <th>Effectif</th>
+                <th>Moyenne</th>
+                <th>Taux réussite</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>L3 - Promo 2022</td><td>Groupe A</td><td>35</td><td>14.2</td><td>91%</td></tr>
+              <tr><td>L2 - Promo 2023</td><td>Groupe B</td><td>42</td><td>12.8</td><td>85%</td></tr>
+              <tr><td>M1 - Promo 2021</td><td>Groupe Unique</td><td>28</td><td>13.5</td><td>89%</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="detail-box" id="prof-notes">
+          <h3> Validation des Notes</h3>
+          <p><strong>En attente :</strong> 12 notes sur 3 modules différents</p>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Matricule</th>
+                <th>Étudiant</th>
+                <th>Module</th>
+                <th>Type</th>
+                <th>Date</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>ETU2024001</td><td>Dupont Jean</td><td>INF101</td><td>Contrôle</td><td>10/12/2024</td><td><button class="btn-small">Saisir</button></td></tr>
+              <tr><td>ETU2023045</td><td>Martin Sophie</td><td>INF202</td><td>Projet</td><td>12/12/2024</td><td><button class="btn-small">Saisir</button></td></tr>
+              <tr><td>ETU2024089</td><td>Bernard Pierre</td><td>MAT201</td><td>Examen</td><td>15/12/2024</td><td><button class="btn-small">Valider</button></td></tr>
+            </tbody>
+          </table>
+          <div class="alert-list" style="margin-top: 20px;">
+            <div class="alert-item warning">
+              <strong> Contrôle continu INF101</strong>
+              <p>8 notes manquantes - Échéance : 15/12/2024</p>
+            </div>
+            <div class="alert-item info">
+              <strong> Projet INF202</strong>
+              <p>3 notes à saisir - Échéance : 20/12/2024</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="detail-box" id="prof-absences">
+          <h3> Gestion des Absences</h3>
+          <p><strong>Total :</strong> 7 absences nécessitant votre attention</p>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Matricule</th>
+                <th>Étudiant</th>
+                <th>Date</th>
+                <th>Module</th>
+                <th>Durée</th>
+                <th>Type</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>ETU2024001</td><td>Dupont Jean</td><td>05/12/2024</td><td>INF101</td><td>3h</td><td>Non justifiée</td><td><button class="btn-small">Justifier</button></td></tr>
+              <tr><td>ETU2023045</td><td>Martin Sophie</td><td>03/12/2024</td><td>MAT201</td><td>2h</td><td>À valider</td><td><button class="btn-small">Valider</button></td></tr>
+              <tr><td>ETU2024089</td><td>Bernard Pierre</td><td>02/12/2024</td><td>STAT301</td><td>3h</td><td>Justifiée</td><td><span class="info-badge">Traité</span></td></tr>
+            </tbody>
+          </table>
+        </div>
       </div>
-      <table>
-        <thead>
-          <tr>
-            <th>Étudiant</th>
-            <th>Filière</th>
-            <th>Dernier module suivi</th>
-            <th>Dernière note</th>
-            <th>Dernière absence</th>
-            <th>Statut</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Marie Dupont</td>
-            <td>MIASHS</td>
-            <td>Programmation Python</td>
-            <td>16.5</td>
-            <td>03/10/2025</td>
-            <td><span class="badge success">Régulière</span></td>
-          </tr>
-          <tr>
-            <td>Pierre Leroy</td>
-            <td>Géographie</td>
-            <td>Cartographie</td>
-            <td>13.2</td>
-            <td>10/10/2025</td>
-            <td><span class="badge warning">Absence récente</span></td>
-          </tr>
-          <tr>
-            <td>Lucie Martin</td>
-            <td>Économie</td>
-            <td>Microéconomie</td>
-            <td>12.8</td>
-            <td>06/10/2025</td>
-            <td><span class="badge success">Régulière</span></td>
-          </tr>
-          <tr>
-            <td>Julie Rousseau</td>
-            <td>Psychologie</td>
-            <td>Psychologie Cognitive</td>
-            <td>14.5</td>
-            <td>08/10/2025</td>
-            <td><span class="badge success">Régulière</span></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
 
-    <!-- Graphiques côte à côte -->
-    <div class="charts-grid">
-      <div class="chart-box">
-        <h4>📈 Activité académique globale</h4>
-        <canvas id="chartGlobalActivity"></canvas>
+      <div class="charts-grid">
+        <div class="chart-box">
+          <div class="chart-header">
+            <h3 class="chart-title"> Performances par module</h3>
+            <select class="period-select">
+              <option>Ce semestre</option>
+              <option>Semestre dernier</option>
+            </select>
+          </div>
+          <div class="chart-container">
+            <canvas id="chartProfMoyennes"></canvas>
+          </div>
+          <div class="legend">
+            <div class="legend-item"><span class="legend-color" style="background:#3498db"></span>Votre classe</div>
+            <div class="legend-item"><span class="legend-color" style="background:#95a5a6"></span>Moyenne département</div>
+          </div>
+        </div>
+
+        <div class="chart-box">
+          <div class="chart-header">
+            <h3 class="chart-title"> Taux de réussite par groupe</h3>
+          </div>
+          <div class="chart-container">
+            <canvas id="chartProfReussite"></canvas>
+          </div>
+          <div class="legend">
+            <div class="legend-item"><span class="legend-color" style="background:#2ecc71"></span>Admis</div>
+            <div class="legend-item"><span class="legend-color" style="background:#f39c12"></span>Rattrapage</div>
+            <div class="legend-item"><span class="legend-color" style="background:#e74c3c"></span>Échec</div>
+          </div>
+        </div>
+
+        <div class="chart-box">
+          <div class="chart-header">
+            <h3 class="chart-title"> Distribution des notes</h3>
+            <select class="period-select">
+              <option>Dernier contrôle</option>
+              <option>Tous les contrôles</option>
+            </select>
+          </div>
+          <div class="chart-container">
+            <canvas id="chartProfDistribution"></canvas>
+          </div>
+          <div class="legend">
+            <div class="legend-item"><span class="legend-color" style="background:#9b59b6"></span>Nombre d'étudiants</div>
+          </div>
+        </div>
       </div>
 
-      <div class="chart-box">
-        <h4>📊 Répartition des alertes par motif</h4>
-        <canvas id="chartAlerts"></canvas>
-      </div>
-    </div>
+    </section>
 
-    <!-- Alertes Étudiantes -->
-    <div class="alertes-etudiantes">
-      <h3><i class="fas fa-exclamation-circle"></i> Alertes Étudiantes</h3>
-
-      <div class="alerte-card critique">
-        <strong>Marie Dupont — MIASHS</strong><br>
-        Moyenne : 8.5 / 20 — 6 absences non justifiées
-        <span class="badge danger">Critique</span>
+    <!-- ================= ETUDIANT ================= -->
+    <section class="role-section" data-role="etudiant" style="display:none;">
+      
+      <div class="dashboard-header">
+        <h2> Mon Espace Personnel</h2>
+        <p class="dashboard-subtitle" id="etudiantBienvenue">
+          <!-- Ceci sera rempli dynamiquement par JavaScript -->
+        </p>
       </div>
 
-      <div class="alerte-card surveiller">
-        <strong>Pierre Leroy — Géographie</strong><br>
-        Moyenne : 10.2 / 20 — Absence répétée depuis 3 semaines
-        <span class="badge warning">À surveiller</span>
+      <div class="stats-grid">
+        <div class="stat-card clickable" data-target="detail-moyenne">
+          <div class="stat-icon"></div>
+          <div class="stat-value">13.8</div>
+          <div class="stat-label">Moyenne générale</div>
+          <div class="stat-change positive">+0.5 vs dernier semestre</div>
+        </div>
+
+        <div class="stat-card clickable" data-target="detail-absences">
+          <div class="stat-icon"></div>
+          <div class="stat-value">2</div>
+          <div class="stat-label">Absences</div>
+          <div class="stat-change">Toutes justifiées</div>
+        </div>
+
+        <div class="stat-card clickable" data-target="detail-modules">
+          <div class="stat-icon"></div>
+          <div class="stat-value">5</div>
+          <div class="stat-label">Modules suivis</div>
+          <div class="stat-change">3 validés, 2 en cours</div>
+        </div>
+
+        <div class="stat-card clickable" data-target="detail-alertes">
+          <div class="stat-icon"></div>
+          <div class="stat-value">1</div>
+          <div class="stat-label">Alerte active</div>
+          <div class="stat-change warning">Attention requise</div>
+        </div>
       </div>
 
-      <div class="alerte-card progression">
-        <strong>Lucie Martin — Économie</strong><br>
-        Moyenne stable : 12.1 / 20 — Progression constante
-        <span class="badge info">En progression</span>
+      <div class="details-container">
+        <div class="detail-box" id="detail-moyenne">
+          <h3> Détail de mes Résultats</h3>
+          <p><strong>Moyenne générale :</strong> 13.8/20 (Rang : 15ème/35 dans mon groupe)</p>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Code</th>
+                <th>Module</th>
+                <th>Coef.</th>
+                <th>Ma note</th>
+                <th>Moyenne groupe</th>
+                <th>Rang</th>
+                <th>Statut</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>INF101</td><td>Programmation Python</td><td>3</td><td>14/20</td><td>13.2</td><td>12ème/35</td><td><span class="info-badge">Validé</span></td></tr>
+              <tr><td>MAT201</td><td>Mathématiques</td><td>4</td><td>12/20</td><td>11.8</td><td>18ème/35</td><td><span class="alert-badge">En alerte</span></td></tr>
+              <tr><td>STAT301</td><td>Statistiques</td><td>3</td><td>15/20</td><td>14.2</td><td>10ème/35</td><td><span class="info-badge">Validé</span></td></tr>
+              <tr><td>INF202</td><td>Base de données</td><td>3</td><td>13/20</td><td>12.5</td><td>14ème/35</td><td><span class="info-badge">En cours</span></td></tr>
+              <tr><td>WEB301</td><td>Web développement</td><td>3</td><td>15.5/20</td><td>14.8</td><td>8ème/35</td><td><span class="info-badge">Validé</span></td></tr>
+            </tbody>
+          </table>
+          <div class="metric-label" style="margin-top: 15px;">
+            <span>Progression nécessaire pour mention : +1.2 points</span>
+          </div>
+          <div class="progress-container">
+            <div class="progress-bar" style="width: 69%"></div>
+          </div>
+        </div>
+
+        <div class="detail-box" id="detail-absences">
+          <h3> Historique de mes Absences</h3>
+          <p><strong>Total :</strong> 2 absences enregistrées (toutes justifiées) - 6 heures au total</p>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Module</th>
+                <th>Durée</th>
+                <th>Type</th>
+                <th>Justification</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>03/10/2024</td><td>INF101 - Programmation</td><td>3h</td><td>Maladie</td><td><span class="info-badge">Validée</span></td></tr>
+              <tr><td>12/10/2024</td><td>MAT201 - Mathématiques</td><td>3h</td><td>Rendez-vous médical</td><td><span class="info-badge">Validée</span></td></tr>
+            </tbody>
+          </table>
+          <div class="alert-item info" style="margin-top: 15px;">
+            <strong>ℹ Information :</strong>
+            <p>Votre taux de présence est de 96% (au-dessus de la moyenne du groupe qui est de 94%)</p>
+          </div>
+        </div>
+
+        <div class="detail-box" id="detail-modules">
+          <h3> Mes Modules - Semestre en cours</h3>
+          <p><strong>Total :</strong> 5 modules (16 coefficients au total)</p>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Code</th>
+                <th>Libellé</th>
+                <th>Coefficient</th>
+                <th>Semestre</th>
+                <th>Responsable</th>
+                <th>Statut</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>INF101</td><td>Programmation Python</td><td>3</td><td>S1</td><td>M. Durand</td><td><span class="info-badge">Validé</span></td></tr>
+              <tr><td>MAT201</td><td>Mathématiques</td><td>4</td><td>S2</td><td>Mme. Martin</td><td><span class="alert-badge">En alerte</span></td></tr>
+              <tr><td>STAT301</td><td>Statistiques</td><td>3</td><td>S3</td><td>M. Bernard</td><td><span class="info-badge">Validé</span></td></tr>
+              <tr><td>INF202</td><td>Base de données</td><td>3</td><td>S2</td><td>Mme. Dubois</td><td><span class="info-badge">En cours</span></td></tr>
+              <tr><td>WEB301</td><td>Développement Web</td><td>3</td><td>S3</td><td>M. Laurent</td><td><span class="info-badge">Validé</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="detail-box" id="detail-alertes">
+          <h3> Mes Alertes et Notifications</h3>
+          <div class="alert-list">
+            <div class="alert-item critical">
+              <strong> Attention : MAT201 - Mathématiques</strong>
+              <p>Votre moyenne actuelle est de 12/20 (minimum requis : 12)</p>
+              <p><strong>Dernière note :</strong> Contrôle du 01/12/2024 : 11/20</p>
+              <p><strong>Recommandation :</strong> Rendez-vous avec le tuteur disponible</p>
+              <button class="btn-action" style="margin-top: 10px;">Prendre rendez-vous</button>
+            </div>
+            <div class="alert-item info">
+              <strong> Prochain examen : INF202 - Base de données</strong>
+              <p>Type : Examen - Date : 20 décembre 2024</p>
+              <p><strong>Préparation :</strong> Révisions planifiées sur 2 semaines</p>
+            </div>
+            <div class="alert-item success">
+              <strong> Félicitations : WEB301 - Web développement</strong>
+              <p>Vous êtes dans le top 10 du groupe (15.5/20)</p>
+              <p>Dernière note : Projet - 18/20</p>
+            </div>
+          </div>
+          <div class="metric-label" style="margin-top: 15px;">
+            <span>Prochain rendez-vous tuteur : 15/12/2024 à 14h</span>
+          </div>
+        </div>
       </div>
 
-      <div class="alerte-card bonne">
-        <strong>Julie Rousseau — Psychologie</strong><br>
-        Moyenne : 15.8 / 20 — Aucune absence signalée
-        <span class="badge success">Positive</span>
+      <div class="charts-grid">
+        <div class="chart-box">
+          <div class="chart-header">
+            <h3 class="chart-title"> Évolution de ma moyenne</h3>
+            <select class="period-select">
+              <option>Ce semestre</option>
+              <option>Année complète</option>
+            </select>
+          </div>
+          <div class="chart-container">
+            <canvas id="chartEtuEvolution"></canvas>
+          </div>
+          <div class="legend">
+            <div class="legend-item"><span class="legend-color" style="background:#3498db"></span>Ma moyenne</div>
+            <div class="legend-item"><span class="legend-color" style="background:#e74c3c"></span>Moyenne classe</div>
+            <div class="legend-item"><span class="legend-color" style="background:#2ecc71"></span>Objectif</div>
+          </div>
+        </div>
+
+        <div class="chart-box">
+          <div class="chart-header">
+            <h3 class="chart-title"> Répartition de mes notes</h3>
+          </div>
+          <div class="chart-container">
+            <canvas id="chartEtuNotes"></canvas>
+          </div>
+          <div class="legend">
+            <div class="legend-item"><span class="legend-color" style="background:#3498db"></span>Maths</div>
+            <div class="legend-item"><span class="legend-color" style="background:#2ecc71"></span>Physique</div>
+            <div class="legend-item"><span class="legend-color" style="background:#9b59b6"></span>Chimie</div>
+            <div class="legend-item"><span class="legend-color" style="background:#e74c3c"></span>Info</div>
+            <div class="legend-item"><span class="legend-color" style="background:#f39c12"></span>Anglais</div>
+          </div>
+        </div>
+
+        <div class="chart-box">
+          <div class="chart-header">
+            <h3 class="chart-title"> Positionnement dans la classe</h3>
+          </div>
+          <div class="chart-container">
+            <canvas id="chartEtuComparaison"></canvas>
+          </div>
+          <div class="legend">
+            <div class="legend-item"><span class="legend-color" style="background:#3498db"></span>Ma note</div>
+            <div class="legend-item"><span class="legend-color" style="background:#95a5a6"></span>Moyenne classe</div>
+            <div class="legend-item"><span class="legend-color" style="background:#2ecc71"></span>Meilleure note</div>
+          </div>
+        </div>
       </div>
-    </div>
+
+    </section>
+
   </div>
 </main>
-{% endblock %}
 
-{% block scripts %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <script>
-new Chart(document.getElementById("chartGlobalActivity"), {
-  type: "line",
-  data: {
-    labels: ["Sept", "Oct", "Nov", "Déc", "Janv", "Fév"],
-    datasets: [
-      { label: "Notes moyennes", data: [13.2, 13.7, 14.1, 13.9, 14.4, 14.7],
-        borderColor: "#667eea", backgroundColor: "rgba(102,126,234,0.2)", fill: true, tension: 0.3 },
-      { label: "Absences", data: [20, 25, 18, 22, 15, 17],
-        borderColor: "#f44336", backgroundColor: "rgba(244,67,54,0.2)", fill: true, tension: 0.3 }
-    ]
-  },
-  options: { plugins: { legend: { position: "bottom" } }, scales: { y: { beginAtZero: true } } }
+document.addEventListener("DOMContentLoaded", () => {
+
+  // Récupérer les données de session
+  const role = localStorage.getItem("userRole");
+  const username = localStorage.getItem("username") || "Utilisateur";
+
+  // Vérifier si l'utilisateur est connecté
+  if (!role || !localStorage.getItem("isLoggedIn")) {
+    window.location.href = "{% url 'login' %}";
+    return;
+  }
+
+  // Formater le username (première lettre en majuscule)
+  const formattedUsername = formatUsername(username);
+
+  // Cacher toutes les sections de rôle
+  document.querySelectorAll(".role-section").forEach(s => s.style.display = "none");
+  
+  // Afficher la section correspondante
+  const section = document.querySelector(`.role-section[data-role="${role}"]`);
+  if (!section) {
+    window.location.href = "{% url 'login' %}";
+    return;
+  }
+  section.style.display = "block";
+
+  // Mettre à jour le titre et les informations utilisateur
+  const title = document.getElementById("dashboardTitle");
+  const roleBreadcrumb = document.getElementById("roleBreadcrumb");
+  const userRoleDisplay = document.getElementById("userRoleDisplay");
+  const userNameDisplay = document.getElementById("userName");
+
+  // Mettre à jour selon le rôle
+  if (role === "admin") {
+    title.innerText = "Tableau de Bord Administratif";
+    roleBreadcrumb.innerText = "Administration";
+    userRoleDisplay.innerText = " Administrateur";
+  } else if (role === "professeur") {
+    title.innerText = "Espace Enseignant";
+    roleBreadcrumb.innerText = "Enseignant";
+    userRoleDisplay.innerText = " Professeur";
+  } else if (role === "etudiant") {
+    title.innerText = "Mon Tableau de Bord";
+    roleBreadcrumb.innerText = "Étudiant";
+    userRoleDisplay.innerText = " Étudiant";
+    
+    // Pour les étudiants, mettre à jour le message de bienvenue avec le username exact
+    const etudiantBienvenue = document.getElementById("etudiantBienvenue");
+    if (etudiantBienvenue) {
+      // Utiliser le username exact (capitalisé)
+      const matricule = `ETU2022${Math.floor(1000 + Math.random() * 9000)}`;
+      const promotion = 2022;
+      const groupe = 'A';
+      
+      etudiantBienvenue.innerHTML = `Bienvenue <strong>${formattedUsername}</strong> - Matricule : <strong>${matricule}</strong> - Promotion ${promotion} - Groupe ${groupe}`;
+    }
+  }
+
+  // Afficher le nom de l'utilisateur dans la topbar (username exact, capitalisé)
+  userNameDisplay.innerText = formattedUsername;
+
+  // Interaction pour les cartes cliquables
+  document.querySelectorAll(".clickable").forEach(card => {
+    card.addEventListener("click", function(){
+      const targetId = this.dataset.target;
+
+      // Cacher toutes les boîtes de détail
+      document.querySelectorAll(".detail-box").forEach(box => {
+        box.style.display = "none";
+      });
+
+      // Afficher la boîte cible
+      const target = document.getElementById(targetId);
+      if(target){
+        target.style.display = "block";
+        // Scroll doucement vers la boîte
+        target.scrollIntoView({ 
+          behavior: "smooth",
+          block: "start"
+        });
+      }
+    });
+  });
+
+  // Initialiser les graphiques selon le rôle
+  if (role === "admin") {
+    initAdminCharts();
+  } else if (role === "professeur") {
+    initProfCharts();
+  } else if (role === "etudiant") {
+    initEtudiantCharts();
+  }
+
+  // Animation des barres de progression
+  document.querySelectorAll('.progress-bar').forEach(bar => {
+    const width = bar.style.width;
+    bar.style.width = '0%';
+    setTimeout(() => {
+      bar.style.width = width;
+    }, 300);
+  });
+
 });
 
-new Chart(document.getElementById("chartAlerts"), {
-  type: "doughnut",
-  data: {
-    labels: ["Absences répétées", "Moyenne < 10", "Non-participation", "Retards fréquents"],
-    datasets: [{ data: [40, 25, 20, 15], backgroundColor: ["#f44336", "#ff9800", "#4caf50", "#2196f3"] }]
-  },
-  options: { plugins: { legend: { position: "bottom" } } }
-});
+// Fonction pour formater le username (première lettre en majuscule)
+function formatUsername(username) {
+  if (!username) return "Utilisateur";
+  return username.charAt(0).toUpperCase() + username.slice(1).toLowerCase();
+}
+
+// Configuration globale des graphiques
+Chart.defaults.font.family = "'Inter', 'Segoe UI', sans-serif";
+Chart.defaults.color = '#757575';
+Chart.defaults.plugins.legend.display = false;
+
+// ================= FONCTIONS DES GRAPHIQUES (inchangées) =================
+function initAdminCharts() {
+  // Graphique 1: Répartition par promotion (Doughnut)
+  const ctx1 = document.getElementById('chartAdminFiliere');
+  if (ctx1) {
+    new Chart(ctx1, {
+      type: 'doughnut',
+      data: {
+        labels: ['L1 - Promo 2024', 'L2 - Promo 2023', 'L3 - Promo 2022', 'M1 - Promo 2021'],
+        datasets: [{
+          data: [180, 165, 142, 37],
+          backgroundColor: ['#3498db', '#2ecc71', '#9b59b6', '#e74c3c'],
+          borderWidth: 3,
+          borderColor: '#fff',
+          hoverBorderWidth: 4,
+          hoverOffset: 10
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        aspectRatio: 1.4,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: 'rgba(0,0,0,0.8)',
+            padding: 12,
+            titleFont: { size: 14, weight: 'bold' },
+            bodyFont: { size: 13 },
+            callbacks: {
+              label: function(context) {
+                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                const percentage = Math.round((context.raw / total) * 100);
+                return `${context.label}: ${context.raw} étudiants (${percentage}%)`;
+              }
+            }
+          }
+        },
+        cutout: '62%'
+      }
+    });
+  }
+
+  // Graphique 2: Absences par mois (Line)
+  const ctx2 = document.getElementById('chartAdminAbsences');
+  if (ctx2) {
+    new Chart(ctx2, {
+      type: 'line',
+      data: {
+        labels: ['Sept', 'Oct', 'Nov', 'Déc', 'Jan', 'Fév'],
+        datasets: [
+          {
+            label: '2024',
+            data: [45, 38, 55, 47, 40, 35],
+            borderColor: '#e74c3c',
+            backgroundColor: 'rgba(231, 76, 60, 0.08)',
+            tension: 0.4,
+            fill: true,
+            borderWidth: 3,
+            pointRadius: 5,
+            pointHoverRadius: 8,
+            pointBackgroundColor: '#fff',
+            pointBorderColor: '#e74c3c',
+            pointBorderWidth: 2
+          },
+          {
+            label: '2023',
+            data: [38, 42, 48, 40, 38, 32],
+            borderColor: '#3498db',
+            backgroundColor: 'rgba(52, 152, 219, 0.05)',
+            tension: 0.4,
+            borderWidth: 2,
+            borderDash: [5, 5],
+            pointRadius: 4,
+            pointBackgroundColor: '#fff',
+            pointBorderColor: '#3498db',
+            pointBorderWidth: 1
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        aspectRatio: 1.8,
+        scales: {
+          y: {
+            beginAtZero: true,
+            grid: { color: 'rgba(0,0,0,0.05)' },
+            ticks: { padding: 8, font: { size: 11 } }
+          },
+          x: {
+            grid: { display: false },
+            ticks: { padding: 8, font: { size: 11 } }
+          }
+        },
+        plugins: {
+          tooltip: {
+            backgroundColor: 'rgba(0,0,0,0.8)',
+            padding: 10,
+            titleFont: { size: 13 },
+            bodyFont: { size: 12 }
+          }
+        }
+      }
+    });
+  }
+
+  // Graphique 3: Statut des étudiants (Bar)
+  const ctx3 = document.getElementById('chartAdminStatut');
+  if (ctx3) {
+    new Chart(ctx3, {
+      type: 'bar',
+      data: {
+        labels: ['En règle', 'En alerte', 'En difficulté', 'Décrocheurs'],
+        datasets: [{
+          data: [420, 65, 25, 14],
+          backgroundColor: ['#2ecc71', '#f39c12', '#e74c3c', '#95a5a6'],
+          borderWidth: 0,
+          borderRadius: 8,
+          borderSkipped: false
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        aspectRatio: 1.8,
+        scales: {
+          y: {
+            beginAtZero: true,
+            grid: { color: 'rgba(0,0,0,0.05)' },
+            ticks: { padding: 8, font: { size: 11 } }
+          },
+          x: {
+            grid: { display: false },
+            ticks: { padding: 8, font: { size: 11 } }
+          }
+        },
+        plugins: {
+          tooltip: {
+            backgroundColor: 'rgba(0,0,0,0.8)',
+            padding: 10,
+            callbacks: {
+              label: function(context) {
+                const total = 524;
+                const percentage = Math.round((context.raw / total) * 100);
+                return `${context.raw} étudiants (${percentage}%)`;
+              }
+            }
+          }
+        }
+      }
+    });
+  }
+}
+
+function initProfCharts() {
+  // Graphique 1: Moyennes par module (Radar)
+  const ctx1 = document.getElementById('chartProfMoyennes');
+  if (ctx1) {
+    new Chart(ctx1, {
+      type: 'radar',
+      data: {
+        labels: ['Python', 'Algèbre', 'Stats', 'BDD', 'Web', 'Projet'],
+        datasets: [
+          {
+            label: 'Votre classe',
+            data: [14.2, 12.8, 13.5, 12.5, 14.8, 13.0],
+            backgroundColor: 'rgba(52, 152, 219, 0.15)',
+            borderColor: '#3498db',
+            pointBackgroundColor: '#3498db',
+            pointBorderColor: '#fff',
+            pointBorderWidth: 2,
+            pointRadius: 5,
+            pointHoverRadius: 7,
+            borderWidth: 2
+          },
+          {
+            label: 'Moyenne département',
+            data: [13.2, 12.5, 12.8, 12.0, 13.5, 12.2],
+            backgroundColor: 'rgba(149, 165, 166, 0.08)',
+            borderColor: '#95a5a6',
+            pointBackgroundColor: '#95a5a6',
+            pointBorderColor: '#fff',
+            pointBorderWidth: 1,
+            pointRadius: 4,
+            borderDash: [5, 5],
+            borderWidth: 2
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        aspectRatio: 1.4,
+        scales: {
+          r: {
+            beginAtZero: true,
+            max: 20,
+            ticks: {
+              stepSize: 5,
+              backdropColor: 'transparent',
+              font: { size: 11 }
+            },
+            grid: { color: 'rgba(0,0,0,0.08)' },
+            angleLines: { color: 'rgba(0,0,0,0.08)' },
+            pointLabels: { font: { size: 11, weight: '500' } }
+          }
+        },
+        plugins: {
+          tooltip: {
+            backgroundColor: 'rgba(0,0,0,0.8)',
+            padding: 10
+          }
+        }
+      }
+    });
+  }
+
+  // Graphique 2: Taux de réussite (Pie)
+  const ctx2 = document.getElementById('chartProfReussite');
+  if (ctx2) {
+    new Chart(ctx2, {
+      type: 'pie',
+      data: {
+        labels: ['Admis', 'Rattrapage', 'Échec'],
+        datasets: [{
+          data: [75, 18, 7],
+          backgroundColor: ['#2ecc71', '#f39c12', '#e74c3c'],
+          borderWidth: 3,
+          borderColor: '#fff',
+          hoverBorderWidth: 4,
+          hoverOffset: 10
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        aspectRatio: 1.4,
+        plugins: {
+          tooltip: {
+            backgroundColor: 'rgba(0,0,0,0.8)',
+            padding: 12,
+            callbacks: {
+              label: function(context) {
+                return `${context.label}: ${context.raw}%`;
+              }
+            }
+          }
+        }
+      }
+    });
+  }
+
+  // Graphique 3: Distribution des notes (Bar)
+  const ctx3 = document.getElementById('chartProfDistribution');
+  if (ctx3) {
+    new Chart(ctx3, {
+      type: 'bar',
+      data: {
+        labels: ['0-5', '6-10', '11-15', '16-20'],
+        datasets: [{
+          data: [2, 8, 25, 5],
+          backgroundColor: '#9b59b6',
+          borderWidth: 0,
+          borderRadius: 8,
+          borderSkipped: false
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        aspectRatio: 1.8,
+        scales: {
+          y: {
+            beginAtZero: true,
+            grid: { color: 'rgba(0,0,0,0.05)' },
+            ticks: { padding: 8, font: { size: 11 } }
+          },
+          x: {
+            grid: { display: false },
+            ticks: { padding: 8, font: { size: 11 } }
+          }
+        },
+        plugins: {
+          tooltip: {
+            backgroundColor: 'rgba(0,0,0,0.8)',
+            padding: 10
+          }
+        }
+      }
+    });
+  }
+}
+
+function initEtudiantCharts() {
+  // Graphique 1: Évolution des notes (Line)
+  const ctx1 = document.getElementById('chartEtuEvolution');
+  if (ctx1) {
+    new Chart(ctx1, {
+      type: 'line',
+      data: {
+        labels: ['Sem 1', 'Sem 2', 'Sem 3', 'Sem 4', 'Sem 5', 'Sem 6'],
+        datasets: [
+          {
+            label: 'Ma moyenne',
+            data: [12.5, 13.0, 12.8, 13.5, 13.8, 14.0],
+            borderColor: '#3498db',
+            backgroundColor: 'rgba(52, 152, 219, 0.08)',
+            tension: 0.4,
+            fill: true,
+            borderWidth: 3,
+            pointRadius: 5,
+            pointHoverRadius: 8,
+            pointBackgroundColor: '#fff',
+            pointBorderColor: '#3498db',
+            pointBorderWidth: 2
+          },
+          {
+            label: 'Moyenne classe',
+            data: [11.8, 12.2, 12.5, 12.8, 13.0, 13.2],
+            borderColor: '#e74c3c',
+            backgroundColor: 'rgba(231, 76, 60, 0.05)',
+            tension: 0.4,
+            borderWidth: 2,
+            borderDash: [5, 5],
+            pointRadius: 4,
+            pointBackgroundColor: '#fff',
+            pointBorderColor: '#e74c3c',
+            pointBorderWidth: 1
+          },
+          {
+            label: 'Objectif',
+            data: [13, 13.5, 14, 14, 14, 14],
+            borderColor: '#2ecc71',
+            backgroundColor: 'transparent',
+            tension: 0.4,
+            borderWidth: 2,
+            borderDash: [2, 2],
+            pointRadius: 0
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        aspectRatio: 1.8,
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: 20,
+            grid: { color: 'rgba(0,0,0,0.05)' },
+            ticks: { padding: 8, font: { size: 11 } }
+          },
+          x: {
+            grid: { display: false },
+            ticks: { padding: 8, font: { size: 11 } }
+          }
+        },
+        plugins: {
+          tooltip: {
+            backgroundColor: 'rgba(0,0,0,0.8)',
+            padding: 10
+          }
+        }
+      }
+    });
+  }
+
+  // Graphique 2: Répartition des notes (Polar Area)
+  const ctx2 = document.getElementById('chartEtuNotes');
+  if (ctx2) {
+    new Chart(ctx2, {
+      type: 'polarArea',
+      data: {
+        labels: ['Maths', 'Physique', 'Chimie', 'Info', 'Anglais'],
+        datasets: [{
+          data: [12, 14, 11, 16, 15],
+          backgroundColor: ['#3498db', '#2ecc71', '#9b59b6', '#e74c3c', '#f39c12'],
+          borderWidth: 3,
+          borderColor: '#fff',
+          hoverBorderWidth: 4
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        aspectRatio: 1.4,
+        scales: {
+          r: {
+            ticks: { display: false, max: 20 },
+            grid: { color: 'rgba(0,0,0,0.08)' }
+          }
+        },
+        plugins: {
+          tooltip: {
+            backgroundColor: 'rgba(0,0,0,0.8)',
+            padding: 10
+          }
+        }
+      }
+    });
+  }
+
+  // Graphique 3: Comparaison avec la classe (Bar)
+  const ctx3 = document.getElementById('chartEtuComparaison');
+  if (ctx3) {
+    new Chart(ctx3, {
+      type: 'bar',
+      data: {
+        labels: ['Maths', 'Physique', 'Chimie', 'Info', 'Anglais'],
+        datasets: [
+          {
+            label: 'Ma note',
+            data: [12, 14, 11, 16, 15],
+            backgroundColor: '#3498db',
+            borderWidth: 0,
+            borderRadius: 6,
+            borderSkipped: false
+          },
+          {
+            label: 'Moyenne classe',
+            data: [11.5, 12.8, 10.5, 14.2, 13.5],
+            backgroundColor: '#95a5a6',
+            borderWidth: 0,
+            borderRadius: 6,
+            borderSkipped: false
+          },
+          {
+            label: 'Meilleure note',
+            data: [18, 17, 16, 19, 18],
+            backgroundColor: '#2ecc71',
+            borderWidth: 0,
+            borderRadius: 6,
+            borderSkipped: false
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        aspectRatio: 1.8,
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: 20,
+            grid: { color: 'rgba(0,0,0,0.05)' },
+            ticks: { padding: 8, font: { size: 11 } }
+          },
+          x: {
+            grid: { display: false },
+            ticks: { padding: 8, font: { size: 11 } }
+          }
+        },
+        plugins: {
+          tooltip: {
+            backgroundColor: 'rgba(0,0,0,0.8)',
+            padding: 10
+          }
+        }
+      }
+    });
+  }
+}
 </script>
+
 {% endblock %}
