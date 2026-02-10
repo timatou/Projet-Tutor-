@@ -7,7 +7,7 @@ class Promotion(models.Model):
     annee = models.CharField(max_length=9)  
 
     def __str__(self):
-        return f"{self.nom} {self.annee}"
+        return f"{self.nom} "
 
 
 # ----- Classe Groupe -----
@@ -20,11 +20,12 @@ class Groupe(models.Model):
     )
 
     def __str__(self):
-        return f"{self.nom} - {self.promotion}"
+        return f"{self.nom}"
 
 
 # ----- Classe Étudiant -----
 class Etudiant(models.Model):
+    matricule = models.CharField(max_length=13, unique=True, primary_key=True)
     nom = models.CharField(max_length=100)
     prenom = models.CharField(max_length=100)
     email = models.EmailField(unique=True)
@@ -42,7 +43,7 @@ class Etudiant(models.Model):
     )
 
     def __str__(self):
-        return f"{self.prenom} {self.nom}"
+        return f" {self.matricule}"
 
     def moyenne_generale(self):
         notes = self.notes.all()

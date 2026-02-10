@@ -10,7 +10,7 @@ class Note(models.Model):
     ]
 
     etudiant = models.ForeignKey(
-        'etudiants.Etudiant',   # ✅ correction ici
+        'etudiants.Etudiant',   
         on_delete=models.CASCADE,
         related_name='notes'
     )

@@ -13,7 +13,7 @@ class PromotionAdmin(admin.ModelAdmin):
 
 @admin.register(Groupe)
 class GroupeAdmin(admin.ModelAdmin):
-    list_display = ('nom', 'promotion')
+    list_display = ('nom', )
     list_filter = ('promotion',)
     # Permet de chercher un groupe par son nom ou le nom de sa promotion
     search_fields = ('nom', 'promotion__nom') 
@@ -24,12 +24,15 @@ class EtudiantAdmin(admin.ModelAdmin):
     list_select_related = ('promotion', 'groupe')
 
     # 2. Affichage de la liste
-    list_display = ('nom', 'prenom', 'promotion', 'groupe', 'get_moyenne', 'status_performance_display')
+    list_display = ('matricule', 'nom', 'prenom', 'promotion', 'email', 'groupe')
     list_filter = ('promotion', 'groupe')
-    search_fields = ('nom', 'prenom', 'email')
+    search_fields = ('matricule', 'nom', 'prenom', 'email')
     
     # 3. Organisation du formulaire de modification (Fiche Étudiant)
     fieldsets = (
+        ('Identifiant Unique', {
+            'fields': ('matricule',)
+        }),
         ('Informations Personnelles', {
             'fields': (('nom', 'prenom'), 'email') # Met nom et prénom sur la même ligne
         }),
