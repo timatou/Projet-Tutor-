@@ -1,6 +1,18 @@
-db.sqlite3
+# Environnement virtuel (À ignorer absolument)
 venv/
-*.pyc
+.venv/
+env/
+
+# Python (Fichiers de compilation inutiles)
 __pycache__/
+*.pyc
+
+# Base de données (On ne partage pas la base locale en général)
 db.sqlite3
+
+# Fichiers système Mac
 .DS_Store
+
+# Fichiers de configuration sensibles
+.env
+

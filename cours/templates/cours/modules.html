@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Gestion des Modules - Suivi Étudiants{% endblock %}
+
+{% block content %}
+<div class="topbar">
+    <h1>Gestion des Modules</h1>
+    <button id="btnAddModule" class="btn-action">
+      <i class="fas fa-plus"></i> Nouveau Module
+    </button>
+</div>
+
+<div class="content-area">
+    <div class="table-container">
+
+      <div class="table-header">
+        <h2><i class="fas fa-layer-group"></i> Liste des Unités d'Enseignement</h2>
+      </div>
+
+      <div class="filters-bar">
+        <div class="search-box">
+          <i class="fas fa-search"></i>
+          <input id="searchModule" class="input-filter" type="text" placeholder="Chercher un code ou un nom...">
+        </div>
+
+        <select id="filterSemestre" class="input-filter">
+          <option value="">Tous les semestres</option>
+          <option value="1">Semestre 1</option>
+          <option value="2">Semestre 2</option>
+          <option value="3">Semestre 3</option>
+          <option value="4">Semestre 4</option>
+          <option value="5">Semestre 5</option>
+          <option value="6">Semestre 6</option>
+        </select>
+      </div>
+
+      <table id="tableModules">
+        <thead>
+          <tr>
+            <th>Code</th>
+            <th>Libellé</th>
+            <th>Coeff.</th>
+            <th>Semestre</th>
+            <th>Responsables</th>
+            <th>Moyenne</th>
+            <th>Réussite</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="tbodyModules">
+          <tr>
+            <td colspan="8" style="text-align:center;padding:40px;">
+              <i class="fas fa-spinner fa-spin"></i> Chargement...
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+    </div>
+</div>
+
+<div id="modalModule" class="modal">
+  <div class="modal-content">
+    <span class="close-modal">&times;</span>
+    <h2><i class="fas fa-edit"></i> Créer un nouveau module</h2>
+    <form id="formModule">
+      {% csrf_token %}
+      <div class="form-group">
+        <label>Code</label>
+        <input id="m_code" type="text" required>
+      </div>
+      <div class="form-group">
+        <label>Libellé</label>
+        <input id="m_libelle" type="text" required>
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Coefficient</label>
+          <input id="m_coef" type="number" required>
+        </div>
+        <div class="form-group">
+          <label>Semestre</label>
+          <input id="m_semestre" type="number" required>
+        </div>
+      </div>
+      <button type="submit" class="btn-action full-width">Enregistrer</button>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'etudiants/css/etudiants.css' %}">
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'cours/js/modules.js' %}"></script>
+{% endblock %}

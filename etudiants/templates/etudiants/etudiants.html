@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Gestion des Étudiants - Suivi Étudiants{% endblock %}
+
+{% block content %}
+<div class="topbar">
+  <h1>Gestion des Étudiants</h1>
+  <a href="#" class="btn-action"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
+</div>
+
+<div class="content-area">
+  <div class="table-container">
+    <div class="table-header">
+      <h2><i class="fas fa-users"></i> Liste des Étudiants</h2>
+    </div>
+
+    <div class="filters-bar">
+      <input id="searchInput" class="input-filter" type="text" placeholder="Rechercher un étudiant...">
+
+      <select id="filterPromo" class="input-filter">
+        <option value="">Toutes les promotions</option>
+        </select>
+
+      <button id="btnAddEtudiant" class="btn-action">
+        <i class="fas fa-plus"></i> Ajouter un étudiant
+      </button>
+    </div>
+
+    <table id="tableEtudiants">
+      <thead>
+        <tr>
+          <th>Matricule</th>
+          <th>Nom</th>
+          <th>Prénom</th>
+          <th>Promotion</th>
+          <th>Groupe</th>
+          <th>Email</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td colspan="7" style="text-align:center;padding:40px;">
+            <i class="fas fa-spinner fa-spin"></i> Chargement des étudiants...
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div id="modalAddEtudiant" class="modal">
+  <div class="modal-content">
+    <span class="close-modal">&times;</span>
+    <h2><i class="fas fa-user-plus"></i> Ajouter un étudiant</h2>
+
+    <form id="formEtudiant">
+      {% csrf_token %} 
+      
+      <div class="form-group">
+        <label for="matricule">Matricule</label>
+        <input id="matricule" type="text" required placeholder="Ex: ET123">
+      </div>
+      
+      <div class="form-group">
+        <label for="nom">Nom</label>
+        <input id="nom" type="text" required>
+      </div>
+      
+      <div class="form-group">
+        <label for="prenom">Prénom</label>
+        <input id="prenom" type="text" required>
+      </div>
+      
+      <div class="form-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+        <div class="form-group">
+          <label for="promotion">Promotion</label>
+          <select id="promotion" required>
+            <option value="">-- Choisir --</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label for="groupe">Groupe</label>
+          <select id="groupe" required>
+            <option value="">-- Choisir --</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input id="email" type="email" required placeholder="nom@etudiant.univ-tlse2.fr">
+      </div>
+      
+      <button type="submit" class="btn-action full-width" style="margin-top:20px;">
+        <i class="fas fa-save"></i> Enregistrer en base
+      </button>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'etudiants/css/etudiants.css' %}">
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'etudiants/js/etudiants.js' %}"></script>
+{% endblock %}
