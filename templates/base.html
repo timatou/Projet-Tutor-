@@ -1,0 +1,64 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Gestion Scolaire{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --sidebar-width: 260px;
+            --primary-color: #4a90e2;
+            --bg-color: #f4f7f6;
+            --sidebar-bg: #2c3e50;
+        }
+        body { font-family: 'Inter', sans-serif; margin: 0; display: flex; background-color: var(--bg-color); }
+        
+        .sidebar { 
+            width: var(--sidebar-width); height: 100vh; background: var(--sidebar-bg); 
+            color: white; position: fixed; left: 0; top: 0; z-index: 1000; 
+        }
+
+        .sidebar-header { padding: 20px; text-align: center; border-bottom: 1px solid #34495e; }
+        
+        .menu { padding: 10px 0; }
+        .menu-item { 
+            display: flex; align-items: center; padding: 15px 25px; 
+            color: #bdc3c7; text-decoration: none; transition: 0.3s;
+        }
+        .menu-item i { margin-right: 15px; width: 20px; }
+        .menu-item:hover, .menu-item.active { background: #34495e; color: white; border-left: 4px solid var(--primary-color); }
+
+        .main-content { 
+            margin-left: var(--sidebar-width); width: calc(100% - var(--sidebar-width)); 
+            min-height: 100vh; display: flex; flex-direction: column; 
+        }
+        .modal { /* ... ton style modal existant ... */ }
+    </style>
+    {% block styles %}{% endblock %}
+</head>
+<body>
+
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h2>Suivi Étudiants</h2>
+      </div>
+      <nav class="menu">
+        <a href="#" class="menu-item"><i class="fas fa-chart-line"></i> Dashboard</a>
+        <a href="{% url 'liste_etudiants' %}" class="menu-item"><i class="fas fa-users"></i> Étudiants</a>
+        <a href="{% url 'liste_modules' %}" class="menu-item"><i class="fas fa-book"></i> Modules</a>
+        <a href="#" class="menu-item"><i class="fas fa-clipboard-list"></i> Notes</a>
+      </nav>
+    </aside>
+
+    <main class="main-content">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>
