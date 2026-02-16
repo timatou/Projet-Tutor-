@@ -8,6 +8,6 @@ urlpatterns = [
     # Routes pour l'API (utilisées par ton JavaScript)
     path('api/data/', views.api_modules_data, name='api_modules_data'),
     path('api/ajouter/', views.api_ajouter_module, name='api_ajouter_module'),
-
+    path('api/supprimer/<int:module_id>/', views.api_supprimer_module, name='api_supprimer_module'),
     path('liste/', views.liste_modules, name='liste_modules'), # Le 'name' doit correspondre au lien !
 ]

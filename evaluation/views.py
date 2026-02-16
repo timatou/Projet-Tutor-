@@ -1,6 +1,11 @@
 from django.shortcuts import render, redirect
 from .forms import NoteForm, AbsenceForm
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.http import JsonResponse
+from .models import Note
+import json
+from django.views.decorators.csrf import csrf_exempt
+
 
 def est_professeur(user):
     return user.groups.filter(name='Professeurs').exists() or user.is_superuser
@@ -29,3 +34,88 @@ def saisir_absence(request):
         form = AbsenceForm()
     
     return render(request, 'evaluation/saisie_absence.html', {'form': form})
+
+
+@csrf_exempt
+def api_ajouter_note(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        note = Note.objects.create(
+            etudiant_id=data["etudiant"],
+            module_id=data["module"],
+            valeur=data["valeur"],
+            type=data["TYPE_CHOICES"],
+            date=data["date"]
+        )
+        return JsonResponse({"success": True, "id": note.id})
+
+
+@csrf_exempt
+def api_ajouter_absence(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        Absence.objects.create(
+            etudiant_id=data["etudiant"],
+            date=data["date"],
+            motif=data.get("motif", "")
+        )
+        return JsonResponse({"success": True})
+    
+
+def api_notes(request):
+    notes = Note.objects.select_related('etudiant', 'module')
+
+    data = []
+    for n in notes:
+        data.append({
+            "id": n.id,
+            "etudiant": str(n.etudiant),
+            "module": str(n.module),
+            "valeur": n.valeur,
+            "type": n.type,
+            "date": n.date.isoformat()
+        })
+
+    return JsonResponse({"notes": data})
+
+
+@csrf_exempt
+def api_ajouter_note(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            
+            # Vérifie bien que ces noms correspondent à ton models.py
+            note = Note.objects.create(
+                etudiant_id=data.get("etudiant"), # ID ou Matricule ?
+                module_id=data.get("module"),     # ID du module envoyé par le Select
+                valeur=data.get("valeur"),
+                type=data.get("type"),       # C'est 'type' dans le JSON JS
+                date=data.get("date")             # C'est 'date' dans le JSON JS
+            )
+            return JsonResponse({"success": True})
+        except Exception as e:
+            # ICI : On renvoie l'erreur réelle pour t'aider à débugger
+            return JsonResponse({"success": False, "error": str(e)}, status=400)
+
+# evaluation/views.py
+
+def notes_view(request):
+    # Cette vue sert juste à charger la page HTML 
+    # Ton JavaScript fera ensuite le travail de récupérer le JSON
+    return render(request, 'evaluation/notes.html')
+
+
+@csrf_exempt # Pour autoriser la requête DELETE sans formulaire classique
+def api_supprimer_note(request, id):
+    if request.method == "DELETE":
+        try:
+            note = Note.objects.get(id=id)
+            note.delete()
+            return JsonResponse({"success": True, "message": "Note supprimée"})
+        except Note.DoesNotExist:
+            return JsonResponse({"success": False, "error": "Note introuvable"}, status=404)
+        except Exception as e:
+            return JsonResponse({"success": False, "error": str(e)}, status=400)
+    
+    return JsonResponse({"error": "Méthode non autorisée"}, status=405)

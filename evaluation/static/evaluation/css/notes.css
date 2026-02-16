@@ -1,0 +1,207 @@
+/* --- Variables spécifiques aux notes --- */
+:root {
+    --note-high: #28a745;
+    --note-avg: #f39c12;
+    --note-low: #dc3545;
+}
+
+/* --- Layout principal (Hérité de base.html mais renforcé) --- */
+.content-area {
+    padding: 20px;
+    animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Topbar & Titres --- */
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+    padding: 15px 30px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+/* --- Conteneur du tableau --- */
+.table-container {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    margin-top: 10px;
+}
+
+.table-header {
+    padding: 20px;
+    background: #fcfcfc;
+    border-bottom: 1px solid #eee;
+}
+
+.table-header h2 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: #2c3e50;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* --- Barre de filtres --- */
+.filters-bar {
+    display: flex;
+    gap: 15px;
+    padding: 15px 20px;
+    background: #f9f9f9;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.input-filter {
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    min-width: 200px;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+.input-filter:focus {
+    border-color: var(--primary-color);
+}
+
+/* --- Style du Tableau --- */
+#tableNotes {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#tableNotes th {
+    text-align: left;
+    background: #f4f7f6;
+    color: #7f8c8d;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+    padding: 15px 20px;
+}
+
+#tableNotes td {
+    padding: 15px 20px;
+    border-bottom: 1px solid #f1f1f1;
+    color: #333;
+    font-size: 0.9rem;
+}
+
+#tableNotes tbody tr:hover {
+    background-color: #fcfdff;
+}
+
+/* --- Mise en forme des valeurs (Notes) --- */
+.note-value {
+    font-weight: 700;
+    font-size: 1rem;
+    padding: 4px 8px;
+    border-radius: 6px;
+    background: #f8f9fa;
+}
+
+/* --- Badges pour le Type (Examen, Projet, TP) --- */
+.badge-type {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.type-examen { background: #e8f4fd; color: #2980b9; }
+.type-projet { background: #fef5e7; color: #d35400; }
+.type-tp { background: #eafaf1; color: #27ae60; }
+
+/* --- Icônes d'actions --- */
+.edit-icon { color: #3498db; cursor: pointer; margin-right: 12px; transition: 0.2s; }
+.delete-icon { color: #e74c3c; cursor: pointer; transition: 0.2s; }
+.edit-icon:hover, .delete-icon:hover { transform: scale(1.2); }
+
+/* --- Bouton Action --- */
+.btn-action {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: background 0.3s, transform 0.2s;
+    text-decoration: none;
+}
+
+.btn-action:hover {
+    filter: brightness(1.1);
+    transform: translateY(-1px);
+}
+
+.full-width { width: 100%; justify-content: center; }
+
+/* --- Modal Design --- */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1001;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(3px);
+}
+
+.modal-content {
+    background: white;
+    margin: 5% auto;
+    padding: 30px;
+    border-radius: 15px;
+    width: 450px;
+    position: relative;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+}
+
+.close-modal {
+    position: absolute;
+    right: 20px;
+    top: 15px;
+    font-size: 24px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #aaa;
+}
+
+/* --- Formulaires dans la Modal --- */
+#formNote label {
+    display: block;
+    margin-top: 15px;
+    margin-bottom: 5px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: #444;
+}
+
+#formNote input, #formNote select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-sizing: border-box; /* Important pour ne pas déborder */
+    outline: none;
+}
+
+#formNote input:focus { border-color: var(--primary-color); }

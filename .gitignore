@@ -15,4 +15,4 @@ db.sqlite3
 
 # Fichiers de configuration sensibles
 .env
-
+README
