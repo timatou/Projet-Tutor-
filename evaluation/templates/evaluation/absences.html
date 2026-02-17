@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Gestion des Absences - Suivi Étudiants{% endblock %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{% static 'evaluation/css/notes.css' %}">
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'evaluation/js/absences.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <h2>Suivi Étudiants</h2>
+    <p>Plateforme de gestion</p>
+  </div>
+  <nav class="menu">
+    <a href="{% url 'liste_etudiants' %}" class="menu-item"><i class="fas fa-users"></i> Étudiants</a>
+    <a href="{% url 'liste_modules' %}" class="menu-item"><i class="fas fa-book"></i> Modules</a>
+    <a href="{% url 'liste_notes' %}" class="menu-item"><i class="fas fa-clipboard-list"></i> Notes</a>
+    <a href="#" class="menu-item active"><i class="fas fa-calendar-times"></i> Absences</a>
+    <a href="#" class="menu-item"><i class="fas fa-chart-pie"></i> Statistiques</a>
+  </nav>
+</aside>
+
+<main class="main-content">
+  <div class="topbar">
+    <h1>Gestion des Absences</h1>
+    <a href="#" class="btn-action"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
+  </div>
+
+  <div class="content-area">
+    <div class="table-container">
+      <div class="table-header">
+        <h2><i class="fas fa-calendar-times"></i> Registre des Absences</h2>
+      </div>
+
+      <div class="filters-bar">
+        <select id="filterEtudiant" class="input-filter">
+          <option value="">Tous les étudiants</option>
+        </select>
+
+        <select id="filterModule" class="input-filter">
+          <option value="">Tous les modules</option>
+        </select>
+
+        <button id="btnAddNote" class="btn-action"><i class="fas fa-plus"></i> Déclarer une absence</button>
+      </div>
+
+      <table id="tableAbsences" class="data-table">
+        <thead>
+          <tr>
+            <th>Étudiant</th>
+            <th>Module</th>
+            <th>Durée</th>
+            <th>Date</th>
+            <th>Statut</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          </tbody>
+      </table>
+    </div>
+  </div>
+</main>
+
+<div id="modalAddNote" class="modal">
+  <div class="modal-content">
+    <button class="close-modal">&times;</button>
+    <h2 id="modalTitle"><i class="fas fa-plus-circle"></i> Ajouter une absence</h2>
+
+    <form id="formAbsence">
+      <label for="etudiantInput">Étudiant (Matricule ou Nom)</label>
+      <input id="etudiantInput" type="text" list="listEtudiants" placeholder="Rechercher un étudiant..." required autocomplete="off">
+      <datalist id="listEtudiants"></datalist>
+
+      <label for="moduleSelect">Module concerné</label>
+      <select id="moduleSelect" required>
+        <option value="">Sélectionnez un module...</option>
+      </select>
+
+      <div style="display: flex; gap: 15px;">
+        <div style="flex: 1;">
+          <label for="date">Date</label>
+          <input id="date" type="date" required>
+        </div>
+        <div style="flex: 1;">
+          <label for="duree">Durée (Heures)</label>
+          <input id="duree" type="number" min="0.5" max="8" step="0.5" placeholder="Ex: 1.5" required>
+        </div>
+      </div>
+
+      <div style="margin: 15px 0;">
+        <label style="display: flex; align-items: center; cursor: pointer;">
+          <input id="justifiee" type="checkbox" style="width: auto; margin-right: 10px;">
+          Absence justifiée ?
+        </label>
+      </div>
+
+      <label for="motif">Motif / Commentaire</label>
+      <textarea id="motif" rows="3" placeholder="Raison de l'absence (optionnel)"></textarea>
+
+      <button type="submit" class="btn-action full-width">Enregistrer l'absence</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

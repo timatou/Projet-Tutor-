@@ -20,36 +20,17 @@
 
 <body>
 
-<!-- SIDEBAR -->
-<aside class="sidebar">
-    <div class="sidebar-header">
-        <h2 class="fw-bold">Suivi Étudiants</h2>
-        <small class="text-muted">Plateforme pédagogique</small>
-    </div>
-
-    <nav class="menu">
-        <a href="#" class="menu-item disabled">
-        <i class="fas fa-chart-line"></i>
-        <span>Dashboard</span>
-        </a>
-
-
-        <a href="{% url 'liste_etudiants' %}" class="menu-item">
-            <i class="fas fa-users"></i>
-            <span>Étudiants</span>
-        </a>
-
-        <a href="{% url 'liste_modules' %}" class="menu-item">
-            <i class="fas fa-book"></i>
-            <span>Modules</span>
-        </a>
-
-        <a href="{% url 'liste_notes' %}" class="menu-item">
-            <i class="fas fa-clipboard-list"></i>
-            <span>Notes</span>
-        </a>
-    </nav>
-</aside>
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h2>Suivi Étudiants</h2>
+      </div>
+      <nav class="menu">
+        <a href="#" class="menu-item"><i class="fas fa-chart-line"></i> Dashboard</a>
+        <a href="{% url 'liste_etudiants' %}" class="menu-item"><i class="fas fa-users"></i> Étudiants</a>
+        <a href="{% url 'liste_modules' %}" class="menu-item"><i class="fas fa-book"></i> Modules</a>
+        <a href="{% url 'liste_notes' %}" class="menu-item"><i class="fas fa-clipboard-list"></i> Notes</a>
+      </nav>
+    </aside>
 
 <!-- CONTENU PRINCIPAL -->
 <main class="main-content">
