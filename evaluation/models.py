@@ -21,12 +21,12 @@ class Note(models.Model):
     )
     type = models.CharField(max_length=10, choices=TYPE_CHOICES)
     valeur = models.FloatField(
-    validators=[MinValueValidator(0.0), MaxValueValidator(20.0)],
+    validators=[MinValueValidator(0.00), MaxValueValidator(20.0)],
     help_text="La note doit être comprise entre 0 et 20")
     date = models.DateField(auto_now_add=True)
 
     class Meta:
-        unique_together = ('etudiant', 'module', 'type')
+       
         ordering = ['module', 'etudiant']
 
     def __str__(self):
