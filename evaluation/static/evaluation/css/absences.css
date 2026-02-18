@@ -1,4 +1,4 @@
-/* ===== PAGE MODULES ===== */
+/* ===== PAGE ABSENCES ===== */
 
 .btn-action {
     display: inline-flex;
@@ -27,47 +27,39 @@
     flex-wrap: wrap;
 }
 
-.search-box {
-    position: relative;
-    display: flex;
-    align-items: center;
-}
-
-.search-box i {
-    position: absolute;
-    left: 12px;
-    color: #94a3b8;
-}
-
-.search-box input {
-    padding-left: 40px;
-}
-
-#tableModules {
+#tableAbsences {
     width: 100%;
     border-collapse: collapse;
 }
 
-#tableModules th {
+#tableAbsences th {
     padding: 16px 20px;
     background: #f8fafd;
     text-align: left;
 }
 
-#tableModules td {
+#tableAbsences td {
     padding: 16px 20px;
     border-bottom: 1px solid #edf2f9;
 }
 
-#tableModules td:nth-child(3) {
-    font-weight: 600;
-    text-align: center;
+/* Statuts spécifiques aux absences */
+.statut-justifie {
+    background: #e3f7e7;
+    color: #0a5d2a;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    display: inline-block;
 }
 
-#tableModules td:nth-child(6) {
-    font-weight: 600;
-    color: #2d4b7c;
-    text-align: center;
+.statut-non-justifie {
+    background: #fee9e9;
+    color: #b02a37;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    display: inline-block;
 }
 
 .modal-content {
@@ -76,8 +68,6 @@
     padding: 30px;
 }
 
-.form-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
+#duree {
+    font-family: monospace;
 }

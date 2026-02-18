@@ -1,126 +1,164 @@
-/* Layout */
-.topbar{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:25px;
+/* ===== PAGE ÉTUDIANTS ===== */
+/* Contient TOUT le CSS nécessaire pour cette page */
+
+/* Boutons */
+.btn-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: #2d4b7c;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
 }
 
-.content-area{
-    background:white;
-    padding:25px;
-    border-radius:12px;
-    box-shadow:0 4px 20px rgba(0,0,0,0.05);
+.btn-action:hover {
+    background: #1e3a5f;
 }
 
-/* Table */
-.table-container{
-    width:100%;
+/* Conteneur tableau */
+.table-container {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    border: 1px solid #edf2f9;
 }
 
-#tableEtudiants{
-    width:100%;
-    border-collapse:collapse;
+.table-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid #edf2f9;
 }
 
-#tableEtudiants th{
-    text-align:left;
-    padding:14px;
-    background:#66b2f1;
-    font-weight:600;
-    font-size:14px;
-    color:#d4cccc;
+.table-header h2 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
-#tableEtudiants td{
-    padding:14px;
-    border-bottom:1px solid #eee;
-    font-size:14px;
+/* Filtres */
+.filters-bar {
+    padding: 16px 24px;
+    background: white;
+    border-bottom: 1px solid #edf2f9;
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
 }
 
-#tableEtudiants tbody tr:hover{
-    background:#fafafa;
+.input-filter {
+    padding: 10px 16px;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    min-width: 200px;
 }
 
-/* Filters */
-.filters-bar{
-    display:flex;
-    gap:12px;
-    margin-bottom:20px;
+.input-filter:focus {
+    outline: none;
+    border-color: #2d4b7c;
+    box-shadow: 0 0 0 3px rgba(45,75,124,0.1);
 }
 
-.input-filter{
-    padding:10px 12px;
-    border-radius:8px;
-    border:1px solid #ddd;
-    min-width:200px;
+/* Tableau spécifique */
+#tableEtudiants {
+    width: 100%;
+    border-collapse: collapse;
 }
 
-.input-filter:focus{
-    outline:none;
-    border-color:#4a90e2;
+#tableEtudiants th {
+    padding: 16px 20px;
+    background: #f8fafd;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    border-bottom: 2px solid #e6edf5;
 }
 
-/* Buttons */
-.btn-action{
-    background:#058ee3;
-    color:white;
-    border:none;
-    padding:10px 16px;
-    border-radius:8px;
-    cursor:pointer;
-    text-decoration:none;
-    transition:0.2s;
-    display:inline-flex;
-    align-items:center;
-    gap:8px;
+#tableEtudiants td {
+    padding: 16px 20px;
+    border-bottom: 1px solid #edf2f9;
 }
 
-.btn-action:hover{
-    background:#357abd;
+#tableEtudiants td:first-child {
+    font-family: monospace;
+    font-weight: 500;
+    color: #2d4b7c;
 }
 
 /* Modal */
-.modal{
-    display:none;
-    position:fixed;
-    inset:0;
-    background:rgba(0,0,0,0.4);
-    justify-content:center;
-    align-items:center;
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
 }
 
-.modal-content{
-    background:white;
-    padding:30px;
-    border-radius:14px;
-    width:420px;
-    max-width:90%;
-    box-shadow:0 20px 50px rgba(0,0,0,0.2);
+.modal.show {
+    display: flex;
 }
 
-/* Form */
-.form-group{
-    display:flex;
-    flex-direction:column;
-    margin-bottom:15px;
+.modal-content {
+    background: white;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 550px;
+    padding: 30px;
+    position: relative;
 }
 
-.form-group label{
-    font-size:13px;
-    margin-bottom:6px;
-    color:#555;
+.close-modal {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #94a3b8;
+}
+
+.modal h2 {
+    margin-bottom: 25px;
+    font-size: 1.4rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Formulaire */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
 }
 
 .form-group input,
-.form-group select{
-    padding:10px;
-    border-radius:8px;
-    border:1px solid #ddd;
+.form-group select {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
 }
 
-.form-group input:focus,
-.form-group select:focus{
-    border-color:#4a90e2;
-    outline:none;
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
 }
