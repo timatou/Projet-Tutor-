@@ -12,20 +12,7 @@
 {% endblock %}
 
 {% block content %}
-<aside class="sidebar">
-  <div class="sidebar-header">
-    <h2>Suivi Étudiants</h2>
-    <p>Plateforme de gestion</p>
-  </div>
-  <nav class="menu">
-    <a href="{% url 'liste_etudiants' %}" class="menu-item"><i class="fas fa-users"></i> Étudiants</a>
-    <a href="{% url 'liste_modules' %}" class="menu-item"><i class="fas fa-book"></i> Modules</a>
-    <a href="{% url 'liste_notes' %}" class="menu-item"><i class="fas fa-clipboard-list"></i> Notes</a>
-    <a href="#" class="menu-item active"><i class="fas fa-calendar-times"></i> Absences</a>
-    <a href="#" class="menu-item"><i class="fas fa-chart-pie"></i> Statistiques</a>
-  </nav>
-</aside>
-
+  
 <main class="main-content">
   <div class="topbar">
     <h1>Gestion des Absences</h1>
