@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="content-area">
+    <div class="table-container shadow-sm p-4 bg-white rounded">
+        <h2 class="mb-4"><i class="fas fa-chart-bar"></i> Statistiques & Analyses</h2>
+
+        <div class="row mb-2">
+            <div class="col-md-4">
+                <label class="form-label fw-bold">Par Module</label>
+                <select id="filter-module" class="form-select">
+                    <option value="">Tous les modules</option>
+                    {% for m in modules %}
+                        <option value="{{ m.id }}">{{ m.libelle }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label fw-bold">Par Groupe</label>
+                <select id="filter-groupe" class="form-select">
+                    <option value="">Tous les groupes</option>
+                    {% for g in groupes %}
+                        <option value="{{ g.id }}">{{ g.nom }}</option>
+                    {% endfor %}
+                </select>
+                <small class="text-muted d-block mt-1">
+                </small>
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label fw-bold">Profil Étudiant</label>
+                <select id="filter-etudiant" class="form-select">
+    <option value="">Choisir un étudiant...</option>
+    {% for e in etudiants %}
+        <option value="{{ e.matricule }}">
+            {{ e.nom }} {{ e.prenom }}
+        </option>
+    {% endfor %}
+</select>
+
+            </div>
+        </div>
+
+        <hr>
+
+        <div style="width: 100%; max-width: 800px; margin: 20px auto;">
+            <canvas id="myChart"></canvas>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{% static 'statistique/js/stat.js' %}"></script>
+
+    <script>
+    // ✅ Désactiver le groupe si un étudiant est choisi
+    const selectEtudiant = document.getElementById('filter-etudiant');
+    const selectGroupe = document.getElementById('filter-groupe');
+
+    selectEtudiant.addEventListener('change', function() {
+        if (this.value) {
+            selectGroupe.disabled = true; // priorité à l'étudiant
+        } else {
+            selectGroupe.disabled = false;
+        }
+    });
+    </script>
+{% endblock %}
