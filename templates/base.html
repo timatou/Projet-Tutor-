@@ -5,11 +5,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Gestion Scolaire{% endblock %}</title>
+    <link rel="icon" href="data:,">
 
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-    <!-- Google Font (recommandé) -->
+    <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- CSS Global -->
@@ -22,15 +23,15 @@
 
     <!-- SIDEBAR -->
     <aside class="sidebar">
-
         <div class="sidebar-header">
             <h2>Suivi Étudiants</h2>
         </div>
-        
 
         <nav class="menu">
+
             <a href="{% url 'dashboard' %}" class="menu-item {% if request.path == '/dashboard/' %}active{% endif %}">
-               <i class="fas fa-tachometer-alt"></i> <span>Dashboard</span>
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Dashboard</span>
             </a>
 
             <a href="{% url 'liste_etudiants' %}" class="menu-item">
@@ -52,6 +53,12 @@
                 <i class="fas fa-calendar-times"></i>
                 <span>Absences</span>
             </a>
+
+            <a href="{% url 'liste_statistiques' %}" class="menu-item">
+                <i class="fas fa-chart-bar"></i>
+                <span>Statistiques</span>
+            </a>
+
         </nav>
     </aside>
     

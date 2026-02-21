@@ -1,39 +1,45 @@
-from django.db import models
-
+from django.db.models import Avg, Count, Q
 
 class Statistique:
-
     @staticmethod
     def moyenne_par_module(module):
         from evaluation.models import Note
-        notes = Note.objects.filter(module=module)
-        if not notes.exists():
-            return 0
-        return round(sum(note.valeur for note in notes) / len(notes), 2)
+        res = Note.objects.filter(module=module).aggregate(Avg('valeur'))
+        return round(res['valeur__avg'] or 0, 2)
 
     @staticmethod
     def moyenne_par_etudiant(etudiant):
         from evaluation.models import Note
-        notes = Note.objects.filter(etudiant=etudiant)
-        if not notes.exists():
-            return 0
-        return round(sum(note.valeur for note in notes) / len(notes), 2)
+        res = Note.objects.filter(etudiant=etudiant).aggregate(Avg('valeur'))
+        return round(res['valeur__avg'] or 0, 2)
 
     @staticmethod
     def taux_absence_etudiant(etudiant):
         from evaluation.models import Absence
-        total = Absence.objects.filter(etudiant=etudiant).count()
-        justifiees = Absence.objects.filter(etudiant=etudiant, justifiee=True).count()
-        if total == 0:
-            return 0
-        return round((total - justifiees) / total * 100, 2)
+        stats = Absence.objects.filter(etudiant=etudiant).aggregate(
+            total=Count('id'),
+            justifiees=Count('id', filter=Q(justifiee=True))
+        )
+        if stats['total'] == 0: return 0
+        injustifiees = stats['total'] - stats['justifiees']
+        return round((injustifiees / stats['total']) * 100, 2)
     
     @staticmethod
     def evolution_notes_etudiant(etudiant):
         from evaluation.models import Note
-        # Récupère les notes triées par date
         notes = Note.objects.filter(etudiant=etudiant).order_by('date')
         return {
-            "labels": [note.date.strftime("%d/%m") for note in notes],
-            "data": [note.valeur for note in notes]
+            "labels": [n.date.strftime("%d/%m") for n in notes],
+            "data": [n.valeur for n in notes]
+        }
+    
+    # Dans ta classe Statistique (models.py)
+@staticmethod
+def notes_par_module_etudiant(etudiant):
+    from evaluation.models import Note
+    # On récupère la dernière note de l'étudiant pour chaque module
+    notes = Note.objects.filter(etudiant=etudiant)
+    return {
+        "labels": [n.module.libelle for n in notes],
+        "data": [n.valeur for n in notes]
     }

@@ -23,6 +23,7 @@ INSTALLED_APPS = [
     'etudiants',
     'evaluation',
     'dashboard',
+    'statistique',
 ]
 
 AUTH_USER_MODEL = 'utilisateurs.User'
@@ -44,8 +45,7 @@ ROOT_URLCONF = 'application.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        # C'est cette ligne qui est cruciale :
-        'DIRS': [BASE_DIR / 'templates'], 
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -72,6 +72,7 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = 'static/'
+
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]

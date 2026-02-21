@@ -24,10 +24,12 @@ class Module(models.Model):
         moyenne = notes['valeur__avg']
         return round(moyenne, 2) if moyenne is not None else 0
     
+    
     def taux_reussite(self):
         from evaluation.models import Note
         notes = Note.objects.filter(module=self)
-        if not notes.exists():
+        total = notes.count()
+        if total == 0:
             return 0
-        reussites = notes.filter(valeur__gte=10).count() # Note >= 10/20
-        return round((reussites / notes.count()) * 100, 2)
+        reussites = notes.filter(valeur__gte=10).count()
+        return round((reussites / total) * 100, 2)
