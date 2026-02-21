@@ -1,83 +1,74 @@
-/* ===== PAGE MODULES ===== */
-
-.btn-action {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 20px;
-    background: #2d4b7c;
-    color: white;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-}
-
-.table-container {
-    background: white;
-    border-radius: 16px;
-    border: 1px solid #edf2f9;
-}
-
-.filters-bar {
-    padding: 16px 24px;
-    background: white;
-    border-bottom: 1px solid #edf2f9;
-    display: flex;
-    gap: 15px;
-    flex-wrap: wrap;
-}
-
-.search-box {
-    position: relative;
-    display: flex;
-    align-items: center;
-}
-
-.search-box i {
-    position: absolute;
-    left: 12px;
-    color: #94a3b8;
-}
-
-.search-box input {
-    padding-left: 40px;
-}
+/* ===============================
+   TABLE MODULES – VERSION PRO
+================================= */
 
 #tableModules {
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
 }
 
-#tableModules th {
-    padding: 16px 20px;
-    background: #f8fafd;
+#tableModules thead th {
+    padding: 18px 22px;
+    background: #f1f5f9;
     text-align: left;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: #64748b;
+    border-bottom: 2px solid #e2e8f0;
 }
 
+/* Lignes */
+#tableModules tbody tr {
+    background: white;
+    transition: all 0.2s ease;
+}
+
+/* Séparation nette entre lignes */
+#tableModules tbody tr + tr td {
+    border-top: 1px solid #f1f5f9;
+}
+
+/* Hover plus visible */
+#tableModules tbody tr:hover {
+    background: #f8fafc;
+}
+
+/* Cellules */
 #tableModules td {
-    padding: 16px 20px;
-    border-bottom: 1px solid #edf2f9;
+    padding: 18px 22px;
+    font-size: 0.95rem;
+    vertical-align: middle;
 }
 
-#tableModules td:nth-child(3) {
+/* Code module en plus léger */
+#tableModules td:first-child {
+    font-weight: 500;
+    color: #334155;
+}
+
+/* Libellé plus marqué */
+#tableModules td:nth-child(2) {
     font-weight: 600;
-    text-align: center;
+    color: #1e293b;
 }
 
+/* Coefficient centré */
+#tableModules td:nth-child(3) {
+    text-align: center;
+    font-weight: 600;
+}
+
+/* Moyenne stylisée */
 #tableModules td:nth-child(6) {
     font-weight: 600;
-    color: #2d4b7c;
+    color: #4f6df5;
     text-align: center;
 }
 
-.modal-content {
-    background: white;
-    border-radius: 20px;
-    padding: 30px;
-}
-
-.form-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
+/* Réussite en rouge si 0 */
+#tableModules td:nth-child(7) {
+    font-weight: 600;
+    text-align: center;
 }

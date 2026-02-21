@@ -12,9 +12,9 @@ urlpatterns = [
     path('api/ajouter/', views.api_ajouter_etudiant, name='api_ajouter'),
     
     # 4. La route pour supprimer (le <str:matricule> permet de savoir qui effacer)
-    path('api/supprimer/<str:matricule>/', views.api_supprimer_etudiant, name='api_supprimer'),
-
+    path('api/supprimer/<str:matricule>/', views.api_supprimer_etudiant, name='api_supprimer_etudiant'),
     path('api/groupes/', views.api_groupes_list, name='api_groupes'),
     
     path('api/promotions/', views.api_promotions_list),
+    
 ]

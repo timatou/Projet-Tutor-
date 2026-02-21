@@ -158,7 +158,9 @@ document.addEventListener('DOMContentLoaded', function () {
 async function deleteEtudiant(matricule) {
     if (confirm("Supprimer cet étudiant ?")) {
         try {
-            const res = await fetch(`${API_BASE}/supprimer/${matricule}/`, {
+            const res = await fetch(`/etudiants/api/supprimer/${matricule}/`, {
+                
+                
                 method: 'DELETE',
                 headers: { 'X-CSRFToken': getCookie('csrftoken') }
             });

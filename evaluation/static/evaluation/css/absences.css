@@ -1,73 +1,99 @@
-/* ===== PAGE ABSENCES ===== */
+#tableAbsences{table-layout:fixed;width:100%}
+#tableAbsences th:nth-child(1){width:140px}
+#tableAbsences th:nth-child(2){width:160px}
+#tableAbsences th:nth-child(3){width:100px}
+#tableAbsences th:nth-child(4){width:90px}
+#tableAbsences th:nth-child(5){width:90px}
+#tableAbsences th:nth-child(6){width:120px}
 
-.btn-action {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 20px;
-    background: #2d4b7c;
-    color: white;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
+.page-header,.filter-bar,.table-container,.absences-summary{
+  background:#fff;border:1px solid #d9e2ef;border-radius:8px;
+  margin-bottom:25px;box-shadow:0 2px 5px rgba(0,0,0,.05)
+}
+.page-header,.filter-bar,.absences-summary{
+  padding:20px 25px;display:flex;flex-wrap:wrap;
+  gap:15px;align-items:center;justify-content:space-between
+}
+.page-header h2,.modal-content h2{
+  font-size:1.3rem;font-weight:600;color:#0f2d5c;display:flex;gap:10px;align-items:center
+}
+.page-header-actions,.filter-group,.date-range{
+  display:flex;gap:15px;flex-wrap:wrap;align-items:center
 }
 
-.table-container {
-    background: white;
-    border-radius: 16px;
-    border: 1px solid #edf2f9;
+.filter-select,.filter-date,#formAbsence input,
+#formAbsence select,#formAbsence textarea{
+  padding:8px 12px;border:1px solid #d9e2ef;
+  border-radius:4px;font-size:.9rem;background:#fff;width:100%
 }
+.filter-select{
+  padding-right:35px;appearance:none;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%230f2d5c' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E")
+  no-repeat right 10px center
+}
+.filter-select:focus,.filter-date:focus,
+#formAbsence input:focus,#formAbsence select:focus,
+#formAbsence textarea:focus{outline:none;border-color:#0f2d5c}
 
-.filters-bar {
-    padding: 16px 24px;
-    background: white;
-    border-bottom: 1px solid #edf2f9;
-    display: flex;
-    gap: 15px;
-    flex-wrap: wrap;
+.table-container{overflow-x:auto}
+.table-container table{
+  width:100%;background:#fff;font-size:.95rem;
+  border-collapse:separate;border-spacing:0;border-radius:8px;overflow:hidden
 }
+thead{background:#f4f7fb}
+th,td{padding:14px 18px;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+thead th{font-size:.8rem;font-weight:600;text-transform:uppercase;border-bottom:2px solid #d9e2ef;color:#0f2d5c}
+tbody td{border-bottom:1px solid #e5edf5}
+tbody tr:last-child td{border:none}
+tbody tr:nth-child(even){background:#f9fbfe}
+tbody tr:hover{background:#edf3fa}
 
-#tableAbsences {
-    width: 100%;
-    border-collapse: collapse;
-}
+.justification-badge{padding:4px 10px;border-radius:30px;font-size:.75rem;font-weight:600;display:inline-block;min-width:85px;text-align:center}
+.justifie{background:#e3f7e7;color:#1e7b48}
+.non-justifie{background:#ffe6e8;color:#b02a37}
+.en-attente{background:#fff3d6;color:#b55f0a}
 
-#tableAbsences th {
-    padding: 16px 20px;
-    background: #f8fafd;
-    text-align: left;
-}
+.summary-item{text-align:center;min-width:120px}
+.summary-label{font-size:.85rem;color:#5e6f8d}
+.summary-value{font-size:1.8rem;font-weight:700;color:#0f2d5c}
+.summary-value.warning{color:#b55f0a}
+.summary-value.danger{color:#b02a37}
 
-#tableAbsences td {
-    padding: 16px 20px;
-    border-bottom: 1px solid #edf2f9;
+.btn-action,.btn-new,.btn-close{
+  border-radius:4px;display:inline-flex;align-items:center;
+  gap:8px;cursor:pointer;transition:.2s
 }
+.btn-action{padding:5px 10px;background:#eef2f7;color:#0f2d5c;border:1px solid #d9e2ef;font-size:.8rem}
+.btn-action:hover{background:#0f2d5c;color:#fff;border-color:#0f2d5c}
+.btn-action.justify-btn{background:#e3f7e7;color:#1e7b48;border-color:#b8e0c5}
+.btn-action.justify-btn:hover{background:#1e7b48;color:#fff}
+.btn-new{padding:10px 20px;background:#0f2d5c;color:#fff;border:none;font-weight:500}
+.btn-new:hover{background:#173a75}
+.btn-close{padding:8px 16px;background:transparent;border:1px solid #d9e2ef;color:#5e6f8d}
+.btn-close:hover{background:#f4f7fb;border-color:#b8c7dd;color:#0f2d5c}
 
-/* Statuts spécifiques aux absences */
-.statut-justifie {
-    background: #e3f7e7;
-    color: #0a5d2a;
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    display: inline-block;
-}
+.empty-state{text-align:center;padding:60px 20px!important;color:#8a9bb5;font-style:italic}
+.empty-state i{font-size:2.5rem;margin-bottom:15px;color:#b8c7dd}
 
-.statut-non-justifie {
-    background: #fee9e9;
-    color: #b02a37;
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    display: inline-block;
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;justify-content:center;align-items:center}
+.modal.show{display:flex}
+.modal-content{
+  background:#fff;border-radius:8px;padding:30px;width:90%;
+  max-width:500px;max-height:90vh;overflow-y:auto;
+  position:relative;box-shadow:0 10px 30px rgba(0,0,0,.2)
 }
+.close-modal{position:absolute;top:15px;right:20px;font-size:1.5rem;background:none;border:none;cursor:pointer;color:#5e6f8d}
+.close-modal:hover{color:#0f2d5c}
 
-.modal-content {
-    background: white;
-    border-radius: 20px;
-    padding: 30px;
-}
+.file-upload{border:2px dashed #d9e2ef;border-radius:4px;padding:20px;text-align:center;background:#f9fbfe;cursor:pointer;transition:.2s}
+.file-upload:hover{border-color:#0f2d5c;background:#f4f7fb}
 
-#duree {
-    font-family: monospace;
+@media(max-width:992px){#tableAbsences{min-width:800px}}
+@media(max-width:768px){
+  .absences-summary,.filter-bar,.page-header{flex-direction:column;align-items:stretch}
+  .summary-item{display:flex;justify-content:space-between;align-items:center}
+  .summary-value{font-size:1.5rem}
+  .filter-select,.filter-date,.btn-new,.btn-close{width:100%;justify-content:center}
+  .date-range{flex-direction:column;width:100%}
 }
+@media(max-width:576px){.modal-content{padding:20px}.file-upload{padding:15px}}

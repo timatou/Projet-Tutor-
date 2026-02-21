@@ -1,0 +1,160 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dashboard - Suivi Étudiants{% endblock %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{% static 'dashboard/css/dashboard.css' %}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'dashboard/js/dashboard.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<main class="main-content">
+    <div class="topbar">
+        <h1>Tableau de Bord</h1>
+        <div class="user-info">
+            <span class="user-badge" id="currentDateTime"></span>
+            <a href="#" class="btn-action"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
+        </div>
+    </div>
+
+    <div class="content-area">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h2><i class="fas fa-chart-line"></i> Vue d'ensemble</h2>
+            <button class="btn-close">Fermer</button>
+        </div>
+
+        <!-- Cartes KPI -->
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-icon" style="background: #e3f2fd;">
+                    <i class="fas fa-users" style="color: #0f2d5c;"></i>
+                </div>
+                <div class="kpi-content">
+                    <h3>Étudiants inscrits</h3>
+                    <div class="kpi-value" id="totalEtudiants">0</div>
+                    <div class="kpi-variation" id="variationEtudiants">+0 cette semaine</div>
+                </div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-icon" style="background: #e8f5e9;">
+                    <i class="fas fa-book" style="color: #2e7d32;"></i>
+                </div>
+                <div class="kpi-content">
+                    <h3>Modules actifs</h3>
+                    <div class="kpi-value" id="totalModules">0</div>
+                    <div class="kpi-variation" id="variationModules">Dont 0 nouveaux</div>
+                </div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-icon" style="background: #fff3e0;">
+                    <i class="fas fa-calendar-times" style="color: #ed6c02;"></i>
+                </div>
+                <div class="kpi-content">
+                    <h3>Absences signalées</h3>
+                    <div class="kpi-value" id="totalAbsences">0</div>
+                    <div class="kpi-variation" id="variationAbsences">+0 cette semaine</div>
+                </div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-icon" style="background: #fce4e4;">
+                    <i class="fas fa-exclamation-triangle" style="color: #d32f2f;"></i>
+                </div>
+                <div class="kpi-content">
+                    <h3>Alertes actives</h3>
+                    <div class="kpi-value" id="totalAlertes">0</div>
+                    <div class="kpi-variation" id="variationAlertes">Nécessite attention</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section Alertes -->
+        <div class="alerts-section">
+            <div class="alerts-header">
+                <h3><i class="fas fa-bell"></i> Alertes et Signalements</h3>
+                <span class="badge badge-danger" id="totalAlertesBadge">0 alertes</span>
+            </div>
+            <div class="alerts-grid">
+                <div class="alert-card">
+                    <div class="alert-card-header">
+                        <i class="fas fa-exclamation-circle" style="color: #d32f2f;"></i>
+                        <span class="alert-count" id="alertesImmediates">0</span>
+                        <span>alertes nécessitant une action immédiate</span>
+                    </div>
+                    <div class="alert-card-body" id="alertesGenerales">
+                        <div class="alert-item">
+                            <strong><span id="etudiantsRisqueCount">0</span> étudiants en risque de décrochage</strong>
+                            <p>Absences répétées et résultats en baisse</p>
+                        </div>
+                        <div class="alert-subitems" id="etudiantsRisque"></div>
+                        
+                        <div class="alert-item">
+                            <strong><span id="modulesEchecCount">0</span> modules avec taux d'échec > 40%</strong>
+                            <p id="modulesEchec"></p>
+                        </div>
+                        
+                        <div class="alert-item">
+                            <strong><span id="retardsSaisie">0</span> retards de saisie des notes</strong>
+                            <p>Contrôles continus et projets en attente de validation</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stats-card">
+                    <div class="stats-card-header">
+                        <h4>Répartition par promotion</h4>
+                        <select class="filter-select" id="promoFilter">
+                            <option>Cette année ▼</option>
+                        </select>
+                    </div>
+                    <div class="stats-card-body">
+                        <canvas id="promoChart" style="height: 200px;"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Graphiques -->
+        <div class="charts-grid">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3><i class="fas fa-chart-line"></i> Évolution des absences mensuelles</h3>
+                </div>
+                <div class="chart-body">
+                    <canvas id="absencesChart"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3><i class="fas fa-chart-bar"></i> Statut académique des étudiants</h3>
+                </div>
+                <div class="chart-body">
+                    <canvas id="academicChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Camembert Absences par module -->
+            <div class="chart-card full-width">
+                <div class="chart-header">
+                    <h3><i class="fas fa-chart-pie"></i> Répartition des absences par module</h3>
+                </div>
+                <div class="chart-body pie-chart-container">
+                    <div class="pie-chart-wrapper">
+                        <canvas id="pieChartAbsences"></canvas>
+                    </div>
+                    <div class="module-list-wrapper" id="moduleAbsencesList"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}

@@ -19,41 +19,55 @@
   </div>
 
   <div class="content-area">
-    <div class="table-container">
-      <div class="table-header">
-        <h2><i class="fas fa-clipboard-list"></i> Liste des Notes</h2>
+    <!-- Page Header (comme Modules) -->
+    <div class="page-header">
+      <h2><i class="fas fa-clipboard-list"></i> Liste des Notes</h2>
+      <div class="page-header-actions">
       </div>
+    </div>
 
-      <div class="filters-bar">
-        <select id="filterEtudiant" class="input-filter">
+    <!-- Filter Bar (comme Modules) -->
+    <div class="filter-bar">
+      <div class="filter-group">
+        <select id="filterEtudiant" class="filter-select">
           <option value="">Tous les étudiants</option>
         </select>
 
-        <select id="filterModule" class="input-filter">
+        <select id="filterModule" class="filter-select">
           <option value="">Tous les modules</option>
         </select>
-
-        <button id="btnAddNote" class="btn-action"><i class="fas fa-plus"></i> Ajouter une note</button>
       </div>
 
+      <button id="btnAddNote" class="btn-new"><i class="fas fa-plus"></i> Ajouter une note</button>
+    </div>
+
+    <!-- Table Container -->
+    <div class="table-container">
       <table id="tableNotes">
         <thead>
           <tr>
-            <th>Matricule Étudiant</th>
-            <th>Module</th>
-            <th>Type</th>
-            <th>Valeur</th>
-            <th>Date</th>
-            <th>Actions</th>
+            <th>MATRICULE ÉTUDIANT</th>
+            <th>MODULE</th>
+            <th>TYPE</th>
+            <th>VALEUR</th>
+            <th>DATE</th>
+            <th>ACTIONS</th>
           </tr>
         </thead>
         <tbody>
-          </tbody>
+          <tr>
+            <td colspan="6" class="empty-state">
+              <i class="fas fa-info-circle"></i><br>
+              Aucune note enregistrée.
+            </td>
+          </tr>
+        </tbody>
       </table>
     </div>
   </div>
 </main>
 
+<!-- Modal pour ajouter/modifier une note -->
 <div id="modalAddNote" class="modal">
   <div class="modal-content">
     <button class="close-modal">&times;</button>
@@ -73,8 +87,8 @@
 
       <label for="type">Type d'évaluation</label>
       <select id="type" required>
-        <option value="">Chargement des types...</option>
-        </select>
+        <option value="">Sélectionnez un type...</option>
+      </select>
 
       <label for="note">Valeur (Note /20)</label>
       <input id="note" type="number" min="0" max="20" step="0.1" placeholder="Ex: 15.5" required>

@@ -22,6 +22,6 @@ urlpatterns = [
     path('absences/', views.absence_view, name='liste_absences'),
     path('api/supprimer-note/<int:id>/', views.api_supprimer_note, name='api_supprimer_note'),
     path('api/supprimer-absence/<int:id>/', views.api_supprimer_absence, name='api_supprimer_absence'),
+    path('api/justifier-absence/<int:absence_id>/', views.api_justifier_absence, name='api_justifier_absence'),
+    path('api/modifier-note/<int:id>/', views.api_modifier_note, name='api_modifier_note'),
 ]
-
-

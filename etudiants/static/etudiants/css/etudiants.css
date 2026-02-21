@@ -1,7 +1,3 @@
-/* ===== PAGE ÉTUDIANTS ===== */
-/* Contient TOUT le CSS nécessaire pour cette page */
-
-/* Boutons */
 .btn-action {
     display: inline-flex;
     align-items: center;
@@ -21,7 +17,6 @@
     background: #1e3a5f;
 }
 
-/* Conteneur tableau */
 .table-container {
     background: white;
     border-radius: 16px;
@@ -42,7 +37,6 @@
     gap: 10px;
 }
 
-/* Filtres */
 .filters-bar {
     padding: 16px 24px;
     background: white;
@@ -65,7 +59,6 @@
     box-shadow: 0 0 0 3px rgba(45,75,124,0.1);
 }
 
-/* Tableau spécifique */
 #tableEtudiants {
     width: 100%;
     border-collapse: collapse;
@@ -92,7 +85,6 @@
     color: #2d4b7c;
 }
 
-/* Modal */
 .modal {
     display: none;
     position: fixed;
@@ -138,7 +130,6 @@
     gap: 10px;
 }
 
-/* Formulaire */
 .form-group {
     margin-bottom: 20px;
 }

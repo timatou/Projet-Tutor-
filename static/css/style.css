@@ -1,116 +1,63 @@
-/* ===== STYLE GLOBAL ===== */
-/* Seulement ce qui est VRAIMENT commun à toutes les pages */
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:"Segoe UI",Arial,sans-serif;background:#eef2f7;color:#1f2937;display:flex;min-height:100vh}
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+.sidebar{width:240px;background:#0f2d5c;color:#fff;display:flex;flex-direction:column;position:fixed;height:100vh}
+.sidebar-header{padding:20px;background:#0c2347}
+.sidebar-header h2{font-size:1.1rem;font-weight:600}
+.menu{padding:10px 0}
+.menu-item{display:flex;align-items:center;gap:12px;padding:14px 20px;color:#dbe6f5;text-decoration:none;font-size:.9rem}
+.menu-item:hover,.menu-item.active{background:#173a75}
+.menu-item.active{border-left:4px solid #fff}
 
-body {
-    font-family: 'Segoe UI', system-ui, sans-serif;
-    background: #f4f6fa;
-    display: flex;
-    min-height: 100vh;
-    color: #1e293b;
-}
+.main-content{flex:1;margin-left:240px;width:calc(100% - 240px)}
+.topbar{background:#fff;padding:18px 30px;border-bottom:2px solid #d9e2ef;display:flex;justify-content:space-between;align-items:center}
+.topbar h1{font-size:1.4rem;font-weight:600}
+.content-area{padding:30px}
 
-/* SIDEBAR - présente sur toutes les pages */
-.sidebar {
-    width: 260px;
-    background: #1a2639;
-    color: #fff;
-    display: flex;
-    flex-direction: column;
-    position: fixed;
-    height: 100vh;
-}
+.page-header,.filter-bar,.table-container{background:#fff;border:1px solid #d9e2ef;margin-bottom:25px}
+.page-header,.filter-bar{padding:20px 25px;display:flex;flex-wrap:wrap;gap:15px;align-items:center;justify-content:space-between}
+.page-header h2{font-size:1.3rem;font-weight:600;color:#0f2d5c}
+.page-header-actions,.filter-group{display:flex;gap:15px;flex-wrap:wrap;align-items:center}
 
-.sidebar-header {
-    padding: 24px 20px;
-    border-bottom: 1px solid #2d3a4f;
-}
+.filter-select,.filter-search,.form-control{padding:8px 12px;border:1px solid #d9e2ef;border-radius:4px;font-size:.9rem}
+.filter-select{padding-right:35px;appearance:none;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%230f2d5c' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") no-repeat right 10px center}
+.filter-select:focus,.filter-search:focus,.form-control:focus{outline:none;border-color:#0f2d5c}
 
-.sidebar-header h2 {
-    font-size: 1.2rem;
-    font-weight: 500;
-    color: #fff;
-}
+table{width:100%;border-collapse:collapse;background:#fff;font-size:.95rem;table-layout:fixed}
+thead{background:#f4f7fb}
+th,td{padding:14px 18px;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+thead th{font-size:.8rem;font-weight:600;text-transform:uppercase;color:#0f2d5c;border-bottom:2px solid #d9e2ef}
+tbody td{border-bottom:1px solid #e5edf5}
+tbody tr:nth-child(even){background:#f9fbfe}
+tbody tr:hover{background:#edf3fa}
+.empty-state{text-align:center;padding:50px 20px!important;color:#8a9bb5;font-style:italic}
 
-.menu {
-    padding: 20px 0;
-    flex: 1;
-}
+.btn,.btn-action{border-radius:4px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;text-decoration:none}
+.btn{padding:8px 16px;font-size:.9rem;font-weight:500;border:none}
+.btn-primary{background:#0f2d5c;color:#fff}.btn-primary:hover{background:#173a75}
+.btn-outline{background:transparent;border:1px solid #0f2d5c;color:#0f2d5c}.btn-outline:hover{background:#f0f5ff}
+.btn-close{background:transparent;border:1px solid #d9e2ef;color:#5e6f8d}.btn-close:hover{background:#f4f7fb}
+.btn-sm{padding:5px 12px;font-size:.85rem}
+.btn-action{padding:5px 10px;background:#eef2f7;border:1px solid #d9e2ef;color:#0f2d5c;font-size:.8rem}
+.btn-action:hover{background:#0f2d5c;color:#fff;border-color:#0f2d5c}
 
-.menu-item {
-    display: flex;
-    align-items: center;
-    padding: 12px 20px;
-    color: #b4c1d1;
-    text-decoration: none;
-    gap: 12px;
-    font-size: 0.95rem;
-}
+.badge{padding:4px 10px;border-radius:30px;font-size:.75rem;font-weight:600;display:inline-block}
+.badge-success{background:#e3f7e7;color:#1e7b48}
+.badge-warning{background:#fff3d6;color:#b55f0a}
+.badge-info{background:#e1f0fa;color:#1b6b9c}
 
-.menu-item:hover {
-    background: #2d3a4f;
-    color: #fff;
-}
+.d-flex{display:flex}.align-center{align-items:center}.justify-between{justify-content:space-between}
+.gap-2{gap:10px}.gap-3{gap:15px}
+.mb-3{margin-bottom:15px}.mb-4{margin-bottom:25px}.mt-3{margin-top:15px}
+.text-muted{color:#6c7a8e}.text-primary{color:#0f2d5c}.w-100{width:100%}
 
-/* MAIN CONTENT - layout commun */
-.main-content {
-    flex: 1;
-    margin-left: 260px;
-    width: calc(100% - 260px);
-}
-
-.topbar {
-    background: white;
-    padding: 20px 30px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid #e9edf4;
-}
-
-.topbar h1 {
-    font-size: 1.6rem;
-    font-weight: 500;
-}
-
-.content-area {
-    padding: 30px;
-}
-
-/* UTILITAIRES DE BASE */
-.text-muted { color: #64748b; }
-.text-center { text-align: center; }
-.mb-4 { margin-bottom: 24px; }
-.mt-4 { margin-top: 24px; }
-.d-flex { display: flex; }
-.gap-2 { gap: 10px; }
-.justify-between { justify-content: space-between; }
-.align-center { align-items: center; }
-.full-width { width: 100%; }
-
-/* RESPONSIVE GLOBAL */
-@media (max-width: 768px) {
-    .sidebar {
-        width: 70px;
-    }
-    .sidebar-header h2,
-    .menu-item span {
-        display: none;
-    }
-    .main-content {
-        margin-left: 70px;
-        width: calc(100% - 70px);
-    }
-    .menu-item {
-        justify-content: center;
-        padding: 15px;
-    }
-    .content-area {
-        padding: 20px;
-    }
+@media(max-width:768px){
+  .sidebar{width:70px}
+  .sidebar-header h2 span,.menu-item span{display:none}
+  .menu-item{justify-content:center;padding:18px 0}
+  .main-content{margin-left:70px;width:calc(100% - 70px)}
+  .content-area{padding:20px}
+  .page-header,.filter-bar{flex-direction:column;align-items:stretch}
+  .filter-select,.filter-search{width:100%;min-width:auto}
+  table{min-width:800px}
 }

@@ -1,18 +1,15 @@
 {% extends 'base.html' %}
 {% load static %}
-
 {% block title %}Gestion des Absences - Suivi Étudiants{% endblock %}
 
 {% block styles %}
-    <link rel="stylesheet" href="{% static 'evaluation/css/notes.css' %}">
+    <link rel="stylesheet" href="{% static 'evaluation/css/absences.css' %}">
 {% endblock %}
-
 {% block scripts %}
     <script src="{% static 'evaluation/js/absences.js' %}"></script>
 {% endblock %}
 
 {% block content %}
-  
 <main class="main-content">
   <div class="topbar">
     <h1>Gestion des Absences</h1>
@@ -20,76 +17,117 @@
   </div>
 
   <div class="content-area">
-    <div class="table-container">
-      <div class="table-header">
-        <h2><i class="fas fa-calendar-times"></i> Registre des Absences</h2>
+    <!-- Page Header -->
+    <div class="page-header">
+      <h2><i class="fas fa-calendar-times"></i> Liste des Absences</h2>
+      <div class="page-header-actions">
       </div>
+    </div>
 
-      <div class="filters-bar">
-        <select id="filterEtudiant" class="input-filter">
+    <!-- Résumé des absences -->
+    <div class="absences-summary">
+      <div class="summary-item">
+        <div class="summary-label">Total absences</div>
+        <div class="summary-value">0</div>
+      </div>
+      <div class="summary-item">
+        <div class="summary-label">Justifiées</div>
+        <div class="summary-value">0</div>
+      </div>
+      <div class="summary-item">
+        <div class="summary-label">Non justifiées</div>
+        <div class="summary-value warning">0</div>
+      </div>
+      <div class="summary-item">
+        <div class="summary-label">Étudiants concernés</div>
+        <div class="summary-value">0</div>
+      </div>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+      <div class="filter-group">
+        <select id="filterEtudiant" class="filter-select">
           <option value="">Tous les étudiants</option>
         </select>
 
-        <select id="filterModule" class="input-filter">
+        <select id="filterModule" class="filter-select">
           <option value="">Tous les modules</option>
         </select>
 
-        <button id="btnAddNote" class="btn-action"><i class="fas fa-plus"></i> Déclarer une absence</button>
+        <div class="date-range">
+          <input type="date" id="dateDebut" class="filter-date" placeholder="Date début">
+          <span>au</span>
+          <input type="date" id="dateFin" class="filter-date" placeholder="Date fin">
+        </div>
       </div>
 
-      <table id="tableAbsences" class="data-table">
+      <button id="btnAddAbsence" class="btn-new"><i class="fas fa-plus"></i> Enregistrer une absence</button>
+    </div>
+
+    <!-- Table Container -->
+    <div class="table-container">
+      <table id="tableAbsences">
         <thead>
           <tr>
-            <th>Étudiant</th>
-            <th>Module</th>
-            <th>Durée</th>
-            <th>Date</th>
-            <th>Statut</th>
-            <th>Actions</th>
+            <th>ÉTUDIANT</th>
+            <th>MODULE</th>
+            <th>DATE</th>
+            <th>DURÉE</th>
+            <th>JUSTIFIÉ</th>
+            <th>ACTIONS</th>
           </tr>
         </thead>
         <tbody>
-          </tbody>
+          <tr>
+            <td colspan="6" class="empty-state">
+              <i class="fas fa-info-circle"></i><br>
+              Aucune absence enregistrée.
+            </td>
+          </tr>
+        </tbody>
       </table>
     </div>
   </div>
 </main>
 
-<div id="modalAddNote" class="modal">
+<!-- Modal pour signaler une absence -->
+<div id="modalAddAbsence" class="modal">
   <div class="modal-content">
     <button class="close-modal">&times;</button>
-    <h2 id="modalTitle"><i class="fas fa-plus-circle"></i> Ajouter une absence</h2>
+    <h2 id="modalTitle"><i class="fas fa-plus-circle"></i> Signaler une absence</h2>
 
     <form id="formAbsence">
-      <label for="etudiantInput">Étudiant (Matricule ou Nom)</label>
-      <input id="etudiantInput" type="text" list="listEtudiants" placeholder="Rechercher un étudiant..." required autocomplete="off">
-      <datalist id="listEtudiants"></datalist>
+      <input type="hidden" id="editingIndex">
 
-      <label for="moduleSelect">Module concerné</label>
+      <!-- ÉTUDIANT - Select (comme pour les modules) -->
+      <label for="etudiantSelect">Étudiant</label>
+      <select id="etudiantSelect" required>
+        <option value="">Sélectionnez un étudiant...</option>
+      </select>
+
+      <!-- MODULE - Select -->
+      <label for="moduleSelect">Module</label>
       <select id="moduleSelect" required>
         <option value="">Sélectionnez un module...</option>
       </select>
 
-      <div style="display: flex; gap: 15px;">
-        <div style="flex: 1;">
-          <label for="date">Date</label>
-          <input id="date" type="date" required>
-        </div>
-        <div style="flex: 1;">
-          <label for="duree">Durée (Heures)</label>
-          <input id="duree" type="number" min="0.5" max="8" step="0.5" placeholder="Ex: 1.5" required>
-        </div>
-      </div>
+      <label for="date">Date de l'absence</label>
+      <input id="date" type="date" required>
 
-      <div style="margin: 15px 0;">
-        <label style="display: flex; align-items: center; cursor: pointer;">
-          <input id="justifiee" type="checkbox" style="width: auto; margin-right: 10px;">
-          Absence justifiée ?
-        </label>
-      </div>
+      <label for="duree">Durée (en heures)</label>
+      <input id="duree" type="number" step="0.5" min="0.5" max="12" value="2" required>
 
-      <label for="motif">Motif / Commentaire</label>
-      <textarea id="motif" rows="3" placeholder="Raison de l'absence (optionnel)"></textarea>
+      <label for="motif">Motif (optionnel)</label>
+      <textarea id="motif" placeholder="Raison de l'absence..."></textarea>
+
+      <label for="justificatif">Justificatif (optionnel)</label>
+      <div class="file-upload">
+        <i class="fas fa-cloud-upload-alt"></i>
+        <span>Cliquez pour télécharger un fichier</span>
+        <small>PDF, JPEG - max 5Mo</small>
+      </div>
+      <input type="file" id="justificatif" style="display: none;">
 
       <button type="submit" class="btn-action full-width">Enregistrer l'absence</button>
     </form>
