@@ -80,3 +80,11 @@ STATICFILES_DIRS = [
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOW_ALL_ORIGINS = True
+
+# Où aller après le login (vers ta vue d'aiguillage)
+LOGIN_REDIRECT_URL = 'dashboard_redirect' 
+
+# Où aller après le logout
+LOGOUT_REDIRECT_URL = 'login'
+
+

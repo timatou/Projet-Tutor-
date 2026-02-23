@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h3><i class="fas fa-user-plus"></i> Créer un nouvel Enseignant</h3>
+        </div>
+        <div class="card-body">
+            <form method="post" class="row g-3">
+                {% csrf_token %}
+                
+                <div class="col-md-6">
+                    <label class="form-label">Identifiant (Login)</label>
+                    {{ form.username }}
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Mot de passe</label>
+                    {{ form.password }}
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Prénom</label>
+                    {{ form.first_name }}
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Nom</label>
+                    {{ form.last_name }}
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Email</label>
+                    {{ form.email }}
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Spécialité</label>
+                    {{ form.specialite }}
+                </div>
+
+                <div class="col-12 mt-4">
+                    <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Enregistrer l'Enseignant</button>
+                    <a href="{% url 'liste_enseignants' %}" class="btn btn-secondary">Annuler</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    input { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
+</style>
+{% endblock %}

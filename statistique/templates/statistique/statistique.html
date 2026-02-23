@@ -4,9 +4,26 @@
 {% block content %}
 <div class="content-area">
     <div class="table-container shadow-sm p-4 bg-white rounded">
-        <h2 class="mb-4"><i class="fas fa-chart-bar"></i> Statistiques & Analyses</h2>
+        
+        <h2 class="mb-4">
+            <i class="fas fa-chart-bar"></i> Statistiques & Analyses
+        </h2>
 
-        <div class="row mb-2">
+        <!-- 🔹 LIGNE 1 -->
+        <div class="row mb-3">
+
+            <!-- 🎓 PROMOTION -->
+            <div class="col-md-4">
+                <label class="form-label fw-bold">Par Promotion</label>
+                <select id="filter-promotion" class="form-select">
+                    <option value="">Toutes les promotions</option>
+                    {% for p in promotions %}
+                        <option value="{{ p.id }}">{{ p.nom }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- 📚 MODULE -->
             <div class="col-md-4">
                 <label class="form-label fw-bold">Par Module</label>
                 <select id="filter-module" class="form-select">
@@ -17,56 +34,84 @@
                 </select>
             </div>
 
-            <div class="col-md-4">
+            <!-- 👥 GROUPE -->
+            <div class="col-md-4" id="groupe-container" style="display:none;">
                 <label class="form-label fw-bold">Par Groupe</label>
                 <select id="filter-groupe" class="form-select">
                     <option value="">Tous les groupes</option>
-                    {% for g in groupes %}
-                        <option value="{{ g.id }}">{{ g.nom }}</option>
-                    {% endfor %}
+                    <!-- ⚠️ Rempli dynamiquement par JS -->
                 </select>
-                <small class="text-muted d-block mt-1">
-                </small>
             </div>
 
+        </div>
+
+        <!-- 🔹 LIGNE 2 -->
+        <div class="row mb-3">
+
+            <!-- 👤 ÉTUDIANT -->
             <div class="col-md-4">
                 <label class="form-label fw-bold">Profil Étudiant</label>
                 <select id="filter-etudiant" class="form-select">
-    <option value="">Choisir un étudiant...</option>
-    {% for e in etudiants %}
-        <option value="{{ e.matricule }}">
-            {{ e.nom }} {{ e.prenom }}
-        </option>
-    {% endfor %}
-</select>
-
+                    <option value="">Choisir un étudiant...</option>
+                    <!-- ⚠️ Rempli dynamiquement par JS -->
+                </select>
             </div>
+
         </div>
 
         <hr>
 
-        <div style="width: 100%; max-width: 800px; margin: 20px auto;">
+        <!-- 📊 GRAPH -->
+        <div style="width: 100%; max-width: 900px; margin: 30px auto;">
             <canvas id="myChart"></canvas>
         </div>
+
     </div>
 </div>
 {% endblock %}
 
 {% block scripts %}
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="{% static 'statistique/js/stat.js' %}"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{% static 'statistique/js/stat.js' %}"></script>
 
-    <script>
-    // ✅ Désactiver le groupe si un étudiant est choisi
-    const selectEtudiant = document.getElementById('filter-etudiant');
-    const selectGroupe = document.getElementById('filter-groupe');
+<script>
+//////////////////////////////////////////////////////
+// 🎯 UI LOGIQUE (SYNC AVEC TON JS)
+//////////////////////////////////////////////////////
 
-    selectEtudiant.addEventListener('change', function() {
-        if (this.value) {
-            selectGroupe.disabled = true; // priorité à l'étudiant
-        } else {
-            selectGroupe.disabled = false;
-        }
-    });
-    </script>
+const selectPromotion = document.getElementById('filter-promotion');
+const selectGroupe = document.getElementById('filter-groupe');
+const selectEtudiant = document.getElementById('filter-etudiant');
+const groupeContainer = document.getElementById('groupe-container');
+
+// 🎓 Promotion → affiche groupe
+selectPromotion.addEventListener('change', function () {
+
+    if (this.value) {
+        groupeContainer.style.display = "block";
+    } else {
+        groupeContainer.style.display = "none";
+        selectGroupe.value = "";
+    }
+
+    // reset étudiant
+    selectEtudiant.innerHTML = `<option value="">Choisir un étudiant...</option>`;
+});
+
+// 👥 Groupe → rien UI (géré côté JS principal)
+
+// 👤 Étudiant → priorité totale
+selectEtudiant.addEventListener('change', function () {
+
+    if (this.value) {
+        // Désactiver promotion + groupe
+        selectPromotion.disabled = true;
+        selectGroupe.disabled = true;
+        groupeContainer.style.display = "none";
+    } else {
+        selectPromotion.disabled = false;
+        selectGroupe.disabled = false;
+    }
+});
+</script>
 {% endblock %}
