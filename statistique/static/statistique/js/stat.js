@@ -5,93 +5,46 @@ const BASE_URL = "/statistique/";
 // 🔥 CONSTRUCTION URL
 //////////////////////////////////////////////////////
 function buildURL() {
-    const module = document.getElementById('filter-module').value;
-    const groupe = document.getElementById('filter-groupe').value;
-    const etudiant = document.getElementById('filter-etudiant').value;
+    const params = new URLSearchParams();
+    const fields = {
+        'module_id': 'filter-module',
+        'groupe_id': 'filter-groupe',
+        'etudiant_id': 'filter-etudiant',
+        'promotion_id': 'filter-promotion'
+    };
 
-    let url = `${BASE_URL}api/globales/?`;
-
-    if (module) url += `module_id=${module}&`;
-    if (groupe) url += `groupe_id=${groupe}&`;
-    if (etudiant) url += `etudiant_id=${etudiant}&`;
-
-    return url;
+    for (const [param, id] of Object.entries(fields)) {
+        const val = document.getElementById(id).value;
+        if (val) params.append(param, val);
+    }
+    return `${BASE_URL}api/globales/?${params.toString()}`;
 }
 
 //////////////////////////////////////////////////////
 // 📊 UPDATE CHART
 //////////////////////////////////////////////////////
 function updateChart(url) {
-    console.log("🚀 URL appelée :", url);
-
-    const module = document.getElementById('filter-module').value;
-    const groupe = document.getElementById('filter-groupe').value;
-    const etudiant = document.getElementById('filter-etudiant').value;
-
     fetch(url)
         .then(res => res.json())
         .then(data => {
-            console.log("✅ Données reçues :", data);
-
-            const canvas = document.getElementById('myChart');
-            if (!canvas) {
-                console.error("❌ Canvas introuvable !");
-                return;
-            }
-
-            const ctx = canvas.getContext('2d');
-
-            // 🔥 Détruire ancien graphique
+            const ctx = document.getElementById('myChart').getContext('2d');
             if (myChart) myChart.destroy();
 
             let labels = data.labels || [];
             let values = data.moyennes || [];
 
-            //////////////////////////////////////////////////////
-            // 🔥 CORRECTION PRINCIPALE
-            //////////////////////////////////////////////////////
-
-            // ⚠️ Si étudiant seul → on s'assure qu'on a plusieurs modules
-            if (etudiant && !module) {
-                console.log("📊 Cas : étudiant seul");
-
-                // sécurité si backend renvoie un seul élément
-                if (labels.length === 1 && labels[0] === "Moyenne de l'étudiant") {
-                    console.warn("⚠️ Backend ne renvoie pas les modules !");
-                }
-            }
-
-            // 🔥 Si aucune donnée
             if (!labels.length) {
                 labels = ["Aucune donnée"];
                 values = [0];
             }
 
-            //////////////////////////////////////////////////////
-            // 🎯 LABEL DYNAMIQUE INTELLIGENT
-            //////////////////////////////////////////////////////
-            let labelTag = "";
+            const etudiant = document.getElementById('filter-etudiant').value;
+            let labelTag = "Moyenne globale";
 
-            if (etudiant && module) {
-                labelTag = "Moyenne de l'étudiant pour ce module";
-                labels = ["Moyenne"];
-            }
-            else if (etudiant && !module) {
-                labelTag = `Moyennes par module (${data.identite || "Étudiant"})`;
-            }
-            else if (!etudiant && module) {
-                labelTag = "Moyennes des étudiants";
-            }
-            else if (groupe) {
-                labelTag = "Moyennes du groupe";
-            }
-            else {
-                labelTag = "Moyenne globale par module";
-            }
+            if (etudiant) labelTag = `Stats de ${data.identite || 'l\'étudiant'}`;
+            else if (document.getElementById('filter-groupe').value) labelTag = "Moyennes du groupe";
+            else if (document.getElementById('filter-promotion').value) labelTag = "Moyennes de la promotion";
 
-            //////////////////////////////////////////////////////
-            // 📊 CREATION CHART
-            //////////////////////////////////////////////////////
             myChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
@@ -99,65 +52,103 @@ function updateChart(url) {
                     datasets: [{
                         label: labelTag,
                         data: values,
-                        backgroundColor: 'rgba(54, 162, 235, 0.7)',
-                        borderWidth: 1
+                        backgroundColor: values.map(v => v >= 10 ? 'rgba(54, 162, 235, 0.7)' : 'rgba(255, 99, 132, 0.7)')
                     }]
                 },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            display: true
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            max: 20
-                        }
-                    }
+                options: { 
+                    responsive: true, 
+                    scales: { y: { beginAtZero: true, max: 20 } } 
                 }
             });
         })
-        .catch(error => {
-            console.error("❌ Erreur fetch :", error);
-        });
+        .catch(err => console.error("Erreur Chart:", err));
 }
 
 //////////////////////////////////////////////////////
-// 🎯 EVENTS FILTRES
+// 🎯 CHARGEMENT DYNAMIQUE
 //////////////////////////////////////////////////////
 
-// 👤 Étudiant
-document.getElementById('filter-etudiant').addEventListener('change', function () {
-    console.log("🎯 Étudiant :", this.value);
+function loadGroupes(promotionId) {
+    const groupeSelect = document.getElementById('filter-groupe');
+    groupeSelect.innerHTML = `<option value="">Tous les groupes</option>`;
+    
+    if (!promotionId) return;
 
+    fetch(`${BASE_URL}api/groupes/?promotion_id=${promotionId}`)
+        .then(res => res.json())
+        .then(data => {
+            data.groupes.forEach(g => {
+                groupeSelect.innerHTML += `<option value="${g.id}">${g.nom}</option>`;
+            });
+        });
+}
+
+/**
+ * Charge les étudiants selon la promo ET/OU le groupe
+ */
+function loadEtudiants(promotionId, groupeId) {
+    const etudiantSelect = document.getElementById('filter-etudiant');
+    etudiantSelect.innerHTML = `<option value="">Choisir un étudiant...</option>`;
+
+    // On construit l'URL de recherche
+    let query = new URLSearchParams();
+    if (promotionId) query.append('promotion_id', promotionId);
+    if (groupeId) query.append('groupe_id', groupeId);
+
+    if (query.toString() === "") return;
+
+    fetch(`${BASE_URL}api/etudiants/?${query.toString()}`) 
+        .then(res => res.json())
+        .then(data => {
+            if (data.etudiants) {
+                data.etudiants.forEach(e => {
+                    etudiantSelect.innerHTML += `<option value="${e.id}">${e.nom}</option>`;
+                });
+            }
+        })
+        .catch(err => console.error("Erreur LoadEtudiants:", err));
+}
+
+//////////////////////////////////////////////////////
+// 🎯 EVENTS
+//////////////////////////////////////////////////////
+
+// 🎓 Changement de Promotion
+document.getElementById('filter-promotion').addEventListener('change', function () {
+    const promotionId = this.value;
+
+    // Reset des menus dépendants
     document.getElementById('filter-groupe').value = "";
+    
+    // 1. Recharge les groupes de cette promo
+    loadGroupes(promotionId);
+    
+    // 2. Recharge TOUS les étudiants de cette promo
+    loadEtudiants(promotionId, null);
 
     updateChart(buildURL());
 });
 
-// 👥 Groupe
+// 👥 Changement de Groupe
 document.getElementById('filter-groupe').addEventListener('change', function () {
-    console.log("🎯 Groupe :", this.value);
+    const promotionId = document.getElementById('filter-promotion').value;
+    const groupeId = this.value;
 
-    document.getElementById('filter-etudiant').value = "";
+    // Recharge les étudiants filtrés par le groupe sélectionné
+    loadEtudiants(promotionId, groupeId);
 
     updateChart(buildURL());
 });
 
-// 📚 Module
+// 👤 Changement d'Étudiant
+document.getElementById('filter-etudiant').addEventListener('change', function () {
+    updateChart(buildURL());
+});
+
+// 📚 Changement de Module
 document.getElementById('filter-module').addEventListener('change', function () {
-    console.log("🎯 Module :", this.value);
-
     updateChart(buildURL());
 });
 
-//////////////////////////////////////////////////////
-// 🚀 INITIALISATION
-//////////////////////////////////////////////////////
-document.addEventListener("DOMContentLoaded", function () {
-    console.log("✅ Page chargée");
-
-    updateChart(`${BASE_URL}api/globales/`);
-});
+// Initialisation
+document.addEventListener("DOMContentLoaded", () => updateChart(buildURL()));

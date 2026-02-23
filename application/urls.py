@@ -10,8 +10,13 @@ urlpatterns = [
 
     # Applications principales
     path('etudiants/', include('etudiants.urls')),
+
+    path('utilisateurs/', include('utilisateurs.urls')),
     path('cours/', include('cours.urls')),
-    path('evaluation/', include('evaluation.urls')),
+    path("evaluation/", include("evaluation.urls")),
+    path('statistique/', include('statistique.urls')),
     path('dashboard/', include('dashboard.urls')),
-    path('stats/', include('statistique.urls')),
+    
+
 ]
+
