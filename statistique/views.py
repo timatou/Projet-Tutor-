@@ -29,7 +29,7 @@ def api_stats_globales(request):
     promotion_id = request.GET.get('promotion_id')
     groupe_id = request.GET.get('groupe_id')
     module_id = request.GET.get('module_id')
-    etudiant_id = request.GET.get('etudiant_id')
+    etudiant_id = request.GET.get('etudiant_matricule')
 
     notes = Note.objects.all()
 

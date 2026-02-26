@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', function () {
     async function loadDashboardData() {
         showLoading(true);
         try {
-            const response = await fetch('/dashboard/api/stats/');
+            const response = await fetch('/dashboard/api/statistique/');
             const data = await response.json();
             console.log("📊 Données API reçues:", data);
 

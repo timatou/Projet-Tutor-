@@ -1,6 +1,7 @@
 from django import forms
 from .models import User, Professeur
 from cours.models import Module
+from evaluation.models import Note
 
 class ProfesseurRegistrationForm(forms.ModelForm):
     username = forms.CharField(max_length=150, label="Identifiant")
@@ -55,3 +56,15 @@ class ProfesseurUpdateForm(forms.ModelForm):
             # C'est cette ligne précise qui met à jour tes cases cochées
             self.instance.modules.set(self.cleaned_data['modules'])
         return professeur
+    
+class NoteForm(forms.ModelForm):
+    class Meta:
+        model = Note
+        fields = ['etudiant', 'epreuve', 'valeur']
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None) # On récupère l'utilisateur connecté
+        super().__init__(*args, **kwargs)
+        if user and user.role == 'PROFESSEUR':
+            # On restreint le menu déroulant des modules
+            self.fields['module'].queryset = Module.objects.filter(professeur__user=user)

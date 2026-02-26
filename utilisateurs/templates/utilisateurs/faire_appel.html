@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-warning text-dark d-flex justify-content-between">
+            <h4 class="mb-0">Faire l'appel : {{ module.libelle }}</h4>
+            <span>Total : {{ etudiants.count }} étudiants</span>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <label>Date de la séance</label>
+                        <input type="date" name="date_absence" class="form-control" required value="{{ today|date:'Y-m-d' }}">
+                    </div>
+                    <div class="col-md-6">
+                        <label>Durée du cours (Heures)</label>
+                        <input type="number" name="duree_heures" class="form-control" step="0.5" value="2" required>
+                    </div>
+                </div>
+
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Matricule</th>
+                            <th>Nom & Prénom</th>
+                            <th class="text-center">Absent ?</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for e in etudiants %}
+                        <tr>
+                            <td>{{ e.matricule }}</td>
+                            <td>{{ e.nom }} {{ e.prenom }}</td>
+                            <td class="text-center">
+                                <div class="form-check d-flex justify-content-center">
+                                    <input class="form-check-input" type="checkbox" 
+                                           name="absent_{{ e.pk }}" style="width: 25px; height: 25px;">
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <div class="text-end mt-3">
+                    <a href="{% url 'espace_enseignant' %}" class="btn btn-secondary">Annuler</a>
+                    <button type="submit" class="btn btn-danger px-4">Enregistrer l'appel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -71,10 +71,59 @@ def api_supprimer_etudiant(request, matricule):
 
 # 5. Vue pour les PROMOTIONS (remplissage menus déroulants)
 def api_promotions_list(request):
-    promos = list(Promotion.objects.values('id', 'nom'))
+    promos = list(Promotion.objects.values('id', 'nom', 'annee'))
     return JsonResponse(promos, safe=False)
 
 # 6. Vue pour les GROUPES
 def api_groupes_list(request):
     groupes = list(Groupe.objects.values('id', 'nom', 'promotion__nom'))
     return JsonResponse(groupes, safe=False)
+
+
+# --- Créer une Promotion ---
+@csrf_exempt
+@require_http_methods(["POST"])
+@csrf_exempt
+def api_ajouter_promotion(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            nom = data.get('nom')
+            annee = data.get('annee')
+
+            # Vérification d'unicité manuelle pour envoyer un message personnalisé
+            if Promotion.objects.filter(nom=nom, annee=annee).exists():
+                return JsonResponse({"message": "Cette promotion existe déjà pour cette année."}, status=400)
+
+            Promotion.objects.create(nom=nom, annee=annee)
+            return JsonResponse({"message": "Promotion créée avec succès"}, status=201)
+        except Exception as e:
+            return JsonResponse({"message": str(e)}, status=400)
+# --- Créer un Groupe lié à une Promotion ---
+@csrf_exempt
+@require_http_methods(["POST"])
+def api_ajouter_groupe(request):
+    try:
+        data = json.loads(request.body)
+        # On récupère la promo par son ID
+        nom = data.get('nom')
+        promo = Promotion.objects.get(id=data.get('promotion_nom'))
+        if Groupe.objects.filter(nom=nom, promotion=promo).exists():
+            return JsonResponse({"message": "Ce groupe existe déjà pour cette promotion."}, status=400)
+        
+        Groupe.objects.create(
+            nom=data.get('nom'),
+            promotion=promo
+        )
+        return JsonResponse({"message": "Groupe créé"}, status=201)
+    except Exception as e:
+        return JsonResponse({"message": str(e)}, status=400)
+    
+def api_groupes_par_promotion(request, promo_id):
+    """Renvoie les groupes filtrés par l'ID de la promotion sélectionnée"""
+    groupes = Groupe.objects.filter(promotion_id=promo_id).values('id', 'nom')
+    return JsonResponse(list(groupes), safe=False)
+
+
+def promotion_groupe(request):
+    return render(request, 'etudiants/promotion_groupe.html')

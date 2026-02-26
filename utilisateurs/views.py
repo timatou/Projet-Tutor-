@@ -2,8 +2,12 @@ from django.shortcuts import render, redirect
 from .models import Professeur
 from .forms import ProfesseurRegistrationForm
 from django.shortcuts import get_object_or_404, render, redirect
-from .models import Professeur
 from .forms import ProfesseurUpdateForm
+from django.contrib.auth.decorators import login_required
+from cours.models import Module  
+from evaluation.models import Note
+from etudiants.models import Etudiant
+from evaluation.models import Absence
 
 def editer_enseignant(request, pk):
     professeur = get_object_or_404(Professeur, pk=pk)
@@ -33,12 +37,102 @@ def liste_enseignants(request):
     profs = Professeur.objects.select_related('user').prefetch_related('modules').all()
     return render(request, 'utilisateurs/enseignants.html', {'profs': profs})
 
+@login_required
 def dashboard_redirect(request):
-    """ Redirection après connexion selon le rôle """
-    if not request.user.is_authenticated:
-        return redirect('login')
+    # Si c'est le superutilisateur (il a tous les droits)
+    if request.user.is_superuser or request.user.role == 'ADMIN':
+        return redirect('liste_enseignants')
     
-    if request.user.role == 'ADMIN':
-        return redirect('liste_enseignants') # L'admin voit les profs
-    else:
-        return redirect('liste_notes') # Le prof voit les notes
+    # Si c'est un enseignant
+    elif request.user.role == 'PROFESSEUR':
+        return redirect('espace_enseignant')
+    
+    # Sécurité : si le rôle est inconnu, renvoyer vers une page par défaut
+    return redirect('login')
+
+@login_required
+def espace_enseignant(request):
+    # On initialise les variables pour éviter des erreurs dans le template
+    mes_modules = []
+    has_modules = False
+    
+    # On essaie de récupérer le profil professeur attaché à l'utilisateur
+    # Teste 'professeur' si 'professeur_profile' ne marche pas
+    professeur = getattr(request.user, 'professeur_profile', None) or getattr(request.user, 'professeur', None)
+    
+    if professeur:
+        mes_modules = professeur.modules.all()
+        has_modules = mes_modules.exists()
+    
+    return render(request, 'utilisateurs/espace_enseignant.html', {
+        'modules': mes_modules,
+        'has_modules': has_modules
+    })
+
+@login_required
+def saisir_notes_module(request, module_id):
+    module = get_object_or_404(Module, id=module_id, professeurs__user=request.user)
+    etudiants = module.etudiants.all() 
+
+    if request.method == 'POST':
+        type_eval = request.POST.get('type_evaluation')
+        # Note: Ton modèle utilise auto_now_add, donc date_eval ne sera pas utilisée
+        
+        for etudiant in etudiants:
+            valeur = request.POST.get(f'note_{etudiant.pk}')
+            
+            if valeur and valeur.strip() != "":
+                try:
+                    note_float = float(valeur.replace(',', '.'))
+                    
+                    # On cherche la note existante pour cet étudiant, ce module ET ce type
+                    # Si elle existe, on met à jour la valeur. Sinon, on la crée.
+                    Note.objects.update_or_create(
+                        etudiant=etudiant,
+                        module=module,
+                        type=type_eval, # On filtre par type pour permettre d'avoir une note DS et une note EXAM
+                        defaults={'valeur': note_float}
+                    )
+                except ValueError:
+                    continue
+        
+        return redirect('espace_enseignant')
+
+    return render(request, 'utilisateurs/saisie_masse_notes.html', {
+        'module': module,
+        'etudiants': etudiants,
+        'types': Note.TYPE_CHOICES
+    })
+
+ # Assure-toi d'importer le modèle Absence
+
+@login_required
+def faire_appel_module(request, module_id):
+    module = get_object_or_404(Module, id=module_id, professeurs__user=request.user)
+    etudiants = module.etudiants.all()
+
+    if request.method == 'POST':
+        date_appel = request.POST.get('date_absence')
+        duree_cours = request.POST.get('duree_heures')
+        
+        for etudiant in etudiants:
+            # On vérifie si la case "absent_ID" a été cochée
+            is_absent = request.POST.get(f'absent_{etudiant.pk}')
+            
+            if is_absent:
+                Absence.objects.get_or_create(
+                    etudiant=etudiant,
+                    module=module,
+                    date=date_appel,
+                    defaults={
+                        'duree': duree_cours,
+                        'justifiee': False,
+                        'motif': 'Appel en classe'
+                    }
+                )
+        return redirect('espace_enseignant')
+
+    return render(request, 'utilisateurs/faire_appel.html', {
+        'module': module,
+        'etudiants': etudiants
+    })

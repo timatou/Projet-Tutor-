@@ -4,23 +4,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Gestion Scolaire{% endblock %}</title>
-    <link rel="icon" href="data:,">
-
-    <!-- FontAwesome -->
+    <title>{% block title %}Suivi Étudiants{% endblock %}</title>
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-    <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-    <!-- CSS Global -->
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 
     {% block styles %}{% endblock %}
 </head>
-
 <body>
-    <!-- NAVBAR FIXE EN HAUT -->
+
     <header class="main-navbar">
         <div class="navbar-left">
             <button id="menuToggle" class="menu-hamburger">
@@ -33,99 +26,93 @@
         </div>
 
         <div class="navbar-right">
-            <div class="user-profile">
-                <img src="https://ui-avatars.com/api/?name=Admin&background=0f2d5c&color=fff" alt="Profile" class="user-avatar">
-                <span class="user-name">Admin</span>
-                <i class="fas fa-chevron-down"></i>
-            </div>
-            <a href="#" class="btn-disconnect">
-                <i class="fas fa-sign-out-alt"></i> 
-                <span>Déconnexion</span>
-            </a>
+            {% if user.is_authenticated %}
+                <div class="user-profile">
+                    <img src="https://ui-avatars.com/api/?name={{ user.username }}&background=0f2d5c&color=fff" alt="Profile" class="user-avatar">
+                    <span class="user-name">{{ user.username|capfirst }}</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                
+                <form id="logout-form" action="{% url 'logout' %}" method="POST" style="display: none;">
+                    {% csrf_token %}
+                </form>
+                <a href="#" class="btn-disconnect" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Déconnexion</span>
+                </a>
+            {% else %}
+                <a href="{% url 'login' %}" class="btn-login" style="text-decoration: none; color: #0f2d5c; font-weight: 600;">
+                    <i class="fas fa-sign-in-alt"></i> Connexion
+                </a>
+            {% endif %}
         </div>
     </header>
 
     <div class="app-container" id="appContainer">
-        <!-- SIDEBAR -->
         <aside class="sidebar" id="sidebar">
             <nav class="menu">
-                <a href="{% url 'dashboard' %}" class="menu-item">
-                    <i class="fas fa-chart-line"></i>
-                    <span>Dashboard</span>
-                </a>
-                <a href="{% url 'liste_enseignants' %}" class="menu-item">
-                    <i class="fas fa-chalkboard-teacher"></i>
-                    <span>Enseignants</span>
-                </a>
-                <a href="{% url 'liste_etudiants' %}" class="menu-item">
-                    <i class="fas fa-users"></i>
-                    <span>Étudiants</span>
-                </a>
-                <a href="{% url 'liste_modules' %}" class="menu-item">
-                    <i class="fas fa-book"></i>
-                    <span>Modules</span>
-                </a>
-                <a href="{% url 'liste_notes' %}" class="menu-item">
-                    <i class="fas fa-clipboard-list"></i>
-                    <span>Notes</span>
-                </a>
-                <a href="{% url 'liste_absences' %}" class="menu-item">
-                    <i class="fas fa-calendar-times"></i>
-                    <span>Absences</span>
-                </a>
-                <a href="{% url 'liste_statistiques' %}" class="menu-item">
-                    <i class="fas fa-chart-bar"></i>
-                    <span>Statistiques</span>
-                </a>
+                {% if user.is_authenticated %}
+                    
+                    {% if user.role == 'ADMIN' %}
+                        
+                        <a href="{% url 'dashboard' %}" class="menu-item"><i class="fas fa-chart-line"></i> <span>Dashboard</span></a>
+                        <a href="{% url 'liste_enseignants' %}" class="menu-item"><i class="fas fa-chalkboard-teacher"></i> <span>Enseignants</span></a>
+                        <a href="{% url 'liste_etudiants' %}" class="menu-item"><i class="fas fa-users"></i> <span>Étudiants</span></a>
+                        <a href="{% url 'liste_modules' %}" class="menu-item"><i class="fas fa-book"></i> <span>Modules</span></a>
+                        <a href="{% url 'liste_notes' %}" class="menu-item"><i class="fas fa-clipboard-list"></i> <span>Notes</span></a>
+                        <a href="{% url 'liste_absences' %}" class="menu-item"><i class="fas fa-calendar-times"></i> <span>Absences</span></a>
+                        <a href="{% url 'promotion_groupe' %}" class="menu-item"><i class="fas fa-layer-group"></i> <span>Promotions</span></a>
+                        <a href="{% url 'liste_statistiques' %}" class="menu-item"><i class="fas fa-chart-bar"></i> <span>Statistiques</span></a>
+                    {% endif %}
+
+                    {% if user.role == 'PROFESSEUR' %}
+                        <div class="menu-separator">MON ESPACE</div>
+                        <a href="{% url 'dashboard' %}" class="menu-item"><i class="fas fa-chart-line"></i> <span>Dashboard</span></a>
+                        <a href="{% url 'espace_enseignant' %}" class="menu-item"><i class="fas fa-book"></i> <span>Mes Modules</span></a>
+                        <a href="{% url 'liste_notes' %}" class="menu-item"><i class="fas fa-clipboard-list"></i> <span>Saisie Notes</span></a>
+                    {% endif %}
+
+                {% else %}
+                    <a href="{% url 'login' %}" class="menu-item"><i class="fas fa-sign-in-alt"></i> <span>Connexion</span></a>
+                {% endif %}
             </nav>
         </aside>
 
-        <!-- CONTENU PRINCIPAL -->
         <main class="main-content" id="mainContent">
             {% block content %}
             {% endblock %}
         </main>
     </div>
 
-    <!-- OVERLAY POUR MOBILE -->
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-    <!-- SCRIPT MENU HAMBURGER -->
     <script>
         (function() {
             const menuToggle = document.getElementById('menuToggle');
             const appContainer = document.getElementById('appContainer');
             const sidebarOverlay = document.getElementById('sidebarOverlay');
 
-            if (!menuToggle || !appContainer) {
-                console.error('❌ Éléments non trouvés');
-                return;
+            if (menuToggle && appContainer) {
+                menuToggle.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    appContainer.classList.toggle('sidebar-open');
+                });
             }
 
-            // ✅ Toggle sidebar au clic sur le hamburger
-            menuToggle.addEventListener('click', function(e) {
-                e.preventDefault();
-                appContainer.classList.toggle('sidebar-open');
-                console.log('✅ Menu cliqué - Classes:', appContainer.className);
-            });
-
-            // ✅ Fermer la sidebar au clic sur l'overlay
             if (sidebarOverlay) {
-                sidebarOverlay.addEventListener('click', function() {
+                sidebarOverlay.addEventListener('click', () => {
                     appContainer.classList.remove('sidebar-open');
                 });
             }
 
-            // ✅ Fermer la sidebar au clic sur un lien menu
+            // Fermeture auto sur mobile après clic lien
             document.querySelectorAll('.menu-item').forEach(item => {
-                item.addEventListener('click', function() {
+                item.addEventListener('click', () => {
                     if (window.innerWidth <= 768) {
                         appContainer.classList.remove('sidebar-open');
                     }
                 });
             });
-
-            console.log('✅ Menu hamburger initialisé');
         })();
     </script>
 
