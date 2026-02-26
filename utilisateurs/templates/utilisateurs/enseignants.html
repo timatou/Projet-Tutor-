@@ -7,9 +7,7 @@
     <div class="table-container shadow-sm p-4 bg-white rounded">
         <div class="table-header d-flex justify-content-between align-items-center mb-4">
             <h2 class="m-0 text-dark"><i class="fas fa-chalkboard-teacher me-2 text-primary"></i>Liste des Enseignants</h2>
-            <a href="{% url 'ajouter_enseignant' %}" class="btn btn-primary px-4 shadow-sm">
-                <i class="fas fa-plus me-2"></i>Nouveau Professeur
-            </a>
+            <a href="{% url 'ajouter_enseignant' %}" class="btn btn-primary px-4 shadow-sm"><i class="fas fa-plus me-2"></i>Nouveau Professeur</a>
         </div>
 
         <div class="table-responsive">
@@ -77,21 +75,6 @@
 </div>
 
 <style>
-    .custom-table thead th {
-        border-top: none;
-        font-weight: 600;
-        text-transform: uppercase;
-        font-size: 0.85rem;
-        letter-spacing: 0.5px;
-    }
-    .avatar-circle {
-        font-size: 0.9rem;
-        border: 2px solid #f8f9fa;
-        text-transform: uppercase;
-    }
-    .badge {
-        font-weight: 500;
-        font-size: 0.75rem;
-    }
+   
 </style>
 {% endblock %}

@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">Saisie des notes : {{ module.libelle }}</h4>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <label>Type d'évaluation</label>
+                        <select name="type_evaluation" class="form-control" required>
+                            {% for code, label in types %}
+                                <option value="{{ code }}">{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label>Date de l'examen</label>
+                        <input type="date" name="date_examen" class="form-control" required>
+                    </div>
+                </div>
+
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Matricule</th>
+                            <th>Nom & Prénom</th>
+                            <th style="width: 150px;">Note / 20</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for e in etudiants %}
+<tr>
+    <td>{{ e.matricule }}</td>
+    <td>{{ e.nom }} {{ e.prenom }}</td>
+    <td>
+        <input type="number" name="note_{{ e.pk }}" class="form-control" step="0.25">
+    </td>
+</tr>
+{% endfor %}
+                    </tbody>
+                </table>
+                <div class="text-end">
+                    <a href="{% url 'espace_enseignant' %}" class="btn btn-secondary">Annuler</a>
+                    <button type="submit" class="btn btn-success px-4">Enregistrer toutes les notes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     'statistique',
 ]
 
+
 AUTH_USER_MODEL = 'utilisateurs.User'
 
 MIDDLEWARE = [
@@ -81,10 +82,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOW_ALL_ORIGINS = True
 
-# Où aller après le login (vers ta vue d'aiguillage)
-LOGIN_REDIRECT_URL = 'dashboard_redirect' 
-
-# Où aller après le logout
+LOGIN_REDIRECT_URL = 'dashboard'  # Doit correspondre au 'name' dans urls.py
 LOGOUT_REDIRECT_URL = 'login'
 
-
+CSRF_COOKIE_SECURE = False
+SESSION_COOKIE_SECURE = False

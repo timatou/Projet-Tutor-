@@ -15,6 +15,10 @@ urlpatterns = [
     path('api/supprimer/<str:matricule>/', views.api_supprimer_etudiant, name='api_supprimer_etudiant'),
     path('api/groupes/', views.api_groupes_list, name='api_groupes'),
     
-    path('api/promotions/', views.api_promotions_list),
+    path('api/promotions/', views.api_promotions_list, name='api_promotions'),
+    path('api/promotions/ajouter/', views.api_ajouter_promotion, name='api_ajouter_promotion'),
+    path('api/groupes/ajouter/', views.api_ajouter_groupe, name='api_ajouter_groupe'),
+    path('api/groupes/promotion/<int:promo_id>/', views.api_groupes_par_promotion, name='api_groupes_par_promotion'),
+    path('promotion-groupe/', views.promotion_groupe, name='promotion_groupe'),
     
 ]

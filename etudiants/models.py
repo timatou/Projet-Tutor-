@@ -6,8 +6,12 @@ class Promotion(models.Model):
     nom = models.CharField(max_length=100)
     annee = models.CharField(max_length=9)  
 
+    class Meta:
+        # Empêche d'avoir deux fois "L3 Info" pour "2025-2026"
+        unique_together = ('nom', 'annee')
+
     def __str__(self):
-        return f"{self.nom} "
+        return f"{self.nom} {self.annee}"
 
 
 # ----- Classe Groupe -----
@@ -18,9 +22,12 @@ class Groupe(models.Model):
         on_delete=models.CASCADE,
         related_name='groupes'
     )
+    class Meta:
+        # Empêche d'avoir deux fois "Groupe A" pour la même promotion
+        unique_together = ('nom', 'promotion')
 
     def __str__(self):
-        return f"{self.nom}"
+        return f"{self.nom} ({self.promotion})"
 
 
 # ----- Classe Étudiant -----

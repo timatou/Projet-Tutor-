@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     async function loadDashboardData() {
         try {
-            const response = await fetch('/dashboard/api/stats/');
+            const response = await fetch('/dashboard/api/statistique/');
             const data = await response.json();
             
             // KPI

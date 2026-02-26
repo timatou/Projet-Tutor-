@@ -3,20 +3,24 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from .models import Module
-
+from django.contrib.auth.decorators import login_required
+from .models import Module
+from  evaluation.models import Note
 # Affiche la page HTML
 def liste_modules(request):
     return render(request, 'cours/modules.html')
 
 # Envoie les données au JavaScript
 def api_modules_data(request):
-    # On récupère les modules et leurs professeurs associés
-    modules = Module.objects.prefetch_related('professeurs').all()
+    # FILTRAGE : Si c'est un prof, on restreint la liste à ses modules uniquement
+    if request.user.is_authenticated and request.user.role == 'PROFESSEUR':
+        modules = Module.objects.filter(professeurs__user=request.user).prefetch_related('professeurs')
+    else:
+        # L'admin ou le superuser voit tout
+        modules = Module.objects.prefetch_related('professeurs').all()
+
     liste_data = []
-    
     for m in modules:
-        # Correction ici : str(p) va utiliser ce que tu as défini dans def __str__(self) 
-        # du modèle Professeur au lieu de chercher un champ 'nom' qui n'existe pas.
         profs_noms = ", ".join([str(p) for p in m.professeurs.all()])
         
         liste_data.append({
@@ -58,3 +62,15 @@ def api_supprimer_module(request, module_id):
             return JsonResponse({"message": "Supprimé"})
         except Module.DoesNotExist:
             return JsonResponse({"message": "Non trouvé"}, status=404)
+
+@login_required
+def liste_notes(request):
+    if request.user.role == 'ADMIN':
+        # L'admin voit tout
+        notes = Note.objects.all()
+    else:
+        # Le professeur ne voit que les notes des modules qu'IL enseigne
+        # On remonte via : Note -> Module -> Professeur -> User
+        notes = Note.objects.filter(module__professeur__user=request.user)
+    
+    return render(request, 'cours/liste_notes.html', {'notes': notes})

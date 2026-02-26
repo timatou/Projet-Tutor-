@@ -14,4 +14,9 @@ urlpatterns = [
     path('dashboard/', views.dashboard_redirect, name='dashboard_redirect'),
     path('enseignants/ajouter/', views.ajouter_enseignant, name='ajouter_enseignant'),
     path('enseignants/editer/<int:pk>/', views.editer_enseignant, name='editer_enseignant'),
+
+    path('tableau-de-bord/', views.dashboard_redirect, name='dashboard'), # Ta vue de redirection
+    path('mon-espace/', views.espace_enseignant, name='espace_enseignant'), # <--- AJOUTE CETTE LIGNE
+    path('saisir-notes/<int:module_id>/', views.saisir_notes_module, name='saisir_notes_module'), # Route pour la saisie des notes
+    path('faire-appel/<int:module_id>/', views.faire_appel_module, name='faire_appel_module'), # Route pour faire l'appel
 ]

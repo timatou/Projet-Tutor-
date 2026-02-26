@@ -13,7 +13,8 @@ class Module(models.Model):
 )
     # Relations
     professeurs = models.ManyToManyField('utilisateurs.Professeur', related_name='modules',blank=True)
-    etudiants = models.ManyToManyField('utilisateurs.Etudiant', related_name='modules',blank=True)
+    
+    etudiants = models.ManyToManyField('etudiants.Etudiant', related_name='modules_inscrits', blank=True)
 
     def __str__(self):
         return f"{self.libelle} (S{self.semestre})"
