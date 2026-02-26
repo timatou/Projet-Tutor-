@@ -4,20 +4,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Gestion Scolaire{% endblock %}</title>
-    <link rel="icon" href="data:,">
-
+    <title>{% block title %}Suivi Étudiants{% endblock %}</title>
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 
     {% block styles %}{% endblock %}
 </head>
-
 <body>
-    <!-- NAVBAR FIXE EN HAUT -->
+
     <header class="main-navbar">
         <div class="navbar-left">
             <button id="menuToggle" class="menu-hamburger">
@@ -29,61 +25,96 @@
             </div>
         </div>
 
-    <aside class="sidebar">
-      <div class="sidebar-header">
-        <h2>Suivi Étudiants</h2>
-      </div>
-      
-      <nav class="menu">
-        {% if user.is_authenticated %}
-
-            {% if user.role == 'ADMIN' %}
-                <div class="menu-separator">ADMINISTRATION</div>
-                <a href="{% url 'dashboard' %}" class="menu-item"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
-                <a href="{% url 'liste_enseignants' %}" class="menu-item"><i class="fas fa-chalkboard-teacher"></i> Enseignants</a>
-                <a href="{% url 'liste_etudiants' %}" class="menu-item"><i class="fas fa-users"></i> Étudiants</a>
-                <a href="{% url 'liste_modules' %}" class="menu-item"><i class="fas fa-book"></i> Modules</a>
-                <a href="{% url 'liste_notes' %}" class="menu-item"><i class="fas fa-clipboard-list"></i> Saisie des Notes</a>
-                <a href="{% url 'liste_absences' %}" class="menu-item"><i class="fas fa-calendar-times"></i> Gérer Absences</a>
-                <a href="{% url 'liste_statistiques' %}" class="menu-item"><i class="fas fa-chart-bar"></i> Statistiques</a>
-                <a href="{% url 'promotion_groupe' %}" class="menu-item"><i class="fas fa-layer-group"></i> Promotions & Groupes</a>
-            {% endif %}
-
-            {% if user.role == 'PROFESSEUR' %}
-                <div class="menu-separator">MON ESPACE</div>
-                <a href="{% url 'dashboard' %}" class="menu-item"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
-                <a href="{% url 'espace_enseignant' %}" class="menu-item"><i class="fas fa-graduation-cap"></i> Mes Modules</a>
-               <a href="{% url 'liste_notes' %}" class="menu-item"><i class="fas fa-clipboard-list"></i> Saisie des Notes</a>
-                <!--<a href="{% url 'liste_absences' %}" class="menu-item"><i class="fas fa-calendar-times"></i> Gérer Absences</a>-->
-            {% endif %}
-
-            <div class="menu-footer mt-auto">
-                <hr class="mx-3 border-secondary">
-                <div class="px-3 mb-2 text-white small">
-                    <i class="fas fa-user-circle me-2"></i> {{ user.get_full_name|default:user.username }}
-                    <br><span class="badge bg-primary mt-1">{{ user.role }}</span>
-                    
+        <div class="navbar-right">
+            {% if user.is_authenticated %}
+                <div class="user-profile">
+                    <img src="https://ui-avatars.com/api/?name={{ user.username }}&background=0f2d5c&color=fff" alt="Profile" class="user-avatar">
+                    <span class="user-name">{{ user.username|capfirst }}</span>
+                    <i class="fas fa-chevron-down"></i>
                 </div>
-                <form method="post" action="{% url 'logout' %}">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-danger">Déconnexion</button>
+                
+                <form id="logout-form" action="{% url 'logout' %}" method="POST" style="display: none;">
+                    {% csrf_token %}
                 </form>
-            </div>
+                <a href="#" class="btn-disconnect" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Déconnexion</span>
+                </a>
+            {% else %}
+                <a href="{% url 'login' %}" class="btn-login" style="text-decoration: none; color: #0f2d5c; font-weight: 600;">
+                    <i class="fas fa-sign-in-alt"></i> Connexion
+                </a>
+            {% endif %}
+        </div>
+    </header>
 
-        {% else %}
-            <a href="{% url 'login' %}" class="menu-item"><i class="fas fa-sign-in-alt"></i> Connexion</a>
-        {% endif %}
-      </nav>
-    </aside>
-    
-    <main class="main-content">
-        <header class="top-bar mb-4 p-3 bg-white shadow-sm d-flex justify-content-end">
-            <!--<span class="text-muted">Session : <strong>2025-2026</strong></span>-->
-        </header>
+    <div class="app-container" id="appContainer">
+        <aside class="sidebar" id="sidebar">
+            <nav class="menu">
+                {% if user.is_authenticated %}
+                    
+                    {% if user.role == 'ADMIN' %}
+                        
+                        <a href="{% url 'dashboard' %}" class="menu-item"><i class="fas fa-chart-line"></i> <span>Dashboard</span></a>
+                        <a href="{% url 'liste_enseignants' %}" class="menu-item"><i class="fas fa-chalkboard-teacher"></i> <span>Enseignants</span></a>
+                        <a href="{% url 'liste_etudiants' %}" class="menu-item"><i class="fas fa-users"></i> <span>Étudiants</span></a>
+                        <a href="{% url 'liste_modules' %}" class="menu-item"><i class="fas fa-book"></i> <span>Modules</span></a>
+                        <a href="{% url 'liste_notes' %}" class="menu-item"><i class="fas fa-clipboard-list"></i> <span>Notes</span></a>
+                        <a href="{% url 'liste_absences' %}" class="menu-item"><i class="fas fa-calendar-times"></i> <span>Absences</span></a>
+                        <a href="{% url 'promotion_groupe' %}" class="menu-item"><i class="fas fa-layer-group"></i> <span>Promotions</span></a>
+                        <a href="{% url 'liste_statistiques' %}" class="menu-item"><i class="fas fa-chart-bar"></i> <span>Statistiques</span></a>
+                    {% endif %}
 
-        {% block content %}
-        {% endblock %}
-    </main>
+                    {% if user.role == 'PROFESSEUR' %}
+                        <div class="menu-separator">MON ESPACE</div>
+                        <a href="{% url 'dashboard' %}" class="menu-item"><i class="fas fa-chart-line"></i> <span>Dashboard</span></a>
+                        <a href="{% url 'espace_enseignant' %}" class="menu-item"><i class="fas fa-book"></i> <span>Mes Modules</span></a>
+                        <a href="{% url 'liste_notes' %}" class="menu-item"><i class="fas fa-clipboard-list"></i> <span>Saisie Notes</span></a>
+                    {% endif %}
+
+                {% else %}
+                    <a href="{% url 'login' %}" class="menu-item"><i class="fas fa-sign-in-alt"></i> <span>Connexion</span></a>
+                {% endif %}
+            </nav>
+        </aside>
+
+        <main class="main-content" id="mainContent">
+            {% block content %}
+            {% endblock %}
+        </main>
+    </div>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <script>
+        (function() {
+            const menuToggle = document.getElementById('menuToggle');
+            const appContainer = document.getElementById('appContainer');
+            const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+            if (menuToggle && appContainer) {
+                menuToggle.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    appContainer.classList.toggle('sidebar-open');
+                });
+            }
+
+            if (sidebarOverlay) {
+                sidebarOverlay.addEventListener('click', () => {
+                    appContainer.classList.remove('sidebar-open');
+                });
+            }
+
+            // Fermeture auto sur mobile après clic lien
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    if (window.innerWidth <= 768) {
+                        appContainer.classList.remove('sidebar-open');
+                    }
+                });
+            });
+        })();
+    </script>
 
     {% block scripts %}{% endblock %}
 </body>

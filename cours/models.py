@@ -8,19 +8,12 @@ class Module(models.Model):
     libelle = models.CharField(max_length=100)
     coefficient = models.FloatField(default=1.0)
     semestre = models.IntegerField(
-<<<<<<< HEAD
     validators=[MinValueValidator(1), MaxValueValidator(10)]
 )
     # Relations
     professeurs = models.ManyToManyField('utilisateurs.Professeur', related_name='modules',blank=True)
     
     etudiants = models.ManyToManyField('etudiants.Etudiant', related_name='modules_inscrits', blank=True)
-=======
-        validators=[MinValueValidator(1), MaxValueValidator(10)]
-    )
-    professeurs = models.ManyToManyField('utilisateurs.Professeur', related_name='modules', blank=True)
-    etudiants = models.ManyToManyField('utilisateurs.Etudiant', related_name='modules', blank=True)
->>>>>>> origin/main
 
     def __str__(self):
         return f"{self.libelle} (S{self.semestre})"

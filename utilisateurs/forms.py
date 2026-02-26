@@ -60,7 +60,7 @@ class ProfesseurUpdateForm(forms.ModelForm):
 class NoteForm(forms.ModelForm):
     class Meta:
         model = Note
-        fields = ['etudiant', 'module', 'valeur']
+        fields = ['etudiant', 'epreuve', 'valeur']
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None) # On récupère l'utilisateur connecté
