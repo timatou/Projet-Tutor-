@@ -15,5 +15,5 @@ urlpatterns = [
     path('api/etudiants/groupe/', views.api_etudiants_par_groupe, name='api_etudiants_par_groupe'),
 
     # Détail d’un étudiant
-    path('api/etudiant/<int:etudiant_id>/', views.dashboard_etudiant, name='api_etudiant_detail'),
+
 ]

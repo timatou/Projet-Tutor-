@@ -20,30 +20,114 @@
 </head>
 
 <body>
+    <!-- NAVBAR FIXE EN HAUT -->
+    <header class="main-navbar">
+        <div class="navbar-left">
+            <button id="menuToggle" class="menu-hamburger">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="navbar-logo">
+                <i class="fas fa-graduation-cap"></i>
+                <span>Suivi Étudiants</span>
+            </div>
+        </div>
 
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
-      <div class="sidebar-header">
-        <h2>Suivi Étudiants</h2>
-      </div>
-      <nav class="menu">
-        <a href="#" class="menu-item"><i class="fas fa-chart-line"></i> Dashboard</a>
-        <a href="{% url 'liste_enseignants' %}" class="menu-item"><i class="fas fa-chalkboard-teacher"></i> Enseignants</a>
-        <a href="{% url 'liste_etudiants' %}" class="menu-item"><i class="fas fa-users"></i> Étudiants</a>
-        <a href="{% url 'liste_modules' %}" class="menu-item"><i class="fas fa-book"></i> Modules</a>
-        <a href="{% url 'liste_notes' %}" class="menu-item"><i class="fas fa-clipboard-list"></i> Notes</a>
-        <a href="{% url 'liste_absences' %}" class="menu-item"><i class="fas fa-calendar-times"></i> Absences</a>
-        <a href="{% url 'liste_statistiques' %}" class="menu-item"><i class="fas fa-chart-bar"></i> Statistiques</a>
+        <div class="navbar-right">
+            <div class="user-profile">
+                <img src="https://ui-avatars.com/api/?name=Admin&background=0f2d5c&color=fff" alt="Profile" class="user-avatar">
+                <span class="user-name">Admin</span>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <a href="#" class="btn-disconnect">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Déconnexion</span>
+            </a>
+        </div>
+    </header>
 
+    <div class="app-container" id="appContainer">
+        <!-- SIDEBAR -->
+        <aside class="sidebar" id="sidebar">
+            <nav class="menu">
+                <a href="{% url 'dashboard' %}" class="menu-item">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="{% url 'liste_enseignants' %}" class="menu-item">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                    <span>Enseignants</span>
+                </a>
+                <a href="{% url 'liste_etudiants' %}" class="menu-item">
+                    <i class="fas fa-users"></i>
+                    <span>Étudiants</span>
+                </a>
+                <a href="{% url 'liste_modules' %}" class="menu-item">
+                    <i class="fas fa-book"></i>
+                    <span>Modules</span>
+                </a>
+                <a href="{% url 'liste_notes' %}" class="menu-item">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>Notes</span>
+                </a>
+                <a href="{% url 'liste_absences' %}" class="menu-item">
+                    <i class="fas fa-calendar-times"></i>
+                    <span>Absences</span>
+                </a>
+                <a href="{% url 'liste_statistiques' %}" class="menu-item">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Statistiques</span>
+                </a>
+            </nav>
+        </aside>
 
-        </nav>
-    </aside>
-    
-    <!-- CONTENU PRINCIPAL -->
-    <main class="main-content">
-        {% block content %}
-        {% endblock %}
-    </main>
+        <!-- CONTENU PRINCIPAL -->
+        <main class="main-content" id="mainContent">
+            {% block content %}
+            {% endblock %}
+        </main>
+    </div>
+
+    <!-- OVERLAY POUR MOBILE -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- SCRIPT MENU HAMBURGER -->
+    <script>
+        (function() {
+            const menuToggle = document.getElementById('menuToggle');
+            const appContainer = document.getElementById('appContainer');
+            const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+            if (!menuToggle || !appContainer) {
+                console.error('❌ Éléments non trouvés');
+                return;
+            }
+
+            // ✅ Toggle sidebar au clic sur le hamburger
+            menuToggle.addEventListener('click', function(e) {
+                e.preventDefault();
+                appContainer.classList.toggle('sidebar-open');
+                console.log('✅ Menu cliqué - Classes:', appContainer.className);
+            });
+
+            // ✅ Fermer la sidebar au clic sur l'overlay
+            if (sidebarOverlay) {
+                sidebarOverlay.addEventListener('click', function() {
+                    appContainer.classList.remove('sidebar-open');
+                });
+            }
+
+            // ✅ Fermer la sidebar au clic sur un lien menu
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    if (window.innerWidth <= 768) {
+                        appContainer.classList.remove('sidebar-open');
+                    }
+                });
+            });
+
+            console.log('✅ Menu hamburger initialisé');
+        })();
+    </script>
 
     {% block scripts %}{% endblock %}
 </body>

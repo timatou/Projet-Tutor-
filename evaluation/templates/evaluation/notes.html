@@ -1,55 +1,41 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %}Gestion des Notes - Suivi Étudiants{% endblock %}
+
+{% block title %}Gestion des Notes{% endblock %}
 
 {% block styles %}
-    <link rel="stylesheet" href="{% static 'evaluation/css/notes.css' %}">
+<link rel="stylesheet" href="{% static 'evaluation/css/notes.css' %}">
 {% endblock %}
 
 {% block scripts %}
-    <script src="{% static 'evaluation/js/notes.js' %}"></script>
+<script src="{% static 'evaluation/js/notes.js' %}"></script>
 {% endblock %}
 
 {% block content %}
 
-<main class="main-content">
   <div class="topbar">
     <h1>Gestion des Notes</h1>
-    <a href="#" class="btn-action"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
   </div>
 
   <div class="content-area">
-    <!-- Page Header (comme Modules) -->
+
+    <!-- HEADER -->
     <div class="page-header">
       <h2><i class="fas fa-clipboard-list"></i> Liste des Notes</h2>
-      <div class="page-header-actions">
-      </div>
+      <button id="btnAddNote" class="btn-new">
+        <i class="fas fa-plus"></i> Ajouter une note
+      </button>
     </div>
 
-    <!-- Filter Bar (comme Modules) -->
-    <div class="filter-bar">
-      <div class="filter-group">
-        <select id="filterEtudiant" class="filter-select">
-          <option value="">Tous les étudiants</option>
-        </select>
-
-        <select id="filterModule" class="filter-select">
-          <option value="">Tous les modules</option>
-        </select>
-      </div>
-
-      <button id="btnAddNote" class="btn-new"><i class="fas fa-plus"></i> Ajouter une note</button>
-    </div>
-
-    <!-- Table Container -->
+    <!-- TABLE -->
     <div class="table-container">
       <table id="tableNotes">
         <thead>
           <tr>
-            <th>MATRICULE ÉTUDIANT</th>
+            <th>ÉTUDIANT</th>
             <th>MODULE</th>
             <th>TYPE</th>
-            <th>VALEUR</th>
+            <th>NOTE</th>
             <th>DATE</th>
             <th>ACTIONS</th>
           </tr>
@@ -57,47 +43,73 @@
         <tbody>
           <tr>
             <td colspan="6" class="empty-state">
-              <i class="fas fa-info-circle"></i><br>
               Aucune note enregistrée.
             </td>
           </tr>
         </tbody>
       </table>
     </div>
-  </div>
-</main>
 
-<!-- Modal pour ajouter/modifier une note -->
+  </div>
+
+<!-- MODAL AJOUT / MODIFICATION NOTE -->
 <div id="modalAddNote" class="modal">
   <div class="modal-content">
-    <button class="close-modal">&times;</button>
-    <h2 id="modalTitle"><i class="fas fa-plus-circle"></i> Ajouter une note</h2>
+    <div class="modal-header">
+      <h2 id="modalTitle">
+        <i class="fas fa-plus-circle"></i> Ajouter une note
+      </h2>
+      <button type="button" class="close-modal">&times;</button>
+    </div>
 
     <form id="formNote">
+      {% csrf_token %}
       <input type="hidden" id="editingIndex">
 
-      <label for="etudiant">Matricule Étudiant</label>
-      <input id="etudiant" type="text" list="listEtudiants" placeholder="Tapez un matricule..." required autocomplete="off">
-      <datalist id="listEtudiants"></datalist>
+      <!-- Étudiant -->
+      <div class="form-group">
+        <label for="etudiant">Matricule Étudiant</label>
+        <input 
+          type="text"
+          id="etudiant"
+          list="listEtudiants"
+          placeholder="Ex: ET001"
+          required
+          autocomplete="off"
+        >
+        <datalist id="listEtudiants"></datalist>
+      </div>
 
-      <label for="moduleSelect">Module</label>
-      <select id="moduleSelect" required>
-        <option value="">Sélectionnez un module...</option>
-      </select>
+      <!-- Épreuve - UN SEUL OPTION -->
+      <div class="form-group">
+        <label for="epreuveSelect">Épreuve</label>
+        <select id="epreuveSelect" required>
+          <option value="" selected disabled>Chargement des épreuves...</option>
+          <!-- IL N'Y A QU'UNE SEULE LIGNE ICI ! -->
+        </select>
+      </div>
 
-      <label for="type">Type d'évaluation</label>
-      <select id="type" required>
-        <option value="">Sélectionnez un type...</option>
-      </select>
+      <!-- Note -->
+      <div class="form-group">
+        <label for="note">Note (/20)</label>
+        <input 
+          type="number"
+          id="note"
+          min="0"
+          max="20"
+          step="0.5"
+          placeholder="10"
+          required
+        >
+      </div>
 
-      <label for="note">Valeur (Note /20)</label>
-      <input id="note" type="number" min="0" max="20" step="0.1" placeholder="Ex: 15.5" required>
-
-      <label for="date">Date de l'examen</label>
-      <input id="date" type="date" required>
-
-      <button type="submit" class="btn-action full-width">Enregistrer la note</button>
+      <!-- Boutons -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="btnCancel">Annuler</button>
+        <button type="submit" class="btn btn-primary">Enregistrer</button>
+      </div>
     </form>
   </div>
 </div>
+
 {% endblock %}

@@ -1,266 +1,307 @@
+// ===============================
+// CSRF TOKEN
+// ===============================
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let cookie of cookies) {
+            cookie = cookie.trim();
+            if (cookie.startsWith(name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+const csrftoken = getCookie('csrftoken');
+
+// ===============================
+// ATTENDRE QUE LE DOM SOIT PRÊT
+// ===============================
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('✅ JavaScript notes chargé');
+    console.log("✅ JavaScript notes chargé - ULTIME VERSION");
     
-    // ===============================
-    // ÉLÉMENTS DU DOM
-    // ===============================
-    
-    const filterEtudiant = document.getElementById('filterEtudiant');
-    const filterModule = document.getElementById('filterModule');
+    // Récupération des éléments DOM
     const tbody = document.querySelector('#tableNotes tbody');
-    
-    // Modal
     const modal = document.getElementById('modalAddNote');
     const btnAdd = document.getElementById('btnAddNote');
     const btnClose = document.querySelector('.close-modal');
-    
-    // Formulaire
+    const btnCancel = document.getElementById('btnCancel');
     const formNote = document.getElementById('formNote');
-    
-    // Selects
-    const etudiantSelect = document.getElementById('etudiant');
-    const moduleSelect = document.getElementById('moduleSelect');
-    const typeSelect = document.getElementById('type');
-    
-    // Stockage global des notes
+    const etudiantInput = document.getElementById('etudiant');
+    const epreuveSelect = document.getElementById('epreuveSelect');
+    const noteInput = document.getElementById('note');
+    const editingIndex = document.getElementById('editingIndex');
+
+    console.log("✅ Éléments récupérés:", {
+        epreuveSelect: epreuveSelect ? "✅" : "❌"
+    });
+
+    // Variable globale pour stocker les notes
     window.notesData = [];
 
     // ===============================
     // GESTION DU MODAL
     // ===============================
-    
-    if (btnAdd && modal) {
-        btnAdd.addEventListener('click', function(e) {
-            e.preventDefault();
-            modal.style.display = 'flex';
-            modal.classList.add('show');
-            if (formNote) formNote.reset();
-            document.getElementById('editingIndex').value = '';
+    function openModal() {
+        console.log("📌 Ouverture du modal");
+        modal.classList.add('show');
+    }
+
+    function closeModal() {
+        console.log("📌 Fermeture du modal");
+        modal.classList.remove('show');
+        if (formNote) formNote.reset();
+        if (editingIndex) editingIndex.value = '';
+    }
+
+    // Ouvrir le modal pour ajouter
+    if (btnAdd) {
+        btnAdd.addEventListener('click', function() {
+            console.log("➕ Clic sur Ajouter une note");
+            formNote.reset();
+            editingIndex.value = '';
             document.getElementById('modalTitle').innerHTML = '<i class="fas fa-plus-circle"></i> Ajouter une note';
+            openModal();
         });
     }
-    
-    if (btnClose && modal) {
-        btnClose.addEventListener('click', function() {
-            modal.style.display = 'none';
-            modal.classList.remove('show');
-        });
-    }
+
+    // Fermer le modal
+    if (btnClose) btnClose.addEventListener('click', closeModal);
+    if (btnCancel) btnCancel.addEventListener('click', closeModal);
     
     window.addEventListener('click', function(e) {
-        if (e.target === modal) {
-            modal.style.display = 'none';
-            modal.classList.remove('show');
-        }
+        if (e.target === modal) closeModal();
     });
 
     // ===============================
-    // CHARGEMENT DES DONNÉES
+    // FORCER LE CHARGEMENT DES ÉPREUVES IMMÉDIATEMENT
     // ===============================
+    console.log("🚀 FORCER LE CHARGEMENT DES ÉPREUVES");
     
-    loadData();
+    // Appel direct sans attendre
+    loadEpreuvesDirect();
     
-    async function loadData() {
+    // Charger les autres données
+    loadEtudiants();
+    loadNotes();
+
+    // ===============================
+    // CHARGER LES ÉPREUVES - VERSION DIRECTE
+    // ===============================
+    async function loadEpreuvesDirect() {
+        console.log("%c📚 CHARGEMENT DIRECT DES ÉPREUVES", "color: orange; font-size: 14px; font-weight: bold");
+        
         try {
-            await Promise.all([
-                loadEtudiants(),
-                loadModules(),
-                loadNotes()
-            ]);
+            // Vérifier que le select existe
+            if (!epreuveSelect) {
+                console.error("❌ Select 'epreuveSelect' non trouvé !");
+                return;
+            }
+            
+            // FORCER le vidage du select
+            console.log("🧹 Vidage forcé du select");
+            epreuveSelect.innerHTML = '';
+            
+            // Option temporaire
+            const tempOption = document.createElement('option');
+            tempOption.value = '';
+            tempOption.textContent = 'Chargement en cours...';
+            tempOption.disabled = true;
+            tempOption.selected = true;
+            epreuveSelect.appendChild(tempOption);
+            
+            // Appel API
+            console.log("📡 Appel à /evaluation/api/epreuves/");
+            const response = await fetch('/evaluation/api/epreuves/');
+            
+            if (!response.ok) {
+                throw new Error(`Erreur HTTP ${response.status}`);
+            }
+            
+            const data = await response.json();
+            console.log("📦 Données reçues:", data);
+            
+            // VIDER COMPLÈTEMENT
+            epreuveSelect.innerHTML = '';
+            
+            // Option par défaut
+            const defaultOption = document.createElement('option');
+            defaultOption.value = '';
+            defaultOption.textContent = 'Sélectionnez une épreuve...';
+            defaultOption.disabled = true;
+            defaultOption.selected = true;
+            epreuveSelect.appendChild(defaultOption);
+            
+            // Ajouter les épreuves
+            if (data.epreuves && data.epreuves.length > 0) {
+                console.log(`📊 ${data.epreuves.length} épreuve(s) trouvée(s)`);
+                
+                data.epreuves.forEach((epreuve, index) => {
+                    const option = document.createElement('option');
+                    option.value = epreuve.id;
+                    
+                    // Format simple
+                    let texte = '';
+                    if (epreuve.module_code) texte += epreuve.module_code;
+                    if (epreuve.type) texte += (texte ? ' - ' : '') + epreuve.type;
+                    if (epreuve.date) {
+                        try {
+                            const d = new Date(epreuve.date);
+                            texte += ` (${d.getDate()}/${d.getMonth()+1}/${d.getFullYear()})`;
+                        } catch {
+                            texte += ` (${epreuve.date})`;
+                        }
+                    }
+                    
+                    option.textContent = texte || `Épreuve #${epreuve.id}`;
+                    epreuveSelect.appendChild(option);
+                    console.log(`   ✅ Ajouté: ${option.textContent}`);
+                });
+                
+                console.log(`✅ TOTAL: ${data.epreuves.length} épreuves dans le select`);
+                console.log("📋 Options:", epreuveSelect.options.length);
+                
+            } else {
+                console.warn("⚠️ Aucune épreuve trouvée");
+                const emptyOption = document.createElement('option');
+                emptyOption.value = '';
+                emptyOption.textContent = 'Aucune épreuve disponible';
+                emptyOption.disabled = true;
+                epreuveSelect.appendChild(emptyOption);
+            }
+            
         } catch (error) {
-            console.error('Erreur chargement:', error);
+            console.error("❌ ERREUR:", error);
+            if (epreuveSelect) {
+                epreuveSelect.innerHTML = '<option value="">Erreur de chargement</option>';
+            }
         }
     }
-    
+
+    // ===============================
+    // CHARGER LES ÉTUDIANTS
+    // ===============================
     async function loadEtudiants() {
         try {
             const response = await fetch('/etudiants/api/data/');
             const data = await response.json();
             
-            if (etudiantSelect) {
-                etudiantSelect.innerHTML = '<option value="">Sélectionnez un étudiant...</option>';
-                data.etudiants.forEach(e => {
-                    const option = document.createElement('option');
-                    option.value = e.matricule;
-                    option.textContent = `${e.matricule} - ${e.nom} ${e.prenom}`;
-                    etudiantSelect.appendChild(option);
-                });
-            }
-            
-            if (filterEtudiant) {
-                filterEtudiant.innerHTML = '<option value="">Tous les étudiants</option>';
-                data.etudiants.forEach(e => {
-                    const option = document.createElement('option');
-                    option.value = e.matricule;
-                    option.textContent = `${e.matricule} - ${e.nom} ${e.prenom}`;
-                    filterEtudiant.appendChild(option);
-                });
+            const datalist = document.getElementById('listEtudiants');
+            if (datalist) {
+                datalist.innerHTML = '';
+                if (data.etudiants && data.etudiants.length > 0) {
+                    data.etudiants.forEach(e => {
+                        const option = document.createElement('option');
+                        option.value = e.matricule;
+                        option.textContent = `${e.matricule} - ${e.nom} ${e.prenom}`;
+                        datalist.appendChild(option);
+                    });
+                    console.log(`✅ ${data.etudiants.length} étudiants`);
+                }
             }
         } catch (error) {
-            console.error('Erreur chargement étudiants:', error);
+            console.error("❌ Erreur étudiants:", error);
         }
     }
-    
-    async function loadModules() {
-        try {
-            const response = await fetch('/cours/api/data/');
-            const data = await response.json();
-            
-            if (moduleSelect) {
-                moduleSelect.innerHTML = '<option value="">Sélectionnez un module...</option>';
-                data.modules.forEach(m => {
-                    const option = document.createElement('option');
-                    option.value = m.id;
-                    option.textContent = `${m.code} - ${m.libelle}`;
-                    moduleSelect.appendChild(option);
-                });
-            }
-            
-            if (filterModule) {
-                filterModule.innerHTML = '<option value="">Tous les modules</option>';
-                data.modules.forEach(m => {
-                    const option = document.createElement('option');
-                    option.value = m.id;
-                    option.textContent = `${m.code} - ${m.libelle}`;
-                    filterModule.appendChild(option);
-                });
-            }
-            
-            // Remplir aussi le type select avec les choix possibles
-            if (typeSelect) {
-                typeSelect.innerHTML = '<option value="">Sélectionnez un type...</option>';
-                const types = ['DS', 'TP', 'EXAM'];
-                types.forEach(t => {
-                    const option = document.createElement('option');
-                    option.value = t;
-                    option.textContent = t;
-                    typeSelect.appendChild(option);
-                });
-            }
-        } catch (error) {
-            console.error('Erreur chargement modules:', error);
-        }
-    }
-    
+
+    // ===============================
+    // CHARGER LES NOTES
+    // ===============================
     async function loadNotes() {
         try {
             const response = await fetch('/evaluation/api/notes/');
             const data = await response.json();
-            renderTable(data.notes || []);
+            
+            window.notesData = data.notes || [];
+            renderTable(window.notesData);
+            console.log(`✅ ${window.notesData.length} notes`);
         } catch (error) {
-            console.error('Erreur chargement notes:', error);
+            console.error("❌ Erreur notes:", error);
         }
     }
-    
+
+    // ===============================
+    // AFFICHER LE TABLEAU
+    // ===============================
     function renderTable(notes) {
         if (!tbody) return;
         
-        // Stocker les données globalement pour l'édition
-        window.notesData = notes;
-        
-        if (!notes.length) {
-            tbody.innerHTML = `<tr><td colspan="6" class="empty-state">
-                <i class="fas fa-info-circle"></i><br>
-                Aucune note enregistrée.
-            </td></tr>`;
+        if (!notes || notes.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" class="empty-state">Aucune note enregistrée.</td></tr>';
             return;
         }
-        
-        tbody.innerHTML = notes.map(n => {
-            const noteClass = n.valeur >= 10 ? 'note-excellente' : 'note-insuffisante';
-            
-            return `
-                <tr>
-                    <td>${n.etudiant_matricule || ''} - ${n.etudiant_nom || ''} ${n.etudiant_prenom || ''}</td>
-                    <td>${n.module_code || ''} - ${n.module_libelle || ''}</td>
-                    <td>${n.type || ''}</td>
-                    <td class="note-value ${noteClass}">${n.valeur || 0}/20</td>
-                    <td>${formatDate(n.date)}</td>
-                    <td>
-                        <div class="actions-cell">
-                            <button class="btn-action" onclick="editNote(${n.id})">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button class="btn-action delete-btn" onclick="deleteNote(${n.id})">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-            `;
-        }).join('');
+
+        tbody.innerHTML = notes.map(n => `
+            <tr>
+                <td>${n.etudiant_matricule || ''} - ${n.etudiant_nom || ''} ${n.etudiant_prenom || ''}</td>
+                <td>${n.module_code || ''}</td>
+                <td>${n.type || ''}</td>
+                <td>${n.valeur || 0}/20</td>
+                <td>${n.date_epreuve || ''}</td>
+                <td>
+                    <button class="btn-action" onclick="editNote(${n.id})">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn-action delete-btn" onclick="deleteNote(${n.id})">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            </tr>
+        `).join('');
     }
-    
+
     // ===============================
-    // FILTRES
+    // SOUMISSION DU FORMULAIRE
     // ===============================
-    
-    function applyFilters() {
-        loadNotes();
-    }
-    
-    if (filterEtudiant) filterEtudiant.addEventListener('change', applyFilters);
-    if (filterModule) filterModule.addEventListener('change', applyFilters);
-    
-    // ===============================
-    // ENVOI DU FORMULAIRE
-    // ===============================
-    
     if (formNote) {
         formNote.addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            const editingId = document.getElementById('editingIndex')?.value;
-            const isEditing = editingId && editingId !== '';
-            
-            const formData = {
-                etudiant: etudiantSelect.value,
-                module: moduleSelect.value,
-                type: typeSelect.value,
-                valeur: document.getElementById('note').value,
-                date: document.getElementById('date').value
-            };
-            
-            // Validation
-            if (!formData.etudiant || !formData.module || !formData.type || !formData.valeur || !formData.date) {
-                alert('Veuillez remplir tous les champs');
+            if (!etudiantInput.value.trim()) {
+                alert('Veuillez saisir un matricule étudiant');
                 return;
             }
             
+            if (!epreuveSelect.value) {
+                alert('Veuillez sélectionner une épreuve');
+                return;
+            }
+            
+            if (!noteInput.value) {
+                alert('Veuillez saisir une note');
+                return;
+            }
+
+            const payload = {
+                etudiant: etudiantInput.value.trim(),
+                epreuve: parseInt(epreuveSelect.value),
+                valeur: parseFloat(noteInput.value)
+            };
+
             try {
-                let url = '/evaluation/api/ajouter-note/';
-                let method = 'POST';
-                
-                if (isEditing) {
-                    url = `/evaluation/api/modifier-note/${editingId}/`;
-                    method = 'PUT';
-                }
-                
-                const response = await fetch(url, {
-                    method: method,
+                const response = await fetch('/evaluation/api/notes/ajouter/', {
+                    method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-CSRFToken': getCookie('csrftoken')
+                        'X-CSRFToken': csrftoken
                     },
-                    body: JSON.stringify(formData)
+                    body: JSON.stringify(payload)
                 });
-                
-                const result = await response.json();
-                
+
                 if (response.ok) {
-                    modal.style.display = 'none';
-                    modal.classList.remove('show');
-                    formNote.reset();
-                    document.getElementById('editingIndex').value = '';
-                    document.getElementById('modalTitle').innerHTML = '<i class="fas fa-plus-circle"></i> Ajouter une note';
+                    closeModal();
                     await loadNotes();
-                    alert(isEditing ? 'Note modifiée avec succès !' : 'Note ajoutée avec succès !');
+                    alert('✅ Note ajoutée !');
                 } else {
-                    alert(result.message || 'Erreur lors de l\'enregistrement');
+                    const result = await response.json();
+                    alert('❌ ' + (result.message || 'Erreur'));
                 }
             } catch (error) {
-                console.error('Erreur:', error);
-                alert('Erreur de connexion au serveur');
+                alert('❌ Erreur de connexion');
             }
         });
     }
@@ -269,124 +310,28 @@ document.addEventListener('DOMContentLoaded', function() {
 // ===============================
 // FONCTIONS GLOBALES
 // ===============================
-
-function formatDate(dateStr) {
-    if (!dateStr) return '—';
-    try {
-        const date = new Date(dateStr);
-        if (isNaN(date.getTime())) return dateStr;
-        return date.toLocaleDateString('fr-FR');
-    } catch (error) {
-        console.error('Erreur formatage date:', error);
-        return dateStr;
-    }
-}
-
-function editNote(id) {
-    // Récupérer la note dans les données stockées
-    const note = window.notesData.find(n => n.id === id);
-    
-    if (!note) {
-        console.error('Note non trouvée:', id);
-        return;
-    }
-    
-    console.log('Modification de la note:', note);
-    
-    // Remplir le formulaire du modal avec vérifications
-    const etudiantSelect = document.getElementById('etudiant');
-    const moduleSelect = document.getElementById('moduleSelect');
-    const typeSelect = document.getElementById('type');
-    const noteInput = document.getElementById('note');
-    const dateInput = document.getElementById('date');
-    const editingIndex = document.getElementById('editingIndex');
-    const modalTitle = document.getElementById('modalTitle');
-    const modal = document.getElementById('modalAddNote');
-    
-    // Vérifier que tous les éléments existent avant de les utiliser
-    if (etudiantSelect && etudiantSelect.options) {
-        for (let i = 0; i < etudiantSelect.options.length; i++) {
-            if (etudiantSelect.options[i].value === note.etudiant_matricule) {
-                etudiantSelect.selectedIndex = i;
-                break;
-            }
-        }
-    } else {
-        console.error('etudiantSelect non trouvé');
-    }
-    
-    if (moduleSelect && moduleSelect.options) {
-        for (let i = 0; i < moduleSelect.options.length; i++) {
-            if (moduleSelect.options[i].value == note.module_id) {
-                moduleSelect.selectedIndex = i;
-                break;
-            }
-        }
-    } else {
-        console.error('moduleSelect non trouvé');
-    }
-    
-    if (typeSelect && typeSelect.options) {
-        for (let i = 0; i < typeSelect.options.length; i++) {
-            if (typeSelect.options[i].value === note.type) {
-                typeSelect.selectedIndex = i;
-                break;
-            }
-        }
-    } else {
-        console.error('typeSelect non trouvé');
-    }
-    
-    if (noteInput) noteInput.value = note.valeur || '';
-    if (dateInput) dateInput.value = note.date || '';
-    if (editingIndex) editingIndex.value = id;
-    
-    // Changer le titre du modal
-    if (modalTitle) {
-        modalTitle.innerHTML = '<i class="fas fa-edit"></i> Modifier la note';
-    }
-    
-    // Ouvrir le modal
-    if (modal) {
-        modal.style.display = 'flex';
-        modal.classList.add('show');
-    } else {
-        console.error('modal non trouvé');
-    }
-}
-
 async function deleteNote(id) {
     if (!confirm('Supprimer cette note ?')) return;
     
     try {
-        const response = await fetch(`/evaluation/api/supprimer-note/${id}/`, {
+        await fetch(`/evaluation/api/notes/supprimer/${id}/`, {
             method: 'DELETE',
-            headers: {
-                'X-CSRFToken': getCookie('csrftoken')
-            }
+            headers: { 'X-CSRFToken': getCookie('csrftoken') }
         });
-        
-        if (response.ok) {
-            location.reload();
-        } else {
-            alert('Erreur lors de la suppression');
-        }
+        location.reload();
     } catch (error) {
-        console.error('Erreur:', error);
+        alert('Erreur');
     }
 }
 
-function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
-    }
-    return cookieValue;
+function editNote(id) {
+    const note = window.notesData.find(n => n.id === id);
+    if (!note) return;
+    
+    document.getElementById('etudiant').value = note.etudiant_matricule || '';
+    document.getElementById('note').value = note.valeur || '';
+    document.getElementById('editingIndex').value = id;
+    
+    document.getElementById('modalTitle').innerHTML = '<i class="fas fa-edit"></i> Modifier la note';
+    document.getElementById('modalAddNote').classList.add('show');
 }

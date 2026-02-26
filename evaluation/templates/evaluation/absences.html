@@ -10,7 +10,6 @@
 {% endblock %}
 
 {% block content %}
-<main class="main-content">
   <div class="topbar">
     <h1>Gestion des Absences</h1>
     <a href="#" class="btn-action"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
@@ -28,19 +27,19 @@
     <div class="absences-summary">
       <div class="summary-item">
         <div class="summary-label">Total absences</div>
-        <div class="summary-value">0</div>
+        <div class="summary-value" id="totalAbsences">0</div>
       </div>
       <div class="summary-item">
         <div class="summary-label">Justifiées</div>
-        <div class="summary-value">0</div>
+        <div class="summary-value" id="absencesJustifiees">0</div>
       </div>
       <div class="summary-item">
         <div class="summary-label">Non justifiées</div>
-        <div class="summary-value warning">0</div>
+        <div class="summary-value warning" id="absencesNonJustifiees">0</div>
       </div>
       <div class="summary-item">
         <div class="summary-label">Étudiants concernés</div>
-        <div class="summary-value">0</div>
+        <div class="summary-value" id="etudiantsConcernes">0</div>
       </div>
     </div>
 
@@ -82,14 +81,13 @@
           <tr>
             <td colspan="6" class="empty-state">
               <i class="fas fa-info-circle"></i><br>
-              Aucune absence enregistrée.
+              Chargement des absences...
             </td>
           </tr>
         </tbody>
       </table>
     </div>
   </div>
-</main>
 
 <!-- Modal pour signaler une absence -->
 <div id="modalAddAbsence" class="modal">
@@ -133,4 +131,5 @@
     </form>
   </div>
 </div>
+
 {% endblock %}

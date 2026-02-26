@@ -256,14 +256,13 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     function updateSummary(stats) {
-        if (!summaryValues || summaryValues.length < 4) return;
-        
-        summaryValues[0].textContent = stats.total || 0;
-        summaryValues[1].textContent = stats.justifiees || 0;
-        summaryValues[2].textContent = stats.non_justifiees || 0;
-        summaryValues[3].textContent = stats.etudiants_concernes || 0;
-    }
+    console.log('📊 Mise à jour des stats:', stats);
     
+    document.getElementById('totalAbsences').textContent = stats.total || 0;
+    document.getElementById('absencesJustifiees').textContent = stats.justifiees || 0;
+    document.getElementById('absencesNonJustifiees').textContent = stats.non_justifiees || 0;
+    document.getElementById('etudiantsConcernes').textContent = stats.etudiants_concernes || 0;
+}
     function formatDate(dateStr) {
         if (!dateStr) return '—';
         return new Date(dateStr).toLocaleDateString('fr-FR');

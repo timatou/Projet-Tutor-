@@ -7,7 +7,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     # Redirection page d'accueil
-    path('', RedirectView.as_view(url='/etudiants/liste/')),
+    path('', RedirectView.as_view(url='/dashboard')),
 
     # Authentification
     path('login/', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
