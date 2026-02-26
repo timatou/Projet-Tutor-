@@ -2,33 +2,38 @@ from django.db import models
 from django.db.models import Avg
 from django.core.validators import MinValueValidator, MaxValueValidator
 
-# Create your models here.
 
 class Module(models.Model):
     code = models.CharField(max_length=10, unique=True)
     libelle = models.CharField(max_length=100)
     coefficient = models.FloatField(default=1.0)
     semestre = models.IntegerField(
+<<<<<<< HEAD
     validators=[MinValueValidator(1), MaxValueValidator(10)]
 )
     # Relations
     professeurs = models.ManyToManyField('utilisateurs.Professeur', related_name='modules',blank=True)
     
     etudiants = models.ManyToManyField('etudiants.Etudiant', related_name='modules_inscrits', blank=True)
+=======
+        validators=[MinValueValidator(1), MaxValueValidator(10)]
+    )
+    professeurs = models.ManyToManyField('utilisateurs.Professeur', related_name='modules', blank=True)
+    etudiants = models.ManyToManyField('utilisateurs.Etudiant', related_name='modules', blank=True)
+>>>>>>> origin/main
 
     def __str__(self):
         return f"{self.libelle} (S{self.semestre})"
 
     def calculer_moyenne(self):
         from evaluation.models import Note
-        notes = Note.objects.filter(module=self).aggregate(Avg('valeur'))
+        notes = Note.objects.filter(epreuve__module=self).aggregate(Avg('valeur'))
         moyenne = notes['valeur__avg']
         return round(moyenne, 2) if moyenne is not None else 0
-    
-    
+
     def taux_reussite(self):
         from evaluation.models import Note
-        notes = Note.objects.filter(module=self)
+        notes = Note.objects.filter(epreuve__module=self)
         total = notes.count()
         if total == 0:
             return 0

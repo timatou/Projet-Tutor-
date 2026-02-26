@@ -1,85 +1,54 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'utilisateurs/css/enseignants.css' %}">
+{% endblock %}
+
 {% block content %}
-<div class="container mt-4">
-    <div class="card shadow-sm border-0">
-        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
-            <h4 class="m-0"><i class="fas fa-book-reader me-2"></i>Assignation des Modules</h4>
-            <span class="badge bg-light text-dark">{{ professeur.user.get_full_name|upper }}</span>
-        </div>
-        <div class="card-body">
-
-            {% if form.errors %}
-                <div class="alert alert-danger">
-                    <strong>Le formulaire contient des erreurs :</strong>
-                    <ul>
-                        {% for field, errors in form.errors.items %}
-                            <li>{{ field }} : {{ errors|striptags }}</li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            {% endif %}
-
-            <form method="post">
-                {% csrf_token %}
-
-                <div style="display: none;">
-                    {{ form.first_name }}
-                    {{ form.last_name }}
-                    {{ form.email }}
-                    {{ form.specialite }}
-                </div>
-                
-                <div class="alert alert-info shadow-sm">
-                    <i class="fas fa-info-circle me-2"></i>
-                    Cochez les matières que <strong>{{ professeur.user.first_name }}</strong> doit enseigner. 
-                </div>
-
-                <div class="row px-3 mt-4">
-                    <h5 class="mb-3 text-secondary border-bottom pb-2">Modules disponibles dans la base</h5>
-                    
-                    {% for checkbox in form.modules %}
-                        <div class="col-md-4 mb-3">
-                            <div class="form-check card p-2 border-light shadow-sm h-100 hover-shadow">
-                                <label class="form-check-label d-flex align-items-center cursor-pointer w-100 py-2">
-                                    <div class="me-3 ps-2">
-                                        {{ checkbox.tag }} 
-                                    </div>
-                                    <div>
-                                        <span class="fw-bold d-block text-dark">{{ checkbox.choice_label }}</span>
-                                    </div>
-                                </label>
-                            </div>
-                        </div>
-                    {% endfor %}
-                </div>
-
-                <div class="mt-4 border-top pt-4 d-flex justify-content-between align-items-center">
-                    <a href="{% url 'liste_enseignants' %}" class="btn btn-outline-secondary px-4">
-                        <i class="fas fa-arrow-left me-1"></i> Annuler
-                    </a>
-                    <button type="submit" class="btn btn-success btn-lg px-5 shadow">
-                        <i class="fas fa-save me-2"></i> Enregistrer les modifications
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
+<div class="topbar">
+    <h1>Assignation des Modules</h1>
 </div>
 
-<style>
-    .hover-shadow:hover {
-        background-color: #f1f8ff;
-        border-color: #0d6efd !important;
-        transition: 0.2s ease-in-out;
-        cursor: pointer;
-    }
-    .form-check-input:checked + label {
-        color: #0d6efd;
-    }
-    input[type="checkbox"] { 
-        width: 1.2rem;
-        height: 1.2rem;
-        cursor: pointer;
-    }
-</style>
+<div class="content-area">
+    <div class="form-card" style="max-width: 850px;">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="fas fa-book-reader"></i> Assignation des Modules</h2>
+            <span class="identifiant-code">{{ professeur.user.get_full_name|upper }}</span>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+            <div style="display:none">
+                {{ form.username }}
+                {{ form.first_name }}
+                {{ form.last_name }}
+                {{ form.email }}
+                {{ form.specialite }}
+            </div>
+            
+            <p class="text-muted" style="margin-bottom:20px;">
+                Cochez les matières que ce professeur doit enseigner :
+            </p>
+            
+            <div class="module-grid">
+                {% for checkbox in form.modules %}
+                <label>
+                    {{ checkbox.tag }}
+                    <span style="font-weight:500;">{{ checkbox.choice_label }}</span>
+                </label>
+                {% endfor %}
+            </div>
+
+            <div class="d-flex justify-content-between mt-5 pt-3" style="border-top: 1px solid #d9e2ef;">
+                <a href="{% url 'liste_enseignants' %}" class="btn btn-close">
+                    <i class="fas fa-arrow-left"></i> Retour
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Enregistrer les modifications
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
 {% endblock %}

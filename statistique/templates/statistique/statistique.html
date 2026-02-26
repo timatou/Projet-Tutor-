@@ -1,21 +1,27 @@
-{% extends 'base.html' %}
+HTML// {% extends 'base.html' %}
 {% load static %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'statistique/css/statistique.css' %}">
+{% endblock %}
 
 {% block content %}
 <div class="content-area">
-    <div class="table-container shadow-sm p-4 bg-white rounded">
-        
-        <h2 class="mb-4">
-            <i class="fas fa-chart-bar"></i> Statistiques & Analyses
+    <div class="dashboard-container">
+
+        <h2 class="dashboard-title">
+            <i class="fas fa-chart-bar"></i>
+            Statistiques & Analyses
         </h2>
 
-        <!-- 🔹 LIGNE 1 -->
-        <div class="row mb-3">
+        <!-- =======================
+             FILTRES
+        ======================== -->
 
-            <!-- 🎓 PROMOTION -->
-            <div class="col-md-4">
-                <label class="form-label fw-bold">Par Promotion</label>
-                <select id="filter-promotion" class="form-select">
+        <div class="filters-container">
+            <div class="filter-item">
+                <label>Promotion</label>
+                <select id="filter-promotion">
                     <option value="">Toutes les promotions</option>
                     {% for p in promotions %}
                         <option value="{{ p.id }}">{{ p.nom }}</option>
@@ -23,10 +29,9 @@
                 </select>
             </div>
 
-            <!-- 📚 MODULE -->
-            <div class="col-md-4">
-                <label class="form-label fw-bold">Par Module</label>
-                <select id="filter-module" class="form-select">
+            <div class="filter-item">
+                <label>Module</label>
+                <select id="filter-module">
                     <option value="">Tous les modules</option>
                     {% for m in modules %}
                         <option value="{{ m.id }}">{{ m.libelle }}</option>
@@ -34,84 +39,122 @@
                 </select>
             </div>
 
-            <!-- 👥 GROUPE -->
-            <div class="col-md-4" id="groupe-container" style="display:none;">
-                <label class="form-label fw-bold">Par Groupe</label>
-                <select id="filter-groupe" class="form-select">
+            <div class="filter-item" id="groupe-container" style="display:none;">
+                <label>Groupe</label>
+                <select id="filter-groupe">
                     <option value="">Tous les groupes</option>
-                    <!-- ⚠️ Rempli dynamiquement par JS -->
                 </select>
             </div>
 
-        </div>
-
-        <!-- 🔹 LIGNE 2 -->
-        <div class="row mb-3">
-
-            <!-- 👤 ÉTUDIANT -->
-            <div class="col-md-4">
-                <label class="form-label fw-bold">Profil Étudiant</label>
-                <select id="filter-etudiant" class="form-select">
+            <div class="filter-item">
+                <label>Étudiant</label>
+                <select id="filter-etudiant">
                     <option value="">Choisir un étudiant...</option>
-                    <!-- ⚠️ Rempli dynamiquement par JS -->
                 </select>
             </div>
-
         </div>
 
-        <hr>
+        <!-- =======================
+             STATS CARDS
+        ======================== -->
 
-        <!-- 📊 GRAPH -->
-        <div style="width: 100%; max-width: 900px; margin: 30px auto;">
-            <canvas id="myChart"></canvas>
+        <div class="stats-grid">
+            <div class="stat-card primary">
+                <span>Moyenne générale</span>
+                <h3 id="stat-moyenne">0</h3>
+            </div>
+
+            <div class="stat-card success">
+                <span>Note maximale</span>
+                <h3 id="stat-max">0</h3>
+            </div>
+
+            <div class="stat-card danger">
+                <span>Note minimale</span>
+                <h3 id="stat-min">0</h3>
+            </div>
+
+            <div class="stat-card warning">
+                <span>Taux de réussite</span>
+                <h3 id="stat-taux">0%</h3>
+            </div>
         </div>
+
+        <!-- =======================
+             TABLEAU STATS
+        ======================== -->
+        <div class="stats-table">
+            <h5>Résumé statistique</h5>
+            <table>
+                <tr>
+                    <th>Indicateur</th>
+                    <th>Valeur</th>
+                </tr>
+                <tr>
+                    <td>Moyenne</td>
+                    <td id="tbl-moyenne">0</td>
+                </tr>
+                <tr>
+                    <td>Minimum</td>
+                    <td id="tbl-min">0</td>
+                </tr>
+                <tr>
+                    <td>Maximum</td>
+                    <td id="tbl-max">0</td>
+                </tr>
+                <tr>
+                    <td>Médiane</td>
+                    <td id="tbl-mediane">0</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- =======================
+             GRAPHIQUES
+        ======================== -->
+
+        <div class="chart-container">
+            <h5><i class="fas fa-chart-column"></i> Moyennes par module</h5>
+            <div class="chart-wrapper">
+                <canvas id="myChart"></canvas>
+            </div>
+        </div>
+
+        
+        
+        <div class="chart-container">
+            <h5><i class="fas fa-chart-pie"></i> Répartition des notes</h5>
+            <div class="chart-wrapper" style="height: 400px; width: 100%;">
+                <div id="pieChart" style="height: 400px; width: 100%;"></div>
+            </div>
+        </div>
+        
 
     </div>
 </div>
 {% endblock %}
 
 {% block scripts %}
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="{% static 'statistique/js/stat.js' %}"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/11.4.1/highcharts.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/11.4.1/highcharts-3d.min.js"></script>
 
 <script>
-//////////////////////////////////////////////////////
-// 🎯 UI LOGIQUE (SYNC AVEC TON JS)
-//////////////////////////////////////////////////////
-
-const selectPromotion = document.getElementById('filter-promotion');
-const selectGroupe = document.getElementById('filter-groupe');
-const selectEtudiant = document.getElementById('filter-etudiant');
-const groupeContainer = document.getElementById('groupe-container');
-
-// 🎓 Promotion → affiche groupe
-selectPromotion.addEventListener('change', function () {
-
-    if (this.value) {
-        groupeContainer.style.display = "block";
-    } else {
-        groupeContainer.style.display = "none";
-        selectGroupe.value = "";
-    }
-
-    // reset étudiant
-    selectEtudiant.innerHTML = `<option value="">Choisir un étudiant...</option>`;
-});
-
-// 👥 Groupe → rien UI (géré côté JS principal)
-
-// 👤 Étudiant → priorité totale
-selectEtudiant.addEventListener('change', function () {
-
-    if (this.value) {
-        // Désactiver promotion + groupe
-        selectPromotion.disabled = true;
-        selectGroupe.disabled = true;
-        groupeContainer.style.display = "none";
-    } else {
-        selectPromotion.disabled = false;
-        selectGroupe.disabled = false;
+window.addEventListener('load', function() {
+    if (typeof Highcharts === 'undefined') {
+        console.log("Fallback: chargement depuis unpkg...");
+        var script = document.createElement('script');
+        script.src = "https://unpkg.com/highcharts@11.4.1/highcharts.js";
+        document.head.appendChild(script);
+        
+        var script3d = document.createElement('script');
+        script3d.src = "https://unpkg.com/highcharts@11.4.1/highcharts-3d.js";
+        document.head.appendChild(script3d);
     }
 });
 </script>
+
+<!-- Ton script personnalisé -->
+<script src="{% static 'statistique/js/stat.js' %}"></script>
 {% endblock %}
