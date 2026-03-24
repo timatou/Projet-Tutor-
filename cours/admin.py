@@ -9,7 +9,7 @@ class ModuleAdmin(admin.ModelAdmin):
     )
     list_filter = ('semestre',)
     search_fields = ('code', 'libelle')
-    filter_horizontal = ('professeurs', 'etudiants')
+    filter_horizontal = ('professeurs', 'etudiants', 'promotions')
 
     def afficher_professeurs(self, obj):
         return ", ".join(str(p) for p in obj.professeurs.all())

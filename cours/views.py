@@ -1,11 +1,12 @@
 import json
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404, redirect
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from .models import Module
 from django.contrib.auth.decorators import login_required
 from .models import Module
 from  evaluation.models import Note
+from .forms import ModuleUpdateForm
 # Affiche la page HTML
 def liste_modules(request):
     return render(request, 'cours/modules.html')
@@ -74,3 +75,16 @@ def liste_notes(request):
         notes = Note.objects.filter(module__professeur__user=request.user)
     
     return render(request, 'cours/liste_notes.html', {'notes': notes})
+
+@login_required
+def editer_module(request, module_id):
+    module = get_object_or_404(Module, id=module_id)
+    if request.method == 'POST':
+        form = ModuleUpdateForm(request.POST, instance=module)
+        if form.is_valid():
+            form.save()
+            return redirect('liste_modules')
+    else:
+        form = ModuleUpdateForm(instance=module)
+    
+    return render(request, 'cours/editer_module.html', {'form': form, 'module': module})

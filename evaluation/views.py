@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
+from django.contrib.auth.decorators import login_required
 from .models import Note, Absence, Epreuve
 from etudiants.models import Etudiant
 from cours.models import Module
@@ -76,6 +77,7 @@ def api_notes(request):
 # API - AJOUT / UPDATE NOTE (ROBUSTE)
 # -----------------------------------------------------
 
+@login_required
 @csrf_exempt
 @require_http_methods(["POST"])
 def api_ajouter_note(request):
@@ -109,6 +111,7 @@ def api_ajouter_note(request):
 # API - SUPPRIMER NOTE
 # -----------------------------------------------------
 
+@login_required
 @csrf_exempt
 @require_http_methods(["DELETE"])
 def api_supprimer_note(request, id):
@@ -174,6 +177,7 @@ def api_absences(request):
 # API - AJOUT ABSENCE
 # -----------------------------------------------------
 
+@login_required
 @csrf_exempt
 @require_http_methods(["POST"])
 def api_ajouter_absence(request):
@@ -202,6 +206,7 @@ def api_ajouter_absence(request):
 # API - VALIDER ABSENCE
 # -----------------------------------------------------
 
+@login_required
 @csrf_exempt
 @require_http_methods(["POST"])
 def api_valider_absence(request, absence_id):
@@ -220,6 +225,7 @@ def api_valider_absence(request, absence_id):
 # API - SUPPRIMER ABSENCE
 # -----------------------------------------------------
 
+@login_required
 @csrf_exempt
 @require_http_methods(["DELETE"])
 def api_supprimer_absence(request, id):

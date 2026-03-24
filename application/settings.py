@@ -85,5 +85,11 @@ CORS_ALLOW_ALL_ORIGINS = True
 LOGIN_REDIRECT_URL = 'dashboard'  # Doit correspondre au 'name' dans urls.py
 LOGOUT_REDIRECT_URL = 'login'
 
-CSRF_COOKIE_SECURE = False
-SESSION_COOKIE_SECURE = False
+# En production, activer ces paramètres de sécurité
+SECURE_HSTS_SECONDS = 31536000  # 1 an (à activer uniquement si HTTPS est configuré)
+SECURE_SSL_REDIRECT = False  # False pour dev (pas de HTTPS)
+CSRF_COOKIE_SECURE = False  # False pour dev
+SESSION_COOKIE_SECURE = False  # False pour dev
+
+# En développement local, tu peux mettre ces valeurs à False pour travailler sans HTTPS.
+# DEBUG = True et ALLOWED_HOSTS = [] doivent être changés avant déploiement réel.

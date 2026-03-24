@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 from .forms import ProfesseurUpdateForm
 from django.contrib.auth.decorators import login_required
 from cours.models import Module  
-from evaluation.models import Note
+from evaluation.models import Note, Epreuve
 from etudiants.models import Etudiant
 from evaluation.models import Absence
 
@@ -72,11 +72,20 @@ def espace_enseignant(request):
 @login_required
 def saisir_notes_module(request, module_id):
     module = get_object_or_404(Module, id=module_id, professeurs__user=request.user)
-    etudiants = module.etudiants.all() 
+    # Filtrer les étudiants des promotions assignées au module
+    etudiants = Etudiant.objects.filter(promotion__in=module.promotions.all()).select_related('promotion', 'groupe') 
 
     if request.method == 'POST':
         type_eval = request.POST.get('type_evaluation')
-        # Note: Ton modèle utilise auto_now_add, donc date_eval ne sera pas utilisée
+        date_examen = request.POST.get('date_examen')
+        
+        # Créer ou récupérer l'épreuve
+        epreuve, created = Epreuve.objects.get_or_create(
+            module=module,
+            type=type_eval,
+            date=date_examen,
+            defaults={'coefficient': 1.0}  # Valeur par défaut
+        )
         
         for etudiant in etudiants:
             valeur = request.POST.get(f'note_{etudiant.pk}')
@@ -85,12 +94,10 @@ def saisir_notes_module(request, module_id):
                 try:
                     note_float = float(valeur.replace(',', '.'))
                     
-                    # On cherche la note existante pour cet étudiant, ce module ET ce type
-                    # Si elle existe, on met à jour la valeur. Sinon, on la crée.
+                    # Créer ou mettre à jour la note pour cette épreuve
                     Note.objects.update_or_create(
                         etudiant=etudiant,
-                        module=module,
-                        type=type_eval, # On filtre par type pour permettre d'avoir une note DS et une note EXAM
+                        epreuve=epreuve,
                         defaults={'valeur': note_float}
                     )
                 except ValueError:
@@ -101,7 +108,7 @@ def saisir_notes_module(request, module_id):
     return render(request, 'utilisateurs/saisie_masse_notes.html', {
         'module': module,
         'etudiants': etudiants,
-        'types': Note.TYPE_CHOICES
+        'types': Epreuve.TYPE_CHOICES
     })
 
  # Assure-toi d'importer le modèle Absence
@@ -109,7 +116,8 @@ def saisir_notes_module(request, module_id):
 @login_required
 def faire_appel_module(request, module_id):
     module = get_object_or_404(Module, id=module_id, professeurs__user=request.user)
-    etudiants = module.etudiants.all()
+    # Filtrer les étudiants des promotions assignées au module
+    etudiants = Etudiant.objects.filter(promotion__in=module.promotions.all()).select_related('promotion', 'groupe')
 
     if request.method == 'POST':
         date_appel = request.POST.get('date_absence')

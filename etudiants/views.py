@@ -3,6 +3,7 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
+from django.contrib.auth.decorators import login_required
 from .models import Etudiant, Promotion, Groupe
 
 # 1. Vue pour afficher la page HTML
@@ -27,6 +28,7 @@ def api_etudiants_data(request):
     return JsonResponse({'etudiants': liste_data})
 
 # 3. Vue pour AJOUTER (avec gestion du groupe)
+@login_required
 @csrf_exempt
 @require_http_methods(["POST"])
 def api_ajouter_etudiant(request):
@@ -59,6 +61,7 @@ def api_ajouter_etudiant(request):
         return JsonResponse({"message": str(e)}, status=400)
 
 # 4. Vue pour SUPPRIMER
+@login_required
 @csrf_exempt
 @require_http_methods(["DELETE"])
 def api_supprimer_etudiant(request, matricule):
@@ -81,9 +84,9 @@ def api_groupes_list(request):
 
 
 # --- Créer une Promotion ---
+@login_required
 @csrf_exempt
 @require_http_methods(["POST"])
-@csrf_exempt
 def api_ajouter_promotion(request):
     if request.method == "POST":
         try:
@@ -100,6 +103,7 @@ def api_ajouter_promotion(request):
         except Exception as e:
             return JsonResponse({"message": str(e)}, status=400)
 # --- Créer un Groupe lié à une Promotion ---
+@login_required
 @csrf_exempt
 @require_http_methods(["POST"])
 def api_ajouter_groupe(request):
@@ -107,7 +111,7 @@ def api_ajouter_groupe(request):
         data = json.loads(request.body)
         # On récupère la promo par son ID
         nom = data.get('nom')
-        promo = Promotion.objects.get(id=data.get('promotion_nom'))
+        promo = Promotion.objects.get(id=data.get('promotion_id'))
         if Groupe.objects.filter(nom=nom, promotion=promo).exists():
             return JsonResponse({"message": "Ce groupe existe déjà pour cette promotion."}, status=400)
         

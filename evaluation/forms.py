@@ -5,7 +5,7 @@ from .models import Absence
 class NoteForm(forms.ModelForm):
     class Meta:
         model = Note
-        fields = ['etudiant', 'module', 'type', 'valeur']
+        fields = ['etudiant', 'epreuve', 'valeur']
 
 class AbsenceForm(forms.ModelForm):
     class Meta:

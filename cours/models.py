@@ -14,6 +14,9 @@ class Module(models.Model):
     professeurs = models.ManyToManyField('utilisateurs.Professeur', related_name='modules',blank=True)
     
     etudiants = models.ManyToManyField('etudiants.Etudiant', related_name='modules_inscrits', blank=True)
+    
+    # Relation avec les promotions qui suivent ce module
+    promotions = models.ManyToManyField('etudiants.Promotion', related_name='modules', blank=True)
 
     def __str__(self):
         return f"{self.libelle} (S{self.semestre})"

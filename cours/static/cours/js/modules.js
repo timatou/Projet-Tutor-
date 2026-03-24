@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             <span style="color:${color}; font-weight:bold;">${m.taux}%</span>
                         </div>
                     </td>
-                    <td><button class="btn-icon" style="color:#ff4757" onclick="deleteModule(${m.id})"><i class="fas fa-trash"></i></button></td>
+                    <td><button class="btn-icon" style="color:#007bff; margin-right:10px;" onclick="editModule(${m.id})"><i class="fas fa-edit"></i></button><button class="btn-icon" style="color:#ff4757" onclick="deleteModule(${m.id})"><i class="fas fa-trash"></i></button></td>
                 `;
                 tbody.appendChild(tr);
             });
@@ -92,6 +92,10 @@ async function deleteModule(id) {
         const res = await fetch(`/cours/api/supprimer/${id}/`, { method: 'DELETE', headers: {'X-CSRFToken': getCookie('csrftoken')} });
         if (res.ok) location.reload();
     }
+}
+
+function editModule(id) {
+    window.location.href = `/cours/editer/${id}/`;
 }
 
 function getCookie(name) {
