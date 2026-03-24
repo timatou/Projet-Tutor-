@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const promotion = row.children[3].textContent.toLowerCase();
 
             const match = (term === '' || nom.includes(term) || prenom.includes(term)) &&
-                          (promo === '' || promotion === promo);
+                        (promo === '' || promotion === promo);
 
             row.style.display = match ? '' : 'none';
         });

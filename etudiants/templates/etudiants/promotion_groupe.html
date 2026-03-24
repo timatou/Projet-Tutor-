@@ -2,67 +2,74 @@
 {% load static %}
 
 {% block content %}
-<div class="container mt-4">
-    <div class="page-header mb-4">
-        <h1><i class="fas fa-university"></i> Gestion des Promotions et Groupes</h1>
+<div class="content-area">
+
+    <h1 class="page-title">Gestion des Promotions et Groupes</h1>
+
+    <!-- FORMULAIRES -->
+    <div class="form-grid">
+
+        <!-- FORM PROMOTION -->
+        <div class="form-card">
+            <form id="formPromo">
+                <h2>Nouvelle Promotion</h2>
+
+                <div class="form-group">
+                    <label for="promoNom">Nom</label>
+                    <input type="text" id="promoNom" class="input-filter" placeholder="Ex : L3 Info" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="promoAnnee">Année</label>
+                    <input type="text" id="promoAnnee" class="input-filter" placeholder="Ex : 2025-2026" required>
+                </div>
+
+                <button type="submit" class="btn-action full-width">Créer Promotion</button>
+            </form>
+        </div>
+
+        <!-- FORM GROUPE -->
+        <div class="form-card">
+            <form id="formGroupe">
+                <h2>Nouveau Groupe</h2>
+
+                <div class="form-group">
+                    <label for="selectPromoForGroupe">Promotion</label>
+                    <select id="selectPromoForGroupe" class="input-filter" required>
+                        <option value="">-- Sélectionner une promotion --</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="groupeNom">Nom du groupe</label>
+                    <input type="text" id="groupeNom" class="input-filter" placeholder="Ex : Groupe A" required>
+                </div>
+
+                <button type="submit" class="btn-action full-width">Créer Groupe</button>
+            </form>
+        </div>
+
     </div>
 
-    <div class="row">
-        <div class="col-md-6">
-            <div class="card shadow-sm p-4 mb-4">
-                <form id="formPromo">
-                    <h3><i class="fas fa-plus-circle"></i> Nouvelle Promotion</h3>
-                    <div class="mb-3">
-                        <input type="text" id="promoNom" class="form-control" placeholder="Nom (ex: L3 Info)" required>
-                    </div>
-                    <div class="mb-3">
-                        <input type="text" id="promoAnnee" class="form-control" placeholder="Année (ex: 2025-2026)" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100">Créer Promotion</button>
-                </form>
-            </div>
+    <!-- TABLEAU DES PROMOTIONS -->
+    <div class="table-container" style="margin-top: 30px;">
+        <div class="table-header">
+            <h2>Liste des Promotions</h2>
         </div>
-        
-        <div class="col-md-6">
-            <div class="card shadow-sm p-4 mb-4">
-                <form id="formGroupe">
-                    <h3><i class="fas fa-users"></i> Nouveau Groupe</h3>
-                    <div class="mb-3">
-                        <select id="selectPromoForGroupe" class="form-select" required>
-                            <option value="">-- Sélectionner une promo --</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <input type="text" id="groupeNom" class="form-control" placeholder="Nom du groupe (ex: Groupe A)" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100">Créer Groupe</button>
-                </form>
-            </div>
-        </div>
+
+        <table id="tablePromotions">
+            <thead>
+                <tr>
+                    <th>NOM</th>
+                    <th>ANNÉE</th>
+                    <th>ACTIONS</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
     </div>
 
-    <div class="row">
-        <div class="col-12">
-            <div class="card shadow-sm">
-                <div class="card-header bg-light">
-                    <h3 class="mb-0">Liste des Promotions</h3>
-                </div>
-                <div class="table-container">
-                    <table class="table" id="tablePromotions">
-                        <thead>
-                            <tr>
-                                <th>NOM</th>
-                                <th>ANNÉE</th>
-                                <th>ACTIONS</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
 
 <script src="{% static 'etudiants/js/promotions.js' %}"></script>

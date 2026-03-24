@@ -17,6 +17,7 @@
     box-sizing: border-box;
 }
 
+
 body {
     font-family: "Inter", "Segoe UI", Arial, sans-serif;
     background: #eef2f7;
@@ -24,6 +25,11 @@ body {
     min-height: 100vh;
     overflow-x: hidden;
 }
+/* Pour le H1*/
+.page-title {
+    margin-bottom: 25px;
+}
+
 
 /* ================================================
    NAVBAR FIXE EN HAUT
