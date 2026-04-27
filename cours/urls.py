@@ -10,5 +10,4 @@ urlpatterns = [
     path('api/ajouter/', views.api_ajouter_module, name='api_ajouter_module'),
     path('api/supprimer/<int:module_id>/', views.api_supprimer_module, name='api_supprimer_module'),
     path('editer/<int:module_id>/', views.editer_module, name='editer_module'),
-    path('liste/', views.liste_modules, name='liste_modules'), # Le 'name' doit correspondre au lien !
 ]

@@ -134,7 +134,7 @@ def faire_appel_module(request, module_id):
                     date=date_appel,
                     defaults={
                         'duree': duree_cours,
-                        'justifiee': False,
+                        'statut': 'EN_ATTENTE',
                         'motif': 'Appel en classe'
                     }
                 )

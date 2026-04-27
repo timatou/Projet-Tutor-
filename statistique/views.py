@@ -45,9 +45,6 @@ def api_stats_globales(request):
     if module_id and module_id != '':
         notes = notes.filter(epreuve__module_id=module_id)
 
-    # Debug
-    print(f"🔍 Promo: {promotion_id} | Groupe: {groupe_id} | Etudiant: {etudiant_id} | Module: {module_id}")
-    print(f"📊 Notes trouvées: {notes.count()}")
 
     labels = []
     moyennes = []

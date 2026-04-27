@@ -1,12 +1,19 @@
 from django.shortcuts import render
 from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from django.contrib.auth.decorators import login_required
 from .models import Note, Absence, Epreuve
 from etudiants.models import Etudiant
 from cours.models import Module
 import json
+
+
+def _is_admin(user):
+    return user.is_authenticated and (user.is_superuser or user.role == 'ADMIN')
+
+
+def _is_admin_or_prof(user):
+    return user.is_authenticated and (user.is_superuser or user.role in ('ADMIN', 'PROFESSEUR'))
 
 
 # =====================================================
@@ -17,14 +24,9 @@ def notes_view(request):
     return render(request, 'evaluation/notes.html')
 
 
-# -----------------------------------------------------
-# API - LISTE DES EPREUVES
-# -----------------------------------------------------
-
-@csrf_exempt
+@require_http_methods(["GET"])
 def api_epreuves(request):
     epreuves = Epreuve.objects.select_related('module').all().order_by('-date')
-
     data = [
         {
             "id": e.id,
@@ -37,22 +39,16 @@ def api_epreuves(request):
         }
         for e in epreuves
     ]
-
     return JsonResponse({"epreuves": data})
 
 
-# -----------------------------------------------------
-# API - LISTE DES NOTES
-# -----------------------------------------------------
-
-@csrf_exempt
+@require_http_methods(["GET"])
 def api_notes(request):
     notes = Note.objects.select_related(
         'etudiant',
         'epreuve',
         'epreuve__module'
     ).all()
-
     data = [
         {
             'id': note.id,
@@ -69,52 +65,38 @@ def api_notes(request):
         }
         for note in notes
     ]
-
     return JsonResponse({'notes': data})
 
 
-# -----------------------------------------------------
-# API - AJOUT / UPDATE NOTE (ROBUSTE)
-# -----------------------------------------------------
-
 @login_required
-@csrf_exempt
 @require_http_methods(["POST"])
 def api_ajouter_note(request):
+    if not _is_admin_or_prof(request.user):
+        return JsonResponse({'success': False, 'message': 'Accès refusé'}, status=403)
     try:
         data = json.loads(request.body)
-
         etudiant = Etudiant.objects.get(matricule=data['etudiant'])
         epreuve = Epreuve.objects.get(id=data['epreuve'])
-
         note, created = Note.objects.update_or_create(
             etudiant=etudiant,
             epreuve=epreuve,
             defaults={'valeur': data['valeur']}
         )
-
         message = "Note ajoutée" if created else "Note mise à jour"
-
         return JsonResponse({'success': True, 'message': message})
-
     except Etudiant.DoesNotExist:
         return JsonResponse({'success': False, 'message': 'Étudiant introuvable'}, status=404)
-
     except Epreuve.DoesNotExist:
         return JsonResponse({'success': False, 'message': 'Épreuve introuvable'}, status=404)
-
     except Exception as e:
         return JsonResponse({'success': False, 'message': str(e)}, status=400)
 
 
-# -----------------------------------------------------
-# API - SUPPRIMER NOTE
-# -----------------------------------------------------
-
 @login_required
-@csrf_exempt
 @require_http_methods(["DELETE"])
 def api_supprimer_note(request, id):
+    if not _is_admin_or_prof(request.user):
+        return JsonResponse({'success': False, 'message': 'Accès refusé'}, status=403)
     try:
         note = Note.objects.get(id=id)
         note.delete()
@@ -131,14 +113,9 @@ def absence_view(request):
     return render(request, 'evaluation/absences.html')
 
 
-# -----------------------------------------------------
-# API - LISTE ABSENCES
-# -----------------------------------------------------
-
-@csrf_exempt
+@require_http_methods(["GET"])
 def api_absences(request):
     absences = Absence.objects.select_related('etudiant', 'module').all()
-
     data = [
         {
             'id': abs.id,
@@ -156,37 +133,26 @@ def api_absences(request):
         }
         for abs in absences
     ]
-
-    # ✅ CALCULER LES STATS
     total = absences.count()
     justifiees = absences.filter(statut='VALIDEE').count()
-    non_justifiees = total - justifiees
-    etudiants_uniques = absences.values('etudiant').distinct().count()
-
     stats = {
         'total': total,
         'justifiees': justifiees,
-        'non_justifiees': non_justifiees,
-        'etudiants_concernes': etudiants_uniques
+        'non_justifiees': total - justifiees,
+        'etudiants_concernes': absences.values('etudiant').distinct().count()
     }
-
-    print(f"✅ Stats calculées: {stats}")  # Debug
     return JsonResponse({'absences': data, 'stats': stats})
 
-# -----------------------------------------------------
-# API - AJOUT ABSENCE
-# -----------------------------------------------------
 
 @login_required
-@csrf_exempt
 @require_http_methods(["POST"])
 def api_ajouter_absence(request):
+    if not _is_admin_or_prof(request.user):
+        return JsonResponse({'success': False, 'message': 'Accès refusé'}, status=403)
     try:
         data = json.loads(request.body)
-
         etudiant = Etudiant.objects.get(matricule=data['etudiant'])
         module = Module.objects.get(id=data['module'])
-
         Absence.objects.create(
             etudiant=etudiant,
             module=module,
@@ -195,40 +161,56 @@ def api_ajouter_absence(request):
             motif=data.get('motif', ''),
             statut='EN_ATTENTE'
         )
-
         return JsonResponse({'success': True, 'message': 'Absence enregistrée'})
-
     except Exception as e:
         return JsonResponse({'success': False, 'message': str(e)}, status=400)
 
 
-# -----------------------------------------------------
-# API - VALIDER ABSENCE
-# -----------------------------------------------------
+@login_required
+@require_http_methods(["PUT"])
+def api_modifier_absence(request, absence_id):
+    if not _is_admin_or_prof(request.user):
+        return JsonResponse({'success': False, 'message': 'Accès refusé'}, status=403)
+    try:
+        absence = Absence.objects.get(id=absence_id)
+        data = json.loads(request.body)
+        if 'etudiant' in data:
+            absence.etudiant = Etudiant.objects.get(matricule=data['etudiant'])
+        if 'module' in data:
+            absence.module = Module.objects.get(id=data['module'])
+        if 'date' in data:
+            absence.date = data['date']
+        if 'duree' in data:
+            absence.duree = data['duree']
+        if 'motif' in data:
+            absence.motif = data['motif']
+        absence.save()
+        return JsonResponse({'success': True, 'message': 'Absence modifiée'})
+    except Absence.DoesNotExist:
+        return JsonResponse({'success': False, 'message': 'Absence non trouvée'}, status=404)
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': str(e)}, status=400)
+
 
 @login_required
-@csrf_exempt
 @require_http_methods(["POST"])
 def api_valider_absence(request, absence_id):
+    if not _is_admin(request.user):
+        return JsonResponse({'success': False, 'message': 'Accès refusé'}, status=403)
     try:
         absence = Absence.objects.get(id=absence_id)
         absence.statut = 'VALIDEE'
         absence.save()
-
         return JsonResponse({'success': True})
-
     except Absence.DoesNotExist:
         return JsonResponse({'success': False}, status=404)
 
 
-# -----------------------------------------------------
-# API - SUPPRIMER ABSENCE
-# -----------------------------------------------------
-
 @login_required
-@csrf_exempt
 @require_http_methods(["DELETE"])
 def api_supprimer_absence(request, id):
+    if not _is_admin_or_prof(request.user):
+        return JsonResponse({'success': False, 'message': 'Accès refusé'}, status=403)
     try:
         absence = Absence.objects.get(id=id)
         absence.delete()

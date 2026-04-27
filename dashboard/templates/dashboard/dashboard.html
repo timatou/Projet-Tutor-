@@ -18,12 +18,6 @@
         <h1>Tableau de Bord</h1>
         <div class="user-info">
             <span class="user-badge" id="currentDateTime"></span>
-            <form method="post" action="{% url 'logout' %}" class="logout-form">
-                {% csrf_token %}
-                <button type="submit" class="btn-logout">
-                    <i class="fas fa-sign-out-alt"></i> Déconnexion
-                </button>
-            </form>
         </div>
     </div>
 

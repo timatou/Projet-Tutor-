@@ -96,8 +96,8 @@ def api_dashboard_stats(request):
             notes__epreuve__module__semestre=i
         ).distinct().count()
 
-        statut_academique['reussite'].append(reussite or 350 + i * 10)
-        statut_academique['difficile'].append(difficile or 40 - i * 2)
+        statut_academique['reussite'].append(reussite)
+        statut_academique['difficile'].append(difficile)
 
     # ===== 6. CAMEMBERT ABSENCES PAR MODULE =====
     absences_par_module = []

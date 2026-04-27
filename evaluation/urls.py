@@ -10,7 +10,6 @@ urlpatterns = [
 
     path('api/notes/', views.api_notes, name='api_notes'),
     path('api/notes/ajouter/', views.api_ajouter_note, name='api_ajouter_note'),
-    
     path('api/notes/supprimer/<int:id>/', views.api_supprimer_note, name='api_supprimer_note'),
 
     # ==========================
@@ -25,9 +24,12 @@ urlpatterns = [
 
     path('api/absences/', views.api_absences, name='api_absences'),
     path('api/ajouter-absence/', views.api_ajouter_absence, name='api_ajouter_absence'),
-    
+    path('api/modifier-absence/<int:absence_id>/', views.api_modifier_absence, name='api_modifier_absence'),
+
     path('api/absences/supprimer/<int:id>/', views.api_supprimer_absence, name='api_supprimer_absence'),
+    # Alias utilisé par le JS (supprimer-absence sans préfixe absences/)
+    path('api/supprimer-absence/<int:id>/', views.api_supprimer_absence, name='api_supprimer_absence_alias'),
+
     path('api/absences/valider/<int:absence_id>/', views.api_valider_absence, name='api_valider_absence'),
-    path('api/justifier-absence/<int:absence_id>/',views.api_valider_absence,name='api_justifier_absence'
-),
+    path('api/justifier-absence/<int:absence_id>/', views.api_valider_absence, name='api_justifier_absence'),
 ]

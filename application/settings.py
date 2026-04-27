@@ -1,12 +1,16 @@
+import os
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-da92g9boo1q9!5agxkwkixg_-z1zul_@egrg&)jf$8&yt#=8_g'
+SECRET_KEY = os.environ.get(
+    'DJANGO_SECRET_KEY',
+    'django-insecure-da92g9boo1q9!5agxkwkixg_-z1zul_@egrg&)jf$8&yt#=8_g'
+)
 
-DEBUG = True
+DEBUG = os.environ.get('DJANGO_DEBUG', 'true').lower() == 'true'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -25,7 +29,6 @@ INSTALLED_APPS = [
     'dashboard',
     'statistique',
 ]
-
 
 AUTH_USER_MODEL = 'utilisateurs.User'
 
@@ -67,8 +70,8 @@ DATABASES = {
     }
 }
 
-LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'UTC'
+LANGUAGE_CODE = 'fr-fr'
+TIME_ZONE = 'Europe/Paris'
 USE_I18N = True
 USE_TZ = True
 
@@ -78,18 +81,22 @@ STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
 
+MEDIA_URL = 'media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CORS_ALLOW_ALL_ORIGINS = True
+# CORS : en développement on accepte localhost uniquement
+CORS_ALLOWED_ORIGINS = os.environ.get(
+    'CORS_ALLOWED_ORIGINS',
+    'http://localhost:8000,http://127.0.0.1:8000'
+).split(',')
 
-LOGIN_REDIRECT_URL = 'dashboard'  # Doit correspondre au 'name' dans urls.py
+LOGIN_REDIRECT_URL = 'dashboard'
 LOGOUT_REDIRECT_URL = 'login'
 
-# En production, activer ces paramètres de sécurité
-SECURE_HSTS_SECONDS = 31536000  # 1 an (à activer uniquement si HTTPS est configuré)
-SECURE_SSL_REDIRECT = False  # False pour dev (pas de HTTPS)
-CSRF_COOKIE_SECURE = False  # False pour dev
-SESSION_COOKIE_SECURE = False  # False pour dev
-
-# En développement local, tu peux mettre ces valeurs à False pour travailler sans HTTPS.
-# DEBUG = True et ALLOWED_HOSTS = [] doivent être changés avant déploiement réel.
+# Sécurité HTTPS (à activer uniquement en production avec HTTPS)
+SECURE_HSTS_SECONDS = 0
+SECURE_SSL_REDIRECT = False
+CSRF_COOKIE_SECURE = False
+SESSION_COOKIE_SECURE = False
